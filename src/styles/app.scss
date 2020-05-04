@@ -121,6 +121,8 @@ header {
     height: 250px;
     display: flex;
     flex-direction: column;
+    background-size: cover;
+    background-position: center;
 }
 
 .carousel-nav {
@@ -154,7 +156,7 @@ header {
 
 .carousel-label {
     height: 75px;
-    background-color: rgba(black, 0.2);
+    background-color: rgba(black, 0.5);
     backdrop-filter: blur(60px);
     border-radius: 0px 0px 20px 20px;
     font-size: 36px;
@@ -162,5 +164,48 @@ header {
     align-items: center;
     display: flex;
     padding-left: 50px;
-    color: #202020;
+    color: white;
+}
+
+
+.section-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #BDBDBD;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .section-title-line {
+        height: 0;
+        width: 100%;
+        border: solid 0.5px rgba($color: black, $alpha: 0.05);
+    }
+    .section-title-text {
+        flex: 1;
+        white-space: nowrap;
+        margin: 0 20px;
+    }
+}
+
+
+.about-us-container {
+    display: flex;
+    justify-content: center;
+}
+
+.about-us-content {
+    width: 1270px;
+    margin-top: 50px;
+    article {
+        padding: 20px 0 0 50px;
+    }
+}
+
+.new-products-container {
+    display: flex;
+    justify-content: center;
+    .new-products-content {
+        width: 1270px;
+        margin-top: 50px;
+    }
 }

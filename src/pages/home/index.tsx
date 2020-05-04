@@ -3,6 +3,8 @@ import "../../styles/app.scss";
 
 import Header from "./components/header";
 import Carousel from "./components/carousel";
+import AboutUs from "./components/aboutus";
+import NewProducts from "./components/newproducts";
 
 export default class Home extends React.Component {
     constructor(props :any) {
@@ -14,6 +16,8 @@ export default class Home extends React.Component {
             <div className="app-container">
                 <Header />
                 <Carousel />
+                <AboutUs />
+                <NewProducts />
             </div>
         );
     }

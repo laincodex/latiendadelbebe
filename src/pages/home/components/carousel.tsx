@@ -35,7 +35,7 @@ export default (props :any) => {
                 moveImage(false)();
             } else
                 setIndex(0);
-        },5000);  
+        },10000);  
         return () => clearInterval(timer);      
     });
     
