@@ -43,7 +43,7 @@ export default (props :any) => {
         <div className="carousel-container">
             <div className="carousel-content"
                 style={{
-                    backgroundImage: 'url("upload/carousel/' + carousel_images[index] + '")'
+                    backgroundImage: `url("upload/carousel/${carousel_images[index]}")`
                 }}>
                 <div className="carousel-nav">
                     <div className={isNavEnabled(true)} onClick={moveImage(true)}><ArrowBackIcon className="svg-24" /></div>

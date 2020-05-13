@@ -18,6 +18,7 @@ export default class Home extends React.Component {
                 <Carousel />
                 <AboutUs />
                 <NewProducts />
+                <div style={{height: 100}}>{/* Temporal until footer exists */}</div>
             </div>
         );
     }
