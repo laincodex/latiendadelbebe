@@ -210,13 +210,29 @@ header {
         .section-title {
             margin-bottom: 30px;
         }
+        .new-products-nav {
+            display: flex;
+            align-items: center;
+            .new-products-nav-enable {
+                background-color: white;
+                border-radius: 35px;
+                svg {
+                    color: black;
+                }
+                box-shadow: 2px 2px 8px rgba($color: black, $alpha: 0.15);
+                cursor: pointer;
+            }
+        }
         .new-products-list {
             list-style-type: none;
             display: flex;
+            flex: 1;
+            padding: 0 50px;
+            justify-content: center;
             li {
                 margin-right: 30px;
             }
-        }
+        }        
     }
 }
 
@@ -241,19 +257,19 @@ header {
         transform: scale(1.1, 1.1);
     }
     // light blue glow on hover
-    // &:hover::before {
-    //     opacity: 1;
-    // }
-    // &::before {
-    //     box-shadow: 0px 32px 32px rgba($color: #d3e8ff, $alpha: 1.0);
-    //     transition: opacity 0.3s ease-in-out;
-    //     opacity: 0;
-    //     height: 100%;
-    //     width: 100%;
-    //     display: block;
-    //     content: '';
-    //     position: absolute;
-    // }
+    &:hover::before {
+        opacity: 1;
+    }
+    &::before {
+        box-shadow: 0px 32px 32px rgba($color: #d3e8ff, $alpha: 1.0);
+        transition: opacity 0.3s ease-in-out;
+        opacity: 0;
+        height: 100%;
+        width: 100%;
+        display: block;
+        content: '';
+        position: absolute;
+    }
 
     .product-photo {
         background-size: cover;
@@ -261,20 +277,22 @@ header {
         flex: 1;
         border-radius: 12px 12px 0 0;
         position: relative;
-        &:hover::before {
-            //background-image: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0), rgba(0,0,0,0.2));
-            opacity: 1;
-        }
-        &::before {
-            transition: opacity 0.3s ease-in-out;
-            opacity: 0;
-            height: 100%;
-            width: 100%;
-            content: '';
-            display: block;
-            position: absolute;
-            box-shadow: inset 0 -150px 100px -75px rgba(0,0,0,0.35);
-        };
+
+        // gradient shadow on the image on hover
+        // &:hover::before {
+        //     //background-image: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0), rgba(0,0,0,0.2));
+        //     opacity: 1;
+        // }
+        // &::before {
+        //     transition: opacity 0.3s ease-in-out;
+        //     opacity: 0;
+        //     height: 100%;
+        //     width: 100%;
+        //     content: '';
+        //     display: block;
+        //     position: absolute;
+        //     box-shadow: inset 0 -150px 100px -75px rgba(0,0,0,0.35);
+        // };
     }
     .product-title{
         height: 35px;
