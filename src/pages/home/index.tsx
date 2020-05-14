@@ -5,6 +5,7 @@ import Header from "./components/header";
 import Carousel from "./components/carousel";
 import AboutUs from "./components/aboutus";
 import NewProducts from "./components/newproducts";
+import ProductList from "./components/productlist"
 
 export default class Home extends React.Component {
     constructor(props :any) {
@@ -18,6 +19,7 @@ export default class Home extends React.Component {
                 <Carousel />
                 <AboutUs />
                 <NewProducts />
+                <ProductList />
                 <div style={{height: 100}}>{/* Temporal until footer exists */}</div>
             </div>
         );

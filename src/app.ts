@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
     res.send(HtmlTemplate({
         content: renderToString(React.createElement(Home)),
         state: '""',
-        head: "<title>hola</title>"
+        head: "<title>La Tienda del BEBE</title>"
     }));
 });
 

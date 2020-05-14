@@ -98,11 +98,11 @@ export default () => {
             <div className="new-products-content">
                 <SectionTitle title="NUEVOS PRODUCTOS"/>
                 <div className="new-products-nav">
-                    <div className={isNavEnable(true)} onClick={nextSlice(true)}><ArrowBackIcon className="svg-24" /></div>
+                    <div className={"new-products-nav-arrow " + isNavEnable(true)} onClick={nextSlice(true)}><ArrowBackIcon className="svg-24" /></div>
                     <ul className="new-products-list">
                         {(renderedProducts.length > 0 ) ? renderedProducts : "loading..."}
                     </ul>
-                    <div className={isNavEnable(false)} onClick={nextSlice(false)}><ArrowBackIcon className="rotate-180 svg-24" /></div>
+                    <div className={"new-products-nav-arrow " + isNavEnable(false)} onClick={nextSlice(false)}><ArrowBackIcon className="rotate-180 svg-24" /></div>
                 </div>
                 
             </div>

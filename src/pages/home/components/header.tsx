@@ -8,7 +8,7 @@ export default (props :any) => {
             <div className="header-content content-width">
                 <div className="logo-container">
                     <div className="header-logo"> <img src={logo} /> </div>
-                    <div className="logo-text-container">
+                    <div className="logo-text-container no-select">
                         <div className="logo-text-top">LA TIENDA</div>
                         <div className="logo-text-bottom">
                             <div className="logo-text-2">DEL</div>
