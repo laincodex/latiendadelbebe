@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import SectionTitle from "./sectiontitle";
 import Product, {TProduct} from "./product";
+import Paginator from "./paginator";
+
+import SearchIcon from "../../../assets/icons/search-24px.svg";
+import Breadcrumbs from "../../../assets/icons/breadcrumbs.svg";
 
 interface Category {
     name :string,
@@ -8,6 +12,7 @@ interface Category {
 }
 
 export default () => {
+
     const productExample :TProduct = {
         name: "Product Test 1",
         image: "product-1.jpg",
@@ -36,10 +41,18 @@ export default () => {
         return list;
     }
 
+    const [currentPage, setCurrentPage] = useState<number>(1);
+
+    const goToPage = (page :number) => () => {
+        if (page != currentPage) {
+            setCurrentPage(page);
+        }
+    }
+
     return (
         <div className="product-list-container">
             <div className="product-list-content">
-                <SectionTitle title="PRODUCTS" />
+                <SectionTitle title="PRODUCTOS" />
                 <section className="product-list">
                     <div className="product-list-nav-container no-select">
                         <ul className="product-list-nav">
@@ -47,15 +60,32 @@ export default () => {
                             {renderCategories()}
                         </ul>
                     </div>
-                    <ul className="product-list-items">
-                        <li><Product product={productExample} /></li>
-                        <li><Product product={productExample} /></li>
-                        <li><Product product={productExample} /></li>
-                        <li><Product product={productExample} /></li>
-                        <li><Product product={productExample} /></li>
-                        <li><Product product={productExample} /></li>
-                        <li><Product product={productExample} /></li>
-                    </ul>
+                    <div className="product-list-items-container">
+                        <div className="product-list-header">
+                            <div className="product-list-breadcrumbs">
+                                <div className="no-select">Productos</div>
+                                <Breadcrumbs />
+                                <div>Conjuntos</div>
+                            </div>
+                            <div className="flex-separator"></div>
+                            <div className="products-search-bar">
+                                <SearchIcon />
+                                <input type="text" placeholder="Ingresa para buscar" name="Search" id="product-search-text"/>
+                            </div>
+                        </div>
+                        <ul className="product-list-items">
+                            <li><Product product={productExample} /></li>
+                            <li><Product product={productExample} /></li>
+                            <li><Product product={productExample} /></li>
+                            <li><Product product={productExample} /></li>
+                            <li><Product product={productExample} /></li>
+                            <li><Product product={productExample} /></li>
+                            <li><Product product={productExample} /></li>
+                        </ul>
+                        <div className="product-list-paginator-container">
+                            <Paginator pages={17} currentPage={currentPage} callback={goToPage} />
+                        </div>
+                    </div>
                 </section>
             </div>
         </div>

@@ -8,6 +8,9 @@ ul, li {
     margin: 0;
     padding: 0;
 }
+input {
+    font-family: 'Open Sans', sans-serif;
+}
 
 $main-blue: #0076FF;
 
@@ -40,6 +43,10 @@ body {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.flex-separator {
+    flex: 1;
 }
 
 // -- Home --
@@ -140,8 +147,8 @@ header {
     display: flex;
     align-items: center;
     div {
-        height: 35px;
-        width: 35px;
+        height: 36px;
+        width: 36px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -152,7 +159,7 @@ header {
     }
     .carousel-nav-enable {
         background-color: white;
-        border-radius: 35px;
+        border-radius: 18px;
         svg {
             color: black;
         }
@@ -225,11 +232,16 @@ header {
             align-items: center;
             justify-content: center;
             .new-products-nav-arrow {
-                margin: 0 50px;
+                margin: 0 30px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 36px;
+                height: 36px;
             }
             .new-products-nav-enable {
                 background-color: white;
-                border-radius: 35px;
+                border-radius: 18px;
                 svg {
                     color: black;
                 }
@@ -240,8 +252,6 @@ header {
         .new-products-list {
             list-style-type: none;
             display: flex;
-            //flex: 1;
-            //padding: 0 50px;
             justify-content: center;
             li {
                 margin-right: 30px;
@@ -309,7 +319,7 @@ header {
         // };
     }
     .product-title{
-        height: 35px;
+        height: 36px;
         font-weight: bold;
         font-size: 14px;
         color: black;
@@ -368,14 +378,106 @@ header {
             }
         }
     }
-    .product-list-items {
-        list-style-type: none;
+    
+    .product-list-items-container {
         display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-top: -25px;
-        li {
-            margin: 25px 15px; //25 15
+        flex-direction: column;
+        margin-left: 25px;
+        .product-list-items {
+            list-style-type: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            //margin-top: -25px;
+            li {
+                margin: 25px 15px; //25 15
+            }
         }
+        .product-list-header {
+            display: flex;
+        }
+        .product-list-breadcrumbs {
+            display: flex;
+            width: 300px;
+            height: 36px;
+            background-color: white;
+            border-radius: 7px;
+            align-items: center;
+            div:last-child {
+                flex: 1;
+                display: flex;
+                justify-content: center;
+                padding-right: 20px;
+            }
+            div:first-child {
+                padding: 0 20px;
+                color: #777;
+                cursor: pointer;
+            }
+            svg {
+                width: 20px;
+                height: 36px;
+                stroke: #d8d8d8;
+            }
+        }
+        .products-search-bar {
+            background-color: white;
+            width: 300px;
+            border-radius: 7px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s ease-in-out;
+            svg {
+                margin: 0 10px;
+            }
+            #product-search-text {
+                flex: 1;
+                border: none;
+                padding-right: 10px;
+                font-size: 14px;
+                outline: none;
+                
+            }
+            &:focus-within{
+                transform: scale(1.2, 1.2) translate(-25px,0px);
+            }
+            
+        }
+    }
+}
+
+.product-list-paginator-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.paginator {
+    display: flex;
+    list-style-type: none;
+    li {
+        width: 36px;
+        height: 36px;
+        border-radius: 18px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-size: 18px;
+        box-shadow: 0 0 10px rgba($color: #000000, $alpha: 0.1);
+        cursor: pointer;
+        margin: 0 10px;
+        transition: transform 0.3s ease-in-out;
+        background-color: white;
+    }
+    li.paginator-active-page {
+        background-color: $main-blue;
+        box-shadow: 0 0 12px $main-blue;
+        cursor: default;
+        color: white;
+    }
+    li:hover:not(.paginator-active-page) {
+        transform: scale(1.2,1.2);
     }
 }
