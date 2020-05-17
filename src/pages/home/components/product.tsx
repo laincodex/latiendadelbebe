@@ -24,7 +24,7 @@ export default ({product} : {product:TProduct}) => {
                     <div className="product-photo" style={{
                         backgroundImage: `url("upload/products/${product.image}")`
                     }}></div>
-                    <div className="product-title">{trimTitle(product.title)}</div>
+                    <div className="product-title no-select">{trimTitle(product.title)}</div>
                 </div>
             </a>
             {renderOverlay()}

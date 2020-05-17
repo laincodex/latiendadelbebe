@@ -1,21 +1,11 @@
 import React from "react";
-
-import logo from "../../../assets/images/logo.png";
+import Logo from "./Logo";
 
 export default (props :any) => {
     return (
         <header>
             <div className="header-content content-width">
-                <div className="logo-container">
-                    <div className="header-logo"> <img src={logo} /> </div>
-                    <div className="logo-text-container no-select">
-                        <div className="logo-text-top">LA TIENDA</div>
-                        <div className="logo-text-bottom">
-                            <div className="logo-text-2">DEL</div>
-                            <div className="logo-text-3">BEBE</div>
-                        </div>
-                    </div>
-                </div>
+                <Logo />
                 <div className="menu-container">
                     <ul>
                         <li><a href="#">Productos</a></li>
