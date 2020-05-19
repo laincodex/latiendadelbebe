@@ -1,7 +1,7 @@
 import React from "react";
 import Logo from "./Logo";
 
-export default (props :any) => {
+export default () => {
     return (
         <header>
             <div className="header-content content-width">

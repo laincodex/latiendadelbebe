@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import SectionTitle from "./sectiontitle";
 import Product, {TProduct} from "./product";
 import Paginator from "./paginator";
+import Overlay from "./Overlay";
 
 import SearchIcon from "../../../assets/icons/search-24px.svg";
 import Breadcrumbs from "../../../assets/icons/breadcrumbs.svg";
@@ -14,6 +15,7 @@ interface Category {
 export default () => {
 
     const productExample :TProduct = {
+        id: 1,
         name: "Product Test 1",
         image: "product-1.jpg",
         title: "Product test 1",
@@ -52,9 +54,21 @@ export default () => {
     const renderProductList = () :Array<JSX.Element> => {
         let products :Array<JSX.Element> = [];
         for (let i =0; i<8;i++) {
-            products.push(<li key={i}><Product product={productExample} /></li>);
+            products.push(<li key={i}><Product product={productExample} onClick={openProductOverlay(productExample.id)} /></li>);
         }
         return products;
+    }
+
+    const [productOverlayOpen, setProductOverlayOpen] = useState<boolean>(false);
+    
+    const openProductOverlay = (productId :number) => (ev :any) => {
+        ev.preventDefault();
+        console.log("Opening product id: ", productId);
+        setProductOverlayOpen(true);
+    }
+    
+    const closeProductOverlay = () => {
+        setProductOverlayOpen(false);
     }
 
     return (
@@ -91,6 +105,11 @@ export default () => {
                         <Paginator pages={17} currentPage={currentPage} callback={goToPage} />
                     </div>
                 </section>
+                <Overlay openState={productOverlayOpen} closeCallback={closeProductOverlay}>
+                    <div className="product-overlay">
+                        asdasd
+                    </div>
+                </Overlay>
             </div>
         </div>
     );

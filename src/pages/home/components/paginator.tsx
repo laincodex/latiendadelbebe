@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 import ArrowBackIcon from "../../../assets/icons/arrow_left-24px.svg";
 
@@ -37,11 +37,12 @@ export default (
         }
         
         // Render Previous or a dummy object for space
-        if (endIndex > MAX_BUTTONS ) {
-            pageList.push(<li key={0} onClick={callback(currentPage-1)}><ArrowBackIcon className="svg-24" /></li>);
-        } else {
-            pageList.push(<li key={0} style={{opacity:0}}></li>)
-        }
+        pageList.push(
+            <li key={0}
+                onClick={(currentPage > 1) ? callback(currentPage-1) : null}
+                className={(currentPage > 1) ? "" : "paginator-disabled"}>
+                    <ArrowBackIcon className="svg-24" />
+            </li>);
 
         // Main pages
         for (let p = startIndex; p <= endIndex; p++) {
@@ -49,11 +50,13 @@ export default (
         }
 
         // Next
-        if (currentPage + MAX_SIDE_BUTTONS < pages) {
-            pageList.push(<li key={endIndex+1} onClick={callback(currentPage+1)}><ArrowBackIcon className="rotate-180 svg-24" /></li>);
-        } else {
-            pageList.push(<li key={endIndex+1} style={{opacity:0}}></li>)
-        }
+        pageList.push(
+            <li key={endIndex+1} 
+                className={(currentPage < pages) ? "": "paginator-disabled"} 
+                onClick={(currentPage < pages) ? callback(currentPage+1) : null}>
+                    <ArrowBackIcon className="rotate-180 svg-24" />
+            </li>);
+
         return pageList;
     }
 

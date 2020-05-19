@@ -35,31 +35,37 @@ export default () => {
             // Products from db are fake loaded
             setProducts([
                 {
+                    id: 1,
                     name: "Product 1",
                     image: "product-1.jpg",
                     title: "Product 1 long title example",
                     description: "this is product 1"
                 },{
+                    id: 1,
                     name: "Product 2",
                     image: "product-2.jpg",
                     title: "Product 2 title",
                     description: "this is product 2"
                 },{
+                    id: 1,
                     name: "Product 3",
                     image: "product-2.jpg",
                     title: "Product 3 title",
                     description: "this is product 2"
                 },{
+                    id: 1,
                     name: "Product 4",
                     image: "product-2.jpg",
                     title: "Product 4 title",
                     description: "this is product 2"
                 },{
+                    id: 1,
                     name: "Product 5",
                     image: "product-2.jpg",
                     title: "Product 5 title",
                     description: "this is product 2"
                 },{
+                    id: 1,
                     name: "Product 6",
                     image: "product-2.jpg",
                     title: "Product 6 title",
