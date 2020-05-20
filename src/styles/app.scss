@@ -75,10 +75,10 @@ body {
     position: fixed;
     left: 0;
     top: 0;
-    visibility: hidden;
-    opacity: 0;
     right: 0;
     bottom: 0;
+    visibility: hidden;
+    opacity: 0;
     z-index: 999;
     .overlay-background {
         left: 0;
@@ -436,7 +436,48 @@ footer {
 .product-overlay {
     width: 90%;
     height: 90%;
-    background-color: white;
+    display: flex;
+    flex-direction: column;
+    .product-overlay-topnav {
+        display: flex;
+        margin-bottom: 20px;
+        height: 36px;
+        
+    }
+    .product-overlay-breadcrumbs {
+        background-color: white;
+        display: flex;
+        border-radius: 7px;
+        box-shadow: 2px 2px 8px rgba($color: #000000, $alpha: 0.2);
+        align-items: center;
+        justify-content: center;
+        svg {
+            width: 20px;
+            height: 36px;
+            stroke: #d8d8d8;
+        }
+        span {
+            padding: 0 20px;
+            &:first-child {
+                color: #777777;
+            }
+        }
+    }
+    .product-overlay-exit {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        border-radius: 7px;
+        cursor: pointer;
+        height: 36px;
+        width: 36px;
+    }
+    .product-overlay-body {
+        background-color: white;
+        border-radius: 12px;
+        flex: 1;
+    }
 }
 
 .product-list-container {

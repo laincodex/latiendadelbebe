@@ -6,6 +6,7 @@ import Overlay from "./Overlay";
 
 import SearchIcon from "../../../assets/icons/search-24px.svg";
 import Breadcrumbs from "../../../assets/icons/breadcrumbs.svg";
+import CloseIcon from "../../../assets/icons/close.svg";
 
 interface Category {
     name :string,
@@ -60,6 +61,7 @@ export default () => {
     }
 
     const [productOverlayOpen, setProductOverlayOpen] = useState<boolean>(false);
+    const [selectedProduct, setSelectedProduct] = useState<TProduct>(productExample);
     
     const openProductOverlay = (productId :number) => (ev :any) => {
         ev.preventDefault();
@@ -85,8 +87,8 @@ export default () => {
                         </div>
                         <div className="product-list-items-container">
                             <div className="product-list-header">
-                                <div className="product-list-breadcrumbs">
-                                    <div className="no-select">Productos</div>
+                                <div className="product-list-breadcrumbs no-select">
+                                    <div>Productos</div>
                                     <Breadcrumbs />
                                     <div>Conjuntos</div>
                                 </div>
@@ -107,7 +109,18 @@ export default () => {
                 </section>
                 <Overlay openState={productOverlayOpen} closeCallback={closeProductOverlay}>
                     <div className="product-overlay">
-                        asdasd
+                        <div className="product-overlay-topnav">
+                            <div className="product-overlay-breadcrumbs no-select">
+                                <span>Products</span>
+                                <Breadcrumbs />
+                                <span>{selectedProduct.name}</span>
+                            </div>
+                            <div className="flex-separator" onClick={closeProductOverlay}></div>
+                            <div className="product-overlay-exit" onClick={closeProductOverlay}><CloseIcon className="svg-24" /></div>
+                        </div>
+                        <div className="product-overlay-body">
+                            
+                        </div>
                     </div>
                 </Overlay>
             </div>

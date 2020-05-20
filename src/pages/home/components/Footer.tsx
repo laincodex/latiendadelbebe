@@ -21,7 +21,7 @@ export default () => {
     const [mapOverlayOpen, setMapOverlayOpen] = useState<boolean>(false);
 
     const snsData :TSNSData = {
-        address: "Ameghino 695, Pergamino, Buenos Aires.",
+        address: "Bv. Ameghino 695, Pergamino, Buenos Aires.",
         facebookUrl: "facebook.com/LTiendadelbebe",
         phone: "2477 - 777777",
         email: "hola@latiendadelbebe.com.ar"
