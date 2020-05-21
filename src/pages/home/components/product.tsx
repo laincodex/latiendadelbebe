@@ -21,7 +21,7 @@ export default ({product, ...rest} : Props) => {
             <a href="#" rel="bookmark" className="product-link" {...rest}>
                 <div className="product-container">
                     <div className="product-photo" style={{
-                        backgroundImage: `url("upload/products/${product.image}")`
+                        backgroundImage: `url("/upload/products/${product.image}")`
                     }}></div>
                     <div className="product-title no-select">{trimTitle(product.title)}</div>
                 </div>

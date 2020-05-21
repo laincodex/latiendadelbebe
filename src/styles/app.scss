@@ -92,8 +92,6 @@ body {
         z-index: 9999;
         cursor: default; // why?
         display: flex;
-        justify-content: center;
-        align-items: center;
         position: relative;
         height: 100%;
     }
@@ -434,21 +432,19 @@ footer {
 }
 
 .product-overlay {
-    width: 90%;
-    height: 90%;
+    margin: 20px;
     display: flex;
     flex-direction: column;
+    align-self: flex-start;
     .product-overlay-topnav {
         display: flex;
         margin-bottom: 20px;
         height: 36px;
-        
     }
     .product-overlay-breadcrumbs {
         background-color: white;
         display: flex;
         border-radius: 7px;
-        box-shadow: 2px 2px 8px rgba($color: #000000, $alpha: 0.2);
         align-items: center;
         justify-content: center;
         svg {
@@ -468,15 +464,127 @@ footer {
         align-items: center;
         justify-content: center;
         background-color: white;
-        border-radius: 7px;
+        border-radius: 18px;
         cursor: pointer;
         height: 36px;
         width: 36px;
+        color: #777777;
+        svg {
+            transition: color 0.3s ease-in-out, 
+                transform 0.3s ease-in-out;
+        }
+        &:hover > svg{
+            transform: rotate(180deg);
+        }
+        &:active {
+            background-color: $main-blue;
+            color:white;
+        }
     }
-    .product-overlay-body {
+
+    .product-overlay-body-container {
+        padding: 10px;
         background-color: white;
         border-radius: 12px;
+    }
+
+    .product-overlay-body {
         flex: 1;
+        display: flex;
+        flex-wrap: wrap;
+        overflow-y: auto;
+        max-height: 85vh;
+        .product-overlay-gallery-container {
+            flex: 1;
+            min-width: 560px;
+            min-height: 650px;
+            display: flex;
+        }
+        .product-overlay-gallery {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+        }
+        .product-overlay-main {
+            display: flex;
+            flex: 1;
+            width: 100%;
+            .product-overlay-arrow {
+                height: 100%;
+                width: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background 0.1s ease-in-out;
+                &:hover {
+                    background-color: rgba($color: #000000, $alpha: 0.1);
+                    cursor: pointer;
+                }
+                &:active {
+                    background-color: $main-blue;
+                    //color: white;
+                }
+                &:first-of-type {
+                    border-radius: 12px 0 0 12px;
+                }
+                &:last-of-type {
+                    border-radius: 0 12px 12px 0;
+                }
+            }
+        }
+        .product-overlay-photo {
+            flex: 1;
+            background-size: cover;
+        }
+        .product-overlay-thumbnails {
+            height: calc(100px + 1vw);
+            background-color: red;
+            width: 100%;
+        }
+        .product-overlay-data {
+            flex: 1;
+            min-width: 500px;
+            display: flex;
+            flex-direction: column;
+                padding-bottom: 50px;
+            h1 {
+                margin: 2vw;
+                font-size: 30px;
+                font-weight: normal;
+            }
+            p {
+                margin: 0 2vw 2vw 2vw;
+                font-size: 20px;
+            }
+            button {
+                width: 300px;
+                height: 50px;
+                background-color: $main-blue;
+                color: white;
+                padding: 0;
+                border: none;
+                border-radius: 7px;
+                font-size: 24px;
+                box-shadow: 0 4px 8px rgba($color: $main-blue, $alpha: 0.2);
+                align-self: center;
+                &:focus {
+                    outline: none;
+                    border: none;
+                }
+                &:hover {
+                    cursor: pointer;
+                }
+                &:active {
+                    background-color: #026CE8;
+                }
+                &::-moz-focus-inner {
+                    border: none;
+                }
+            }
+        }
     }
 }
 

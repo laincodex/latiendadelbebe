@@ -7,6 +7,7 @@ import Overlay from "./Overlay";
 import SearchIcon from "../../../assets/icons/search-24px.svg";
 import Breadcrumbs from "../../../assets/icons/breadcrumbs.svg";
 import CloseIcon from "../../../assets/icons/close.svg";
+import ArrowBackIcon from "../../../assets/icons/arrow_left-24px.svg";
 
 interface Category {
     name :string,
@@ -20,7 +21,7 @@ export default () => {
         name: "Product Test 1",
         image: "product-1.jpg",
         title: "Product test 1",
-        description: "asddasd"
+        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper. "
     };
 
     const categories :Array<Category> = [
@@ -111,15 +112,31 @@ export default () => {
                     <div className="product-overlay">
                         <div className="product-overlay-topnav">
                             <div className="product-overlay-breadcrumbs no-select">
-                                <span>Products</span>
+                                <span>Productos</span>
                                 <Breadcrumbs />
                                 <span>{selectedProduct.name}</span>
                             </div>
                             <div className="flex-separator" onClick={closeProductOverlay}></div>
                             <div className="product-overlay-exit" onClick={closeProductOverlay}><CloseIcon className="svg-24" /></div>
                         </div>
-                        <div className="product-overlay-body">
-                            
+                        <div className="product-overlay-body-container">
+                            <div className="product-overlay-body">
+                                <div className="product-overlay-gallery-container">
+                                    <div className="product-overlay-gallery">
+                                        <div className="product-overlay-main">
+                                            <div className="product-overlay-arrow"><ArrowBackIcon /></div>
+                                            <div className="product-overlay-photo" style={{backgroundImage: `url("/upload/products/${selectedProduct.image}")`}}></div>
+                                            <div className="product-overlay-arrow"><ArrowBackIcon className="rotate-180" /></div>
+                                        </div>
+                                        <ul className="product-overlay-thumbnails"></ul>
+                                    </div>
+                                </div>
+                                <article className="product-overlay-data">
+                                    <h1>{selectedProduct.name}</h1>
+                                    <p>{selectedProduct.description}</p>
+                                    <button>Preguntar</button>
+                                </article>
+                            </div>
                         </div>
                     </div>
                 </Overlay>
