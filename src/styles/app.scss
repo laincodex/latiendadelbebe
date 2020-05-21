@@ -438,7 +438,7 @@ footer {
     align-self: flex-start;
     .product-overlay-topnav {
         display: flex;
-        margin-bottom: 20px;
+        margin-bottom: 12px;
         height: 36px;
     }
     .product-overlay-breadcrumbs {
@@ -493,7 +493,7 @@ footer {
         display: flex;
         flex-wrap: wrap;
         overflow-y: auto;
-        max-height: 85vh;
+        max-height: 87.5vh;
         .product-overlay-gallery-container {
             flex: 1;
             min-width: 560px;
@@ -540,9 +540,12 @@ footer {
             background-size: cover;
         }
         .product-overlay-thumbnails {
-            height: calc(100px + 1vw);
+            height: 110px;
             background-color: red;
             width: 100%;
+            .product-overlay-thumbnails-active {
+                color: white;
+            }
         }
         .product-overlay-data {
             flex: 1;

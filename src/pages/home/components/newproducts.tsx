@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import SectionTitle from "./sectiontitle";
 import Product, {TProduct} from "./product";
 
@@ -10,7 +10,7 @@ export default () => {
     const [renderedProducts, setRenderedProducts] = useState<Array<JSX.Element>>([]);
     const [sliceIndex, setSliceIndex] = useState<number>(0);
     const [products, setProducts] = useState<Array<TProduct>>([]);
-    const [isProductsLoaded, setProductsLoaded] = useState<boolean>(false);
+    //const [isProductsLoaded, setProductsLoaded] = useState<boolean>(false);
     
     const renderProducts = (products :Array<TProduct>, index :number) :Array<JSX.Element> => {
         let renderedList : Array<JSX.Element> = [];
@@ -25,14 +25,11 @@ export default () => {
         setRenderedProducts(renderProducts(products, sliceIndex));
     }, [products, sliceIndex]);
 
+    const isProductsLoaded = useRef<boolean>(false);
     useEffect(()=> {
-        // Load products from db
-        setProductsLoaded(true);
-    });
-
-    useEffect(() => {
-        if (isProductsLoaded) {
-            // Products from db are fake loaded
+        // fake load products from db
+        if (!isProductsLoaded.current) {
+            isProductsLoaded.current = true;
             setProducts([
                 {
                     id: 1,
@@ -73,8 +70,7 @@ export default () => {
                 }
             ]);
         }
-
-    }, [isProductsLoaded]);
+    });
 
     const nextSlice = (back :boolean) => () => {
         if (back) {
@@ -110,7 +106,6 @@ export default () => {
                     </ul>
                     <div className={"new-products-nav-arrow " + isNavEnable(false)} onClick={nextSlice(false)}><ArrowBackIcon className="rotate-180 svg-24" /></div>
                 </div>
-                
             </div>
         </div>
     );

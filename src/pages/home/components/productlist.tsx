@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import SectionTitle from "./sectiontitle";
 import Product, {TProduct} from "./product";
 import Paginator from "./paginator";
-import Overlay from "./Overlay";
+import ProductListOverlay from "./productListOverlay";
+
 
 import SearchIcon from "../../../assets/icons/search-24px.svg";
-import Breadcrumbs from "../../../assets/icons/breadcrumbs.svg";
-import CloseIcon from "../../../assets/icons/close.svg";
-import ArrowBackIcon from "../../../assets/icons/arrow_left-24px.svg";
+import BreadcrumbsIcon from "../../../assets/icons/breadcrumbs.svg";
 
 interface Category {
     name :string,
@@ -63,10 +62,10 @@ export default () => {
 
     const [productOverlayOpen, setProductOverlayOpen] = useState<boolean>(false);
     const [selectedProduct, setSelectedProduct] = useState<TProduct>(productExample);
-    
     const openProductOverlay = (productId :number) => (ev :any) => {
         ev.preventDefault();
         console.log("Opening product id: ", productId);
+        setSelectedProduct(productExample);
         setProductOverlayOpen(true);
     }
     
@@ -90,7 +89,7 @@ export default () => {
                             <div className="product-list-header">
                                 <div className="product-list-breadcrumbs no-select">
                                     <div>Productos</div>
-                                    <Breadcrumbs />
+                                    <BreadcrumbsIcon />
                                     <div>Conjuntos</div>
                                 </div>
                                 <div className="flex-separator"></div>
@@ -108,38 +107,7 @@ export default () => {
                         <Paginator pages={17} currentPage={currentPage} callback={goToPage} />
                     </div>
                 </section>
-                <Overlay openState={productOverlayOpen} closeCallback={closeProductOverlay}>
-                    <div className="product-overlay">
-                        <div className="product-overlay-topnav">
-                            <div className="product-overlay-breadcrumbs no-select">
-                                <span>Productos</span>
-                                <Breadcrumbs />
-                                <span>{selectedProduct.name}</span>
-                            </div>
-                            <div className="flex-separator" onClick={closeProductOverlay}></div>
-                            <div className="product-overlay-exit" onClick={closeProductOverlay}><CloseIcon className="svg-24" /></div>
-                        </div>
-                        <div className="product-overlay-body-container">
-                            <div className="product-overlay-body">
-                                <div className="product-overlay-gallery-container">
-                                    <div className="product-overlay-gallery">
-                                        <div className="product-overlay-main">
-                                            <div className="product-overlay-arrow"><ArrowBackIcon /></div>
-                                            <div className="product-overlay-photo" style={{backgroundImage: `url("/upload/products/${selectedProduct.image}")`}}></div>
-                                            <div className="product-overlay-arrow"><ArrowBackIcon className="rotate-180" /></div>
-                                        </div>
-                                        <ul className="product-overlay-thumbnails"></ul>
-                                    </div>
-                                </div>
-                                <article className="product-overlay-data">
-                                    <h1>{selectedProduct.name}</h1>
-                                    <p>{selectedProduct.description}</p>
-                                    <button>Preguntar</button>
-                                </article>
-                            </div>
-                        </div>
-                    </div>
-                </Overlay>
+                <ProductListOverlay selectedProduct={selectedProduct} productOverlayOpen={productOverlayOpen} closeProductOverlay={closeProductOverlay} /> 
             </div>
         </div>
     );
