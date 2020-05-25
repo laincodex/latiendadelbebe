@@ -35,6 +35,8 @@ export default () => {
         setMapOverlayOpen(false);
     }
 
+    const googleMapsIframe = '<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3312.316142907874!2d-60.57786404867735!3d-33.881510927056226!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95b9caae8751ce5d%3A0xeb82183f25427954!2sBv.%20Ameghino%20695%2C%20Pergamino%2C%20Buenos%20Aires!5e0!3m2!1ses-419!2sar!4v1590372809218!5m2!1ses-419!2sar" width="100%" height="100%" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>';
+
     return (
         <footer>
             <div className="footer-content content-width">
@@ -43,8 +45,8 @@ export default () => {
                         <img src={MapImageSrc}/>
                     </Tooltip>
                     <Overlay openState={mapOverlayOpen} closeCallback={closeMapOverlay}>
-                        <div className="footer-map-overlay">
-                            Map <a href="#">here</a>
+                        <div className="footer-map-overlay-container" onClick={closeMapOverlay}>
+                            <div className="footer-map-overlay" id="google-map" dangerouslySetInnerHTML={{__html: googleMapsIframe}}></div>
                         </div>
                     </Overlay>
                 </div>
