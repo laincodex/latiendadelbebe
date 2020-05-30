@@ -6,7 +6,7 @@ import ArrowBackIcon from "../../../assets/icons/arrow_left-24px.svg"
 
 const PRODUCTS_LIMIT = 4; //Maximum products to show on New Products
 
-export default () => {
+export default ( { openProductOverlay } : { openProductOverlay :Function } ) => {
     const [renderedProducts, setRenderedProducts] = useState<Array<JSX.Element>>([]);
     const [sliceIndex, setSliceIndex] = useState<number>(0);
     const [products, setProducts] = useState<Array<TProduct>>([]);
@@ -16,7 +16,7 @@ export default () => {
         let renderedList : Array<JSX.Element> = [];
         let maxIndex = (index+PRODUCTS_LIMIT < products.length) ? index+PRODUCTS_LIMIT : products.length;
         for (let i = index; i < maxIndex; i++)
-            renderedList.push(<li key={i}><Product product={products[i]}/></li>);
+            renderedList.push(<li key={i}><Product product={products[i]} onClick={openProductOverlay(products[i].id)} /></li>);
         return renderedList;
     };
 

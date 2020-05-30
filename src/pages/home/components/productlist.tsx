@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import SectionTitle from "./sectiontitle";
 import Product, {TProduct} from "./product";
+import NewProducts from "./newproducts";
 import Paginator from "./paginator";
 import ProductListOverlay from "./productListOverlay";
 
@@ -13,7 +14,21 @@ interface Category {
     id :number
 }
 
-export default () => {
+interface Props {
+    newProductsEnabled :boolean,
+    showSectionTitle? :boolean,
+    products :Array<TProduct>,
+    productId :number,
+    maxListedProducts? :number
+}
+
+export default ({
+    newProductsEnabled = false,
+    showSectionTitle = true,
+    products = [],
+    productId = 0,
+    maxListedProducts = 8
+} : Props) => {
 
     const productExample :TProduct = {
         id: 1,
@@ -54,7 +69,7 @@ export default () => {
 
     const renderProductList = () :Array<JSX.Element> => {
         let products :Array<JSX.Element> = [];
-        for (let i =0; i<8;i++) {
+        for (let i =0; i< maxListedProducts;i++) {
             products.push(<li key={i}><Product product={productExample} onClick={openProductOverlay(productExample.id)} /></li>);
         }
         return products;
@@ -75,8 +90,9 @@ export default () => {
 
     return (
         <div className="product-list-container">
+            {(newProductsEnabled) ? <NewProducts openProductOverlay={openProductOverlay} /> : <></>}
             <div className="product-list-content">
-                <SectionTitle title="PRODUCTOS" />
+                {(showSectionTitle) ? <SectionTitle title="PRODUCTOS" /> : <></>}
                 <section className="product-list-section">
                     <div className="product-list">
                         <div className="product-list-nav-container no-select">

@@ -1,4 +1,4 @@
-export default ({content, state, head} : {content :string, state :string, head :string}) => `
+export default ({content, props, head} : {content :string, props :string, head :string}) => `
 <html>
 <head>
     ${head}
@@ -8,7 +8,7 @@ export default ({content, state, head} : {content :string, state :string, head :
 </head>
 <body>
     <div id="app">${content}</div>
-    <script>window._initialState=${state}</script>
+    <script>window._initialProps=${props}</script>
     <script src="/client.js"></script>
 </body>
 </html>
