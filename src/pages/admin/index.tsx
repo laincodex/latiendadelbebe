@@ -1,14 +1,10 @@
 import React from "react";
-import Login from "./components/login";
 
-export default ({ isLoggedIn = false } : { isLoggedIn :boolean }) => {
-    if (!isLoggedIn) {
-        return (<Login />);
-    } else {
-        return (
-            <div>
-                loggedIn
-            </div>
-        );
-    }
+export default () => {
+    return (
+        <div>
+            loggedIn
+            <a href="/admin/logout">logout</a>
+        </div>
+    );
 }

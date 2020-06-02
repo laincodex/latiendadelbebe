@@ -1,7 +1,10 @@
 import React from "react";
 import { renderToString } from "react-dom/server";
-import express, { Application } from "express";
+import express, { Application, Request, Response, NextFunction } from "express";
+import bodyparser from "body-parser";
+import cookieparser from "cookie-parser";
 import http from "http";
+import jwt from "jsonwebtoken";
 
 const app :Application = express();
 const server : http.Server = http.createServer(app);
@@ -10,20 +13,18 @@ import HtmlTemplate from "./components/HtmlTemplate";
 import HomePage from "./pages/home";
 import ProductsPage from "./pages/products";
 import AdminPage from "./pages/admin";
+import AdminLogin from "./pages/admin/components/login";
 
 import { TProduct } from "./pages/home/components/product";
 
-app.use((req, res, next) => {
-    try {
-        decodeURIComponent(req.path);
-    } catch(e) {
-        return res.redirect("/error");
-    }
-    next();
-});
+app.use(bodyparser.urlencoded({extended: true}));
+app.use(bodyparser.json());
+app.use(cookieparser());
+
 app.use(express.static("dist"));
 app.use(express.json());
 
+app.set("jwt-secret", "6x7fSQ7z6JXDDfBa6Lrdozrd9rHK")
 
 app.get("/", (req, res) => {
     res.send(HtmlTemplate({
@@ -34,7 +35,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/products/:productId?", (req, res) => {
-    const props = {
+    let props = {
         productId: parseInt(req.params.productId, 10) || 0,
         products: [],
     };
@@ -45,7 +46,66 @@ app.get("/products/:productId?", (req, res) => {
     }));
 });
 
-app.get("/admin", (req, res) => {
+const adminOnly = (req :Request, res :Response, next :NextFunction) => {
+    const token = req.cookies.token;
+    if (token) {
+        jwt.verify(token, app.get("jwt-secret"), (err :any) => {
+            if (err) {
+                res.clearCookie("token");
+                res.redirect("/admin/login");
+            }
+            next();
+        }); 
+    } else {
+        res.clearCookie("token");
+        res.redirect("/admin/login");
+    }
+}
+
+app.get("/admin/login", (req :Request, res :Response) => {
+    const token = req.cookies.token;
+    if (!token) {
+        res.send(HtmlTemplate({
+            content: renderToString(React.createElement(AdminLogin)),
+            props: '""',
+            head: "<title>La Tienda del BEBE - Panel del administrador - Login</title>"
+        }));
+    } else {
+        res.redirect("/admin");
+    }
+});
+
+app.post("/admin/login", (req :Request, res :Response) => {
+    if(req.body.username == "admin" && req.body.password == "admin") {
+        const token = jwt.sign( {username: "admin"}, app.get("jwt-secret"), {
+            algorithm: "HS256",
+            expiresIn: '30m'
+        });
+        res.cookie("token", token, {
+            httpOnly: true,
+            sameSite: true,
+            //secure: true,
+            maxAge: 1800*1000
+        })
+        res.redirect("/admin");
+    } else {
+        let props = {
+            error: "Usuario y/o contraseña incorrectos."
+        };
+        res.send(HtmlTemplate({
+            content: renderToString(React.createElement(AdminLogin, props)),
+            props: JSON.stringify(props),
+            head: "<title>La Tienda del BEBE - Panel del administrador - Login</title>"
+        }));
+    }
+});
+
+app.get("/admin/logout", (req :Request, res :Response) => {
+    res.clearCookie("token");
+    res.redirect("/admin");
+})
+
+app.get("/admin(/*)?", adminOnly ,(req :Request, res :Response) => {
     res.send(HtmlTemplate({
         content: renderToString(React.createElement(AdminPage)),
         props: '""',
