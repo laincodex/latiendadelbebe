@@ -5,12 +5,11 @@ export default () => {
     return (
         <header>
             <div className="header-content content-width">
-                <Logo />
+                <a href="/"><Logo /></a>
                 <div className="menu-container">
                     <ul>
-                        <li><a href="#">Productos</a></li>
+                        <li><a href="/productos">Productos</a></li>
                         <li><a href="#">¿Donde estamos?</a></li>
-                        <li className="search-component">Search Component Here</li>
                     </ul>
                 </div>
             </div>

@@ -14,10 +14,11 @@ export default ({ error } : { error? :string}) => {
                 <form method="POST" action="/admin/login">
                     <input type="text" placeholder="Usuario" name="username" required/>
                     <input type="password" placeholder="Contraseña" name="password" required/>
-                    <button type="submit">ENTRAR</button>
+                    <button className="main-btn" type="submit">ENTRAR</button>
                     {loginError()}
                 </form>
             </div>
+            <a href="/"><button className="admin-login-backbtn">VOLVER</button></a>
         </div>
     );
 }

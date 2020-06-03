@@ -1,7 +1,7 @@
 import React from "react";
 import { renderToString } from "react-dom/server";
 import express, { Application, Request, Response, NextFunction } from "express";
-import bodyparser from "body-parser";
+//import bodyparser from "body-parser";
 import cookieparser from "cookie-parser";
 import http from "http";
 import jwt from "jsonwebtoken";
@@ -17,11 +17,10 @@ import AdminLogin from "./pages/admin/components/login";
 
 import { TProduct } from "./pages/home/components/product";
 
-app.use(bodyparser.urlencoded({extended: true}));
-app.use(bodyparser.json());
 app.use(cookieparser());
 
 app.use(express.static("dist"));
+app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
 app.set("jwt-secret", "6x7fSQ7z6JXDDfBa6Lrdozrd9rHK")
@@ -34,7 +33,7 @@ app.get("/", (req, res) => {
     }));
 });
 
-app.get("/products/:productId?", (req, res) => {
+app.get("/productos/:productId?", (req, res) => {
     let props = {
         productId: parseInt(req.params.productId, 10) || 0,
         products: [],
@@ -105,12 +104,34 @@ app.get("/admin/logout", (req :Request, res :Response) => {
     res.redirect("/admin");
 })
 
-app.get("/admin(/*)?", adminOnly ,(req :Request, res :Response) => {
+const renderAdminTemplate = (props :any, res :Response) => {
     res.send(HtmlTemplate({
-        content: renderToString(React.createElement(AdminPage)),
-        props: '""',
+        content: renderToString(React.createElement(AdminPage, props)),
+        props: JSON.stringify(props),
         head: "<title>La Tienda del BEBE - Panel del administrador</title>"
     }));
+}
+
+app.get("/admin", adminOnly ,(req :Request, res :Response) => res.redirect("/admin/productos"));
+
+app.get("/admin/productos", adminOnly, (req :Request, res :Response) => {
+    const props = {
+        section: "productos"
+    };
+    renderAdminTemplate(props, res);
 });
+
+app.get("/admin/banners", adminOnly, (req :Request, res :Response) => {
+    const props = {
+        section: "banners"
+    };
+    renderAdminTemplate(props, res);
+});
+
+app.get("/404", (req :Request, res :Response) => {
+    res.send("Not found lol");
+});
+
+app.get("*", (req :Request, res :Response) => res.redirect("/404"));
 
 server.listen( process.env.PORT || 5000, () => console.log("Running..."))

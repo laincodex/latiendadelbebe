@@ -34,6 +34,12 @@ body {
 .rotate-180 {
     transform: rotate(180deg);
 }
+.rotate-90 {
+    transform: rotate(90deg);
+}
+.rotate-270 {
+    transform: rotate(270deg);
+}
 
 .no-select {
     cursor: default;
@@ -100,6 +106,30 @@ body {
     }
 }
 
+.main-btn {
+    background-color: $main-blue;
+    color: white;
+    padding: 0;
+    border: none;
+    border-radius: 7px;
+    font-size: 24px;
+    box-shadow: 0 4px 8px rgba($color: $main-blue, $alpha: 0.2);
+    align-self: center;
+    &:focus {
+        outline: none;
+        border: none;
+    }
+    &:hover {
+        cursor: pointer;
+    }
+    &:active {
+        background-color: #026CE8;
+    }
+    &::-moz-focus-inner {
+        border: none;
+    }
+}
+
 // -- Home --
 
 header, footer {
@@ -158,6 +188,13 @@ footer {
     display: flex;
     .logo-container {
         width: 500px;
+    }
+    a {
+        display: flex;
+        text-decoration: none;
+        .logo-text-container:hover {
+            cursor: pointer;
+        }
     }
 }
 
@@ -594,27 +631,6 @@ footer {
             button {
                 width: 300px;
                 height: 50px;
-                background-color: $main-blue;
-                color: white;
-                padding: 0;
-                border: none;
-                border-radius: 7px;
-                font-size: 24px;
-                box-shadow: 0 4px 8px rgba($color: $main-blue, $alpha: 0.2);
-                align-self: center;
-                &:focus {
-                    outline: none;
-                    border: none;
-                }
-                &:hover {
-                    cursor: pointer;
-                }
-                &:active {
-                    background-color: #026CE8;
-                }
-                &::-moz-focus-inner {
-                    border: none;
-                }
             }
         }
     }
@@ -793,10 +809,36 @@ footer {
 
 .admin-login-container {
     display: flex;
+    flex-direction: column;
     height: 100vh;
     width: 100vw;
     justify-content: center;
     align-items: center;
+}
+
+.admin-login-backbtn {
+    width: 150px;
+    height: 36px;
+    margin-top: 20px;
+    background-color: white;
+    padding: 0;
+    border: none;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: bold;
+    align-self: center;
+    transition: transform 0.3s linear;
+    &:focus {
+        outline: none;
+        border: none;
+    }
+    &:hover {
+        cursor: pointer;
+        transform: scale(1.1, 1.1);
+    }
+    &::-moz-focus-inner {
+        border: none;
+    }
 }
 
 .admin-login-content {
@@ -809,18 +851,194 @@ footer {
     .logo-text-container {
         color: $main-blue;
     }
-    padding: 70px 50px;
+    padding: 70px 50px 30px;
     form {
         display: flex;
         flex-direction: column;
+        margin-top: 30px;
         input {
             width: 400px;
+            padding: 0 20px;
             height: 50px;
             background-color: #ebebeb;
             color: black;
-            font-size: 24px;
+            font-size: 20px;
             border-radius: 7px;
             border: none;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease-in-out;
+            &:focus {
+                transform: scale(1.07, 1.07);
+                outline: none;
+            }
+        }
+        button {
+            width: 300px;
+            height: 50px;
+        }
+        .admin-login-error {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba($color: red, $alpha: 0.5);
+            color: #700;
+            border: solid 1px red;
+            border-radius: 12px;
+            height: 36px;
+            margin-top: 20px;
+        }
+    }
+}
+
+.admin-panel-container {
+    display: flex;
+    flex-direction: column;
+    .admin-panel-topnav {
+        width: 100vw;
+        margin: 10px 0 20px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: $main-blue;
+        font-size: 28px;
+        font-family: 'Passion One', cursive;
+    }
+    .admin-panel-content {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}
+
+.admin-panel-nav {
+    width: 300px;
+    margin: 0 50px 50px 50px;
+    display: flex;
+    flex-direction: column;
+    ul {
+        background-color: white;
+        border-radius: 12px;
+        padding: 30px 40px;
+        list-style-type: none;
+        display: flex;
+        flex-direction: column;
+        h3 {
+            margin: 0 0 10px -20px;
+            color: #8D8D8D;
+            font-weight: normal;
+        };
+        li > a {
+            display: flex;
+            align-items: center;
+            padding: 5px 0;
+            transition: color 0.3s ease-in-out;
+            svg {
+                margin-right: 10px;
+            }
+            &:hover{
+                color: $main-blue;
+            }
+        }
+    }
+    a {
+        text-decoration: none;
+        &:visited {
+            color: black;
+        }
+        font-size: 20px;
+    }
+    .admin-panel-exit {
+        margin-top: 20px;
+        background-color: white;
+        border-radius: 12px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        padding-left: 40px;
+        transition: transform 0.3s ease-in-out;
+        svg {
+            color: red;
+            margin-right: 10px;
+        }
+        &:hover {
+            transform: scale(1.1,1.1);
+        }
+    }
+}
+
+.admin-panel-body {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    min-width: 600px;
+}
+
+.admin-banners-container {
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+    svg {
+        width: 24px;
+        height: 24px;
+    }
+    .admin-banners-add {
+        background-color: white;
+        border-radius: 7px;
+        height: 40px;
+        transition: color 0.3s ease-in-out;
+        &:hover {
+            cursor: pointer;
+            color: $main-blue;
+        }
+        .tooltip-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+    .admin-banners-content {
+        list-style-type: none;
+        display: flex;
+        flex-direction: column;
+        & > li {
+            display: flex;
+            flex-direction: column;
+        }
+        .admin-banner-photo {
+            width: 100%;
+            margin-top: 30px;
+            border-radius: 20px;
+            height: 0;
+            // banner height/width ratio 250/1270 * 100  %
+            padding-bottom: 19.6850393701%;
+            background-color: white;
+        }
+        .admin-banner-nav {
+            display: flex;
+            justify-content: flex-end;
+            & > ul {
+                background-color: white;
+                list-style-type: none;
+                display: flex;
+                border-radius: 7px;
+                margin-top: 15px;
+                padding: 0 20px;
+                & > li {
+                    display: flex;
+                    margin: 12px 10px;
+                    align-items: center;
+                    transition: transform 0.3s ease-in-out, color 0.3s linear;
+                    &:hover {
+                        cursor: pointer;
+                        transform: scale(1.2,1.2);
+                        color: $main-blue;
+                    }
+                    &.admin-banner-remove:hover {
+                        color: red;
+                    }
+                }
+            }
         }
     }
 }

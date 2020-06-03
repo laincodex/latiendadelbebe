@@ -125,7 +125,7 @@ export default ({selectedProduct, productOverlayOpen, closeProductOverlay} :
                         <article className="product-overlay-data">
                             <h1>{selectedProduct.name}</h1>
                             <p>{selectedProduct.description}</p>
-                            <button>Preguntar</button>
+                            <button className="main-btn">Preguntar</button>
                         </article>
                     </div>
                 </div>
