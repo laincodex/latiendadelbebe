@@ -14,7 +14,9 @@
     "jsonwebtoken": "^8.5.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-router-dom": "^5.2.0"
+    "react-router-dom": "^5.2.0",
+    "sqlite": "^4.0.10",
+    "sqlite3": "^4.2.0"
   },
   "devDependencies": {
     "@svgr/webpack": "^5.4.0",
@@ -25,6 +27,7 @@
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.7",
     "@types/react-router-dom": "^5.1.5",
+    "@types/sqlite3": "^3.1.6",
     "awesome-typescript-loader": "^5.2.1",
     "css-loader": "^3.5.3",
     "file-loader": "^6.0.0",

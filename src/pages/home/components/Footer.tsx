@@ -39,7 +39,7 @@ export default () => {
         <footer>
             <div className="footer-content content-width">
                 <div className="footer-map">
-                    <Tooltip title="Haz click para agrandar el mapa!" style={{marginTop: 100, marginLeft: 100}} onClick={openMapOverlay}>
+                    <Tooltip title="Haz click para agrandar el mapa!" onClick={openMapOverlay}>
                         <img src={MapImageSrc}/>
                     </Tooltip>
                     <Overlay openState={mapOverlayOpen} closeCallback={closeMapOverlay}>

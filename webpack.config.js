@@ -60,5 +60,5 @@ module.exports = {
         ignoreOrder: false, // Enable to remove warnings about conflicting order
         }),
     ],
-    externals: ["utf-8-validate", "bufferutil", "uws", {'socket.io': 'commonjs socket.io', express: 'commonjs express'}]
+    externals: ["utf-8-validate", "bufferutil", "uws", {express: 'commonjs express'}, {sqlite3: 'commonjs sqlite3'}]
 }

@@ -5,6 +5,8 @@ import express, { Application, Request, Response, NextFunction } from "express";
 import cookieparser from "cookie-parser";
 import http from "http";
 import jwt from "jsonwebtoken";
+import sqlite3 from "sqlite3";
+import { open as openDatabase, Database} from "sqlite";
 
 const app :Application = express();
 const server : http.Server = http.createServer(app);
@@ -15,7 +17,13 @@ import ProductsPage from "./pages/products";
 import AdminPage from "./pages/admin";
 import AdminLogin from "./pages/admin/components/login";
 
-import { TProduct } from "./pages/home/components/product";
+import * as Banners from "./components/banners";
+
+
+const database = openDatabase({
+    filename: "database.db",
+    driver: sqlite3.Database
+});
 
 app.use(cookieparser());
 
@@ -121,11 +129,39 @@ app.get("/admin/productos", adminOnly, (req :Request, res :Response) => {
     renderAdminTemplate(props, res);
 });
 
-app.get("/admin/banners", adminOnly, (req :Request, res :Response) => {
-    const props = {
-        section: "banners"
-    };
-    renderAdminTemplate(props, res);
+app.get("/admin/banners", adminOnly, async (req :Request, res :Response) => {
+    try {
+        const db :Database = await database;
+        Banners.getBanners(db)
+        .then(banners => {
+            const props = {
+                section: "banners",
+                sourceBanners: banners,
+            };
+            renderAdminTemplate(props, res);
+        })
+        .catch(err => res.send(err));
+    } catch(err) {res.send(err);}
+});
+
+app.get("/admin/banners/new", adminOnly, (req :Request, res :Response) => {
+    const source :Banners.TBanner[] = [];
+    const dest :Banners.TBanner[] = [];
+
+    source.push({id: 1, image_url: "hola.png", label: "asdasdasd"});
+    source.push({id: 2, image_url: "asd.png", label: "eeeee"});
+    dest.push({id: 1, image_url: "nueva foto.png", label: "nuevo label"});
+    dest.push({id: 0, image_url: "tuvieja.png", label: "jejeje"});
+})
+app.post("/admin/banners", adminOnly, async (req :Request, res :Response) => {
+    const db :Database = await database;
+    Banners.updateBanners(db, req.body.source, req.body.destination)
+        .then(() => {
+            res.sendStatus(200);
+        })
+        .catch(err => {
+            res.status(500).send(err);
+        });
 });
 
 app.get("/404", (req :Request, res :Response) => {
