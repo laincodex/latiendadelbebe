@@ -2,6 +2,7 @@ import React from "react";
 import { renderToString } from "react-dom/server";
 import express, { Application, Request, Response, NextFunction } from "express";
 //import bodyparser from "body-parser";
+import multiparty, { Form } from "multiparty";
 import cookieparser from "cookie-parser";
 import http from "http";
 import jwt from "jsonwebtoken";
@@ -29,7 +30,6 @@ app.use(cookieparser());
 
 app.use(express.static("dist"));
 app.use(express.urlencoded({extended: true}));
-app.use(express.json());
 
 app.set("jwt-secret", "6x7fSQ7z6JXDDfBa6Lrdozrd9rHK")
 
@@ -92,7 +92,7 @@ app.post("/admin/login", (req :Request, res :Response) => {
             httpOnly: true,
             sameSite: true,
             //secure: true,
-            maxAge: 1800*1000
+            maxAge: 3600*1000
         })
         res.redirect("/admin");
     } else {
@@ -152,7 +152,17 @@ app.get("/admin/banners/new", adminOnly, (req :Request, res :Response) => {
     source.push({id: 2, image_url: "asd.png", label: "eeeee"});
     dest.push({id: 1, image_url: "nueva foto.png", label: "nuevo label"});
     dest.push({id: 0, image_url: "tuvieja.png", label: "jejeje"});
-})
+});
+
+app.post("/admin/banners/upload", adminOnly, async (req :Request, res :Response) => {
+    console.log("hola?");
+    const form :Form = new multiparty.Form();
+    form.parse(req, (err, fields, files) => {
+        console.log(req.body, fields, files);
+        res.send({fields: fields, files: files});
+    })
+});
+
 app.post("/admin/banners", adminOnly, async (req :Request, res :Response) => {
     const db :Database = await database;
     Banners.updateBanners(db, req.body.source, req.body.destination)

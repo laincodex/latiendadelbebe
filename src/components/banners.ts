@@ -16,10 +16,10 @@ export const getBanners = async (database :Database) :Promise<TBanner[]> => {
 };
 
 export const newBanner = async (database :Database, banner :TBanner) :Promise<TBanner> => {
-    return await database.run(`INSERT INTO banners(image_url, label) VALUES('${banner.image_url}', '${banner.label}');`)
-    .then(async res => {
-        const id = await database.get("SELECT last_insert_rowid() as id;");
-        banner.id = id;
+    return await database.run('INSERT INTO banners(image_url, label) VALUES(?, ?);', banner.image_url, banner.label)
+    .then(async () => {
+        const res = await database.get("SELECT last_insert_rowid() as id;");
+        banner.id = res.id;
         return banner;
     })
 };

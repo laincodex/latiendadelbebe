@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Tooltip from "../../home/components/Tooltip";
 import { TBanner } from "../../../components/banners";
 
 import AddIcon from "../../../assets/icons/baseline-add.svg";
 import ArrowIcon from "../../../assets/icons/arrow_left-24px.svg";
-import EditTextIcon from "../../../assets/icons/title-24px.svg";
+import InserPhotoIcon from "../../../assets/icons/insert_photo-24px.svg";
 import RemoveIcon from "../../../assets/icons/remove_circle-24px.svg";
 
 export interface BannersProps {
@@ -18,8 +18,12 @@ export default ( { sourceBanners } :BannersProps ) => {
         fontSize: 14
     }
 
-    // Create a copy of the source banners to a state
+    const [hasAnyChangesFlag, setHasAnyChangesFlag] = useState<boolean>(false);
+    const [snackbarActive, setSnackbarActive] = useState<boolean>(false);
+
+    // Create two copies of the source banners to handle new edits and cancel functionality
     const [banners, setBanners] = useState<TBanner[]>(sourceBanners.map(a => Object.assign({}, a)));
+    const sourceBannersCopy = useRef<TBanner[]>(sourceBanners.map(a => Object.assign({}, a)));
 
     const renderBanners = () => {
         let renderedBanners :Array<JSX.Element> = [];
@@ -29,19 +33,20 @@ export default ( { sourceBanners } :BannersProps ) => {
                     <div className="admin-banner-photo" style={{
                         backgroundImage: `url("/upload/carousel/${banner.image_url}")`
                     }}>
-                        <input className="admin-banner-label" placeholder={banner.label} onChange={handleChangeLabel(index)}></input>
-                    <div>{banner.label}</div>
+                        <input id={"edit-banner-label-"+index} className="admin-banner-label carousel-label" placeholder="Pon un texto o deja vacio para que no se muestre." onChange={handleChangeLabel(index)} value={banner.label}></input>
                     </div>
                     <div className="admin-banner-nav">
                         <ul>
                             <li className="admin-banner-moveup">
-                                <Tooltip title="Subir" style={tooltipStyle}><ArrowIcon className="rotate-90" /></Tooltip></li>
+                                {(index > 0) ? <Tooltip title="Subir" style={tooltipStyle} onClick={moveBannerPosition(true, index)}><ArrowIcon className="rotate-90" /></Tooltip> : <><ArrowIcon className="rotate-90 admin-banner-disabled-icon" /></>}</li>
                             <li className="admin-banner-movedown">
-                                <Tooltip title="Bajar" style={tooltipStyle}><ArrowIcon className="rotate-270" /></Tooltip></li>
-                            <li className="admin-banner-edittext">
-                                <Tooltip title="Editar texto" style={tooltipStyle}><EditTextIcon /></Tooltip></li>
+                                {(index < banners.length-1) ? <Tooltip title="Bajar" style={tooltipStyle} onClick={moveBannerPosition(false, index)}><ArrowIcon className="rotate-270" /></Tooltip> : <ArrowIcon className="rotate-270 admin-banner-disabled-icon" />}</li>
+                            <li className="admin-banner-upload">
+                                <Tooltip title="Subir imagen" style={tooltipStyle} onClick={promptBannerUpload(index)}><InserPhotoIcon /></Tooltip>
+                                <input type="file" id={"admin-banner-upload-"+index} onChange={uploadBanner(index)} />
+                            </li>
                             <li className="admin-banner-remove">
-                                <Tooltip title="Eliminar" style={tooltipStyle}><RemoveIcon /></Tooltip>
+                                <Tooltip title="Eliminar" style={tooltipStyle} onClick={removeBanner(index)}><RemoveIcon /></Tooltip>
                             </li>
                         </ul>
                     </div>
@@ -51,38 +56,95 @@ export default ( { sourceBanners } :BannersProps ) => {
         return renderedBanners;
     }
 
+    const addBanner = () => {
+        banners.unshift({
+            image_url: "",
+            id: 0,
+            label:""
+        });
+        setHasAnyChangesFlag(true);
+        setBanners([...banners]);
+    }
+
     const handleChangeLabel = (bannerIndex :number) => (ev :any) => {
+        setHasAnyChangesFlag(true);
         banners[bannerIndex].label = ev.target.value;
         setBanners([...banners]);
     }
 
+    const moveBannerPosition = (up :boolean, index :number) => () => {
+        const targetIndex = up ? index-1 : index+1;
+        if (targetIndex >= 0 || targetIndex < banners.length) {
+            setHasAnyChangesFlag(true);
+            const temp :TBanner = banners[index];
+            banners[index] = banners[targetIndex];
+            banners[targetIndex] = temp;
+            setBanners([...banners]);
+        }
+    }
+
+    const promptBannerUpload = (index :number) => () => {
+        document.getElementById("admin-banner-upload-"+index)?.click();
+    }
+
+    const uploadBanner = (index :number) => (ev :any) => {
+        const file :File = ev.target.files[0];
+        // const bannerImageForm = new FormData();
+        // bannerImageForm.append("newImage", file, file.name);
+        fetch("/admin/banners/upload", {
+            method: 'POST',
+            headers: {'Content-Type': "multipart/form-data"},
+            body: file
+        })  .then(res => res.json())
+            .then(res => console.log(res));
+    }
+    
+    const removeBanner = (index :number) => () => {
+        if(confirm("Estas seguro de borrar el banner?")) {
+            setHasAnyChangesFlag(true);
+            banners.splice(index,1);
+            setBanners([...banners]);
+        }
+    }
+
+    const cancelChanges = () => {
+        const restoredBanners = sourceBannersCopy.current.map(b => Object.assign({}, b));
+        setHasAnyChangesFlag(false);
+        setBanners([...restoredBanners]);
+    }
+
     const submitBanners = (ev :any) => {
-        const tuvieja = JSON.stringify({
-                source: sourceBanners,
-                destination: banners
-            });
         fetch("/admin/banners",{
             method: 'POST',
-            body: tuvieja,
+            body: JSON.stringify({
+                source: sourceBannersCopy.current,
+                destination: banners
+            }),
             headers: {
                 'Content-Type':'application/json'
             }
         })
         .then(res => {
             console.log(res);
+            setHasAnyChangesFlag(false);
+            setSnackbarActive(true);
+            sourceBannersCopy.current = banners.map(b => Object.assign({}, b));
+            setTimeout(() =>{
+                setSnackbarActive(false)}, 3000);
         })
         .catch(err => console.log(err));
     }
-    
+
     return (
        <div className="admin-banners-container">
             <div className="admin-banners-add">
-                <Tooltip title="Agregar un nuevo banner" style={{marginTop: 35}}><AddIcon /></Tooltip>
+                <Tooltip title="Agregar un nuevo banner" style={{marginTop: 35}} onClick={addBanner}><AddIcon /></Tooltip>
             </div>
             <ul className="admin-banners-content">
                 {renderBanners()}
             </ul>
-            <button className="main-btn" onClick={submitBanners}>save</button>
+            { hasAnyChangesFlag && <div className="admin-banners-savecancel-btns"><button className="main-btn" onClick={submitBanners}>GUARDAR CAMBIOS</button><button className="cancel-btn" onClick={cancelChanges}>CANCELAR</button></div>}
+            <div id="admin-banners-snackbar" className={snackbarActive ? "admin-banners-snackbar-active" : undefined}>Se han guardado los cambios</div>
        </div>
    );
 }

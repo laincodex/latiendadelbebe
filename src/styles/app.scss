@@ -135,6 +135,29 @@ body {
     }
 }
 
+.cancel-btn {
+    color: white;
+    background-color: red;
+    padding: 0;
+    border-radius: 7px;
+    border: none;
+    font-size: 24px;
+    box-shadow: 0 4px 8px rgba($color: red, $alpha: 0.2);
+    &:focus {
+        outline: none;
+        border: none;
+    }
+    &:hover {
+        cursor: pointer;
+    }
+    &:active {
+        background-color: #ca0000;
+    }
+    &::-moz-focus-inner {
+        border: none;
+    }
+}
+
 // -- Home --
 
 header, footer {
@@ -946,10 +969,15 @@ footer {
     }
     a {
         text-decoration: none;
+        color: black;
         &:visited {
             color: black;
         }
         font-size: 20px;
+    }
+    .admin-panel-sectionactive a {
+        color: $main-blue;
+        cursor: default;
     }
     .admin-panel-exit {
         margin-top: 20px;
@@ -967,10 +995,6 @@ footer {
         &:hover {
             transform: scale(1.1,1.1);
         }
-    }
-    .admin-panel-sectionactive a {
-        color: $main-blue;
-        cursor: default;
     }
 }
 
@@ -1015,13 +1039,24 @@ footer {
             border-radius: 20px;
             height: 0;
             // banner height/width ratio 250/1270 * 100  %
-            padding-bottom: 19.6850393701%;
+            padding-top: 19.6850393701%;
             background-color: white;
             background-position: center;
             background-size: cover;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
+            .admin-banner-label {
+                border: none;
+                &:focus {
+                    outline: 0;
+                }
+                &::placeholder {
+                    color: #ddd;
+                    font-weight: normal;
+                    font-size: 28px;
+                }
+            }
         }
         .admin-banner-nav {
             display: flex;
@@ -1049,5 +1084,57 @@ footer {
                 }
             }
         }
+        .admin-banner-disabled-icon {
+            color: gray;
+            &:hover {
+                cursor: default;
+            }
+        }
+        .admin-banner-upload {
+            input[type="file"] {
+                display: none;
+            }
+        }
     }
+    .admin-banners-savecancel-btns {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .main-btn {
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
+    .cancel-btn {
+        margin-left: 20px;
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: bold;
+        border-radius: 5px;
+    }
+    #admin-banners-snackbar {
+        visibility: hidden;
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        background-color: green;
+        box-shadow: 0 4px 8px rgba($color: green, $alpha: 0.2);
+        color: white;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 5px;
+
+    }
+    #admin-banners-snackbar.admin-banners-snackbar-active {
+        visibility: visible;
+        animation: snackbar 3s;
+    }
+    @keyframes snackbar {
+        0% {bottom: 0; opacity: 0;}
+        25% {bottom: 30px; opacity: 1;}
+        75% {bottom: 30px; opacity: 1;}
+        100% {bottom: 0; opacity: 0;}
+    }
+
 }
