@@ -1,8 +1,8 @@
 DROP TABLE IF EXISTS products;
 DROP TABLE IF EXISTS featured_products;
-DROP TABLE IF EXISTS banners;
+DROP TABLE IF EXISTS carousel;
 DROP TABLE IF EXISTS product_images;
-DROP TABLE IF EXISTS banners_positions;
+DROP TABLE IF EXISTS carousel_positions;
 
 create table products (
     id serial primary key,
@@ -25,16 +25,16 @@ create table product_images (
     thumbnail_preview varchar(250) null
 );
 
-create table banners (
+create table carousel (
     id integer primary key autoincrement,
     image_url varchar(250) not null,
     label varchar(250) null
 );
 
-create table banners_positions (
+create table carousel_positions (
     id integer not null
 );
 
-insert into banners(image_url, label) values('carousel_1.png', 'Tenemos todo para ellos');
-insert into banners(image_url, label) values('carousel_2.png', 'Y para ellas');
-insert into banners_positions(id) values('2'), ('1');
+insert into carousel(image_url, label) values('carousel_1.png', 'Tenemos todo para ellos');
+insert into carousel(image_url, label) values('carousel_2.png', 'Y para ellas');
+insert into carousel_positions(id) values('2'), ('1');

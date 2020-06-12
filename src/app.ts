@@ -18,7 +18,7 @@ import ProductsPage from "./pages/products";
 import AdminPage from "./pages/admin";
 import AdminLogin from "./pages/admin/components/login";
 
-import * as Banners from "./components/banners";
+import * as Carousel from "./components/carousel";
 
 
 const database = openDatabase({
@@ -30,6 +30,7 @@ app.use(cookieparser());
 
 app.use(express.static("dist"));
 app.use(express.urlencoded({extended: true}));
+app.use(express.json());
 
 app.set("jwt-secret", "6x7fSQ7z6JXDDfBa6Lrdozrd9rHK")
 
@@ -129,14 +130,14 @@ app.get("/admin/productos", adminOnly, (req :Request, res :Response) => {
     renderAdminTemplate(props, res);
 });
 
-app.get("/admin/banners", adminOnly, async (req :Request, res :Response) => {
+app.get("/admin/carousel", adminOnly, async (req :Request, res :Response) => {
     try {
         const db :Database = await database;
-        Banners.getBanners(db)
-        .then(banners => {
+        Carousel.getCarouselItems(db)
+        .then(carouselItems => {
             const props = {
-                section: "banners",
-                sourceBanners: banners,
+                section: "carousel",
+                sourceCarouselItems: carouselItems,
             };
             renderAdminTemplate(props, res);
         })
@@ -144,9 +145,9 @@ app.get("/admin/banners", adminOnly, async (req :Request, res :Response) => {
     } catch(err) {res.send(err);}
 });
 
-app.get("/admin/banners/new", adminOnly, (req :Request, res :Response) => {
-    const source :Banners.TBanner[] = [];
-    const dest :Banners.TBanner[] = [];
+app.get("/admin/carousel/new", adminOnly, (req :Request, res :Response) => {
+    const source :Carousel.TCarouselItem[] = [];
+    const dest :Carousel.TCarouselItem[] = [];
 
     source.push({id: 1, image_url: "hola.png", label: "asdasdasd"});
     source.push({id: 2, image_url: "asd.png", label: "eeeee"});
@@ -154,7 +155,7 @@ app.get("/admin/banners/new", adminOnly, (req :Request, res :Response) => {
     dest.push({id: 0, image_url: "tuvieja.png", label: "jejeje"});
 });
 
-app.post("/admin/banners/upload", adminOnly, async (req :Request, res :Response) => {
+app.post("/admin/carousel/upload", adminOnly, async (req :Request, res :Response) => {
     console.log("hola?");
     const form :Form = new multiparty.Form();
     form.parse(req, (err, fields, files) => {
@@ -163,9 +164,9 @@ app.post("/admin/banners/upload", adminOnly, async (req :Request, res :Response)
     })
 });
 
-app.post("/admin/banners", adminOnly, async (req :Request, res :Response) => {
+app.post("/admin/carousel", adminOnly, async (req :Request, res :Response) => {
     const db :Database = await database;
-    Banners.updateBanners(db, req.body.source, req.body.destination)
+    Carousel.updateCarouselItems(db, req.body.source, req.body.destination)
         .then(() => {
             res.sendStatus(200);
         })

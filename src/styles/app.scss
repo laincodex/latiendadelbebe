@@ -1005,7 +1005,7 @@ footer {
     min-width: 600px;
 }
 
-.admin-banners-container {
+.admin-carousel-container {
     display: flex;
     flex-direction: column;
     width: 92%;
@@ -1013,7 +1013,7 @@ footer {
         width: 24px;
         height: 24px;
     }
-    .admin-banners-add {
+    .admin-carousel-add {
         background-color: white;
         border-radius: 7px;
         height: 40px;
@@ -1025,7 +1025,7 @@ footer {
             box-shadow: 0 4px 8px rgba($color: $main-blue, $alpha: 0.5);
         }
     }
-    .admin-banners-content {
+    .admin-carousel-content {
         list-style-type: none;
         display: flex;
         flex-direction: column;
@@ -1033,12 +1033,12 @@ footer {
             display: flex;
             flex-direction: column;
         }
-        .admin-banner-photo {
+        .admin-carousel-photo {
             width: 100%;
             margin-top: 30px;
             border-radius: 20px;
             height: 0;
-            // banner height/width ratio 250/1270 * 100  %
+            // height/width ratio 250/1270 * 100  %
             padding-top: 19.6850393701%;
             background-color: white;
             background-position: center;
@@ -1046,7 +1046,7 @@ footer {
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
-            .admin-banner-label {
+            .admin-carousel-label {
                 border: none;
                 &:focus {
                     outline: 0;
@@ -1058,7 +1058,7 @@ footer {
                 }
             }
         }
-        .admin-banner-nav {
+        .admin-carousel-nav {
             display: flex;
             justify-content: flex-end;
             & > ul {
@@ -1078,25 +1078,25 @@ footer {
                         transform: scale(1.2,1.2);
                         color: $main-blue;
                     }
-                    &.admin-banner-remove:hover {
+                    &.admin-carousel-remove:hover {
                         color: red;
                     }
                 }
             }
         }
-        .admin-banner-disabled-icon {
+        .admin-carousel-disabled-icon {
             color: gray;
             &:hover {
                 cursor: default;
             }
         }
-        .admin-banner-upload {
+        .admin-carousel-upload {
             input[type="file"] {
                 display: none;
             }
         }
     }
-    .admin-banners-savecancel-btns {
+    .admin-carousel-savecancel-btns {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -1113,7 +1113,7 @@ footer {
         font-weight: bold;
         border-radius: 5px;
     }
-    #admin-banners-snackbar {
+    #admin-carousel-snackbar {
         visibility: hidden;
         position: fixed;
         bottom: 30px;
@@ -1126,7 +1126,7 @@ footer {
         border-radius: 5px;
 
     }
-    #admin-banners-snackbar.admin-banners-snackbar-active {
+    #admin-carousel-snackbar.admin-carousel-snackbar-active {
         visibility: visible;
         animation: snackbar 3s;
     }
