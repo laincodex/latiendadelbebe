@@ -3,15 +3,17 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
     entry: {
         app: "./src/app.ts",
-        client: "./src/client.tsx"
+        "public/client": "./src/client.tsx"
     },
     output: {
         filename: "[name].js",
         path: path.resolve(__dirname,"dist"),
-        publicPath: "/"
     },
-    //devtool: "source-map",
+    devtool: "source-map",
     target: 'node',
+    node: {
+        __dirname: false
+    },
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".json", ".scss", ".css"]
     },
@@ -24,7 +26,7 @@ module.exports = {
                 test: /\.(sa|sc|c)ss$/,
                 use: [
                     {
-                    loader: MiniCssExtractPlugin.loader,
+                        loader: MiniCssExtractPlugin.loader,
                     },
                     'css-loader',
                 // 'postcss-loader',
@@ -32,7 +34,14 @@ module.exports = {
                 ],
             },
             { test: /\.(jpg|png|gif|pdf|ico|eot|ttf|woff2?)$/, use: [
-                    { loader: 'file-loader', options: { name: '[path][name]-[hash:8].[ext]'}}
+                    { 
+                        loader: 'file-loader', 
+                        options: { 
+                            name: '[path][name]-[hash:8].[ext]', 
+                            outputPath: url => url.replace(/^src\//,'public/'),
+                            publicPath: url => url.replace(/^src\//,'/'),
+                        }
+                    }
                 ]
             },
             {
@@ -46,7 +55,6 @@ module.exports = {
                         }
                     }
                 ] 
-                
             }
         ]
     },
@@ -55,7 +63,7 @@ module.exports = {
         new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output
         // all options are optional
-        filename: 'src/styles/[name].css',
+        filename: 'public/styles/[name].css',
         chunkFilename: '[id].css',
         ignoreOrder: false, // Enable to remove warnings about conflicting order
         }),

@@ -89,12 +89,22 @@ export default ( { sourceCarouselItems } :CarouselProps ) => {
 
     const uploadCarouselItem = (index :number) => (ev :any) => {
         const file :File = ev.target.files[0];
+        const data :FormData = new FormData();
+        data.append('carouselImage', file);
         fetch("/admin/carousel/upload", {
             method: 'POST',
-            headers: {'Content-Type': "multipart/form-data"},
-            body: file
+            body: data
         })  .then(res => res.json())
-            .then(res => console.log(res));
+            .then(res => {
+                console.log(res);
+                if (res.tmpItem) {
+                    console.log("asd");
+                    carouselItems[index].image_url = "tmp/" + res.tmpItem;
+                    setHasAnyChangesFlag(true);
+                    setCarouselItems([...carouselItems]);
+                }
+            })
+            .catch(err => console.log(err));
     }
     
     const removeCarouselItem = (index :number) => () => {

@@ -1,8 +1,8 @@
 import React from "react";
 import { renderToString } from "react-dom/server";
 import express, { Application, Request, Response, NextFunction } from "express";
-//import bodyparser from "body-parser";
-import multiparty, { Form } from "multiparty";
+import fs from "fs";
+import multyparty from "multiparty";
 import cookieparser from "cookie-parser";
 import http from "http";
 import jwt from "jsonwebtoken";
@@ -28,11 +28,14 @@ const database = openDatabase({
 
 app.use(cookieparser());
 
-app.use(express.static("dist"));
+app.use(express.static("public"));
 app.use(express.urlencoded({extended: true}));
-app.use(express.json());
+app.set("jwt-secret", "6x7fSQ7z6JXDDfBa6Lrdozrd9rHK");
 
-app.set("jwt-secret", "6x7fSQ7z6JXDDfBa6Lrdozrd9rHK")
+//app.use(file.Upload());
+
+// const
+const carouselImagesTmpPath = __dirname + "/public/upload/carousel/tmp";
 
 app.get("/", (req, res) => {
     res.send(HtmlTemplate({
@@ -59,14 +62,13 @@ const adminOnly = (req :Request, res :Response, next :NextFunction) => {
     if (token) {
         jwt.verify(token, app.get("jwt-secret"), (err :any) => {
             if (err) {
-                res.clearCookie("token");
-                res.redirect("/admin/login");
+                res.clearCookie("token").status(401).redirect("/admin/login");
+            } else {
+                next();
             }
-            next();
         }); 
     } else {
-        res.clearCookie("token");
-        res.redirect("/admin/login");
+        res.clearCookie("token").status(401).redirect("/admin/login");
     }
 }
 
@@ -145,26 +147,30 @@ app.get("/admin/carousel", adminOnly, async (req :Request, res :Response) => {
     } catch(err) {res.send(err);}
 });
 
-app.get("/admin/carousel/new", adminOnly, (req :Request, res :Response) => {
-    const source :Carousel.TCarouselItem[] = [];
-    const dest :Carousel.TCarouselItem[] = [];
 
-    source.push({id: 1, image_url: "hola.png", label: "asdasdasd"});
-    source.push({id: 2, image_url: "asd.png", label: "eeeee"});
-    dest.push({id: 1, image_url: "nueva foto.png", label: "nuevo label"});
-    dest.push({id: 0, image_url: "tuvieja.png", label: "jejeje"});
-});
-
+if (!fs.existsSync(carouselImagesTmpPath)) {
+    console.log("creating carousel images temporal folder...");
+    fs.mkdirSync(carouselImagesTmpPath, 0o744);
+}
 app.post("/admin/carousel/upload", adminOnly, async (req :Request, res :Response) => {
-    console.log("hola?");
-    const form :Form = new multiparty.Form();
+    const form = new multyparty.Form();
     form.parse(req, (err, fields, files) => {
-        console.log(req.body, fields, files);
-        res.send({fields: fields, files: files});
-    })
+        if (err)
+            res.status(400).send(err);
+        const carouselImage :multyparty.File = files["carouselImage"][0];
+        const tmpPath :string = "public/upload/carousel/tmp/" + carouselImage.originalFilename;
+        fs.copyFile(carouselImage.path, tmpPath, err => {
+            if (err) {
+                res.status(500).send(err);
+                return;
+            }
+            res.status(200).send({tmpItem: carouselImage.originalFilename});
+        })
+    });
+    return;
 });
 
-app.post("/admin/carousel", adminOnly, async (req :Request, res :Response) => {
+app.post("/admin/carousel", express.json(), adminOnly, async (req :Request, res :Response) => {
     const db :Database = await database;
     Carousel.updateCarouselItems(db, req.body.source, req.body.destination)
         .then(() => {

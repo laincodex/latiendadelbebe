@@ -1,4 +1,5 @@
 import { Database } from "sqlite";
+import fs from "fs";
 
 export interface TCarouselItem {
     id :number, 
@@ -36,8 +37,28 @@ export const updateCarouselItems = async (database :Database, source :TCarouselI
             const labelChanged = source[index].label !== carouselItem.label;
             if (imageUrlChanged || labelChanged ) {
                 let query :string = "UPDATE carousel SET ";
-                if(imageUrlChanged)
-                    query += `image_url='${carouselItem.image_url}' `;
+                if(imageUrlChanged) {
+
+                    // BUG - sometimes get weird and try to remove an old image, maybe I should test with sync.
+
+                    // const carouselImageTmpPath = options.carouselImagesTmpPath + "/" + carouselItem.image_url;
+                    // const carouselImagePath
+                    const carouselImageTmpPath = __dirname + "/public/upload/carousel/" + carouselItem.image_url;
+                    const newCarouselImageUrl = carouselItem.image_url.replace(/^tmp\//, "");
+                    fs.rename(carouselImageTmpPath, __dirname + "/public/upload/carousel/" + newCarouselImageUrl, err => {
+                        if (err) {
+                            console.log("Error moving temporal carousel image...", err);
+                        } else {
+                            // remove old image
+                            fs.unlink(__dirname + "/public/upload/carousel/" + source[index].image_url, err => {
+                                if (err)
+                                    console.log("Error deleting old carousel image...", err);
+                            });
+                        }
+                    });
+
+                    query += `image_url='${newCarouselImageUrl}' `;
+                }
                 if(labelChanged)
                     query += `label='${carouselItem.label}' `;
                 query += `WHERE carousel.id = ${carouselItem.id};`;
@@ -54,6 +75,10 @@ export const updateCarouselItems = async (database :Database, source :TCarouselI
         const index = destination.findIndex(d => d.id === carouselItem.id);
         if (index === -1) {
             // carousel item has been removed
+            fs.unlink(__dirname + "/public/upload/carousel/"+carouselItem.image_url, err => {
+                if(err)
+                    console.log(err);
+            });
             sqlQueryStack.push(`DELETE FROM carousel WHERE carousel.id = '${carouselItem.id}';`);
         }
     })

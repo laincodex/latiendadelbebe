@@ -9,12 +9,13 @@ var tsp = ts.createProject("tsconfig.json");
 function buildjs() {
     return gulp.src("src/pages/**/*.ts")
         .pipe(tsp())
-        .pipe(gulp.dest("dist/src/scripts"));
+        .pipe(gulp.dest("dist/public/scripts"));
 }
 
 function buildreact() {
     gulp.src("src/assets/upload/**/*")
-        .pipe(gulp.dest("dist/upload"));
+        .pipe(gulp.dest("dist/public/upload"));
+    gulp.src("database.db").pipe(gulp.dest("dist"));
     return gulp.src("src/*")
         .pipe(webpack(require("./webpack.config.js")))
         .pipe(gulp.dest("dist"));
@@ -26,12 +27,12 @@ function watch() {
 }
 async function server() {
     if(nodeprocess) nodeprocess.kill();
-    nodeprocess = await spawn("node", ["dist/app"], {stdio: "inherit"})
+    nodeprocess = await spawn("node", ["app"], {stdio: "inherit", cwd: "dist/"});
     nodeprocess.on("close", function(code) {
         if(code === 8) {
             gulp.log("error", code)
         }
-    })
+    });
 }
 
 // Switch these two if you don't need isomorphic rendering
