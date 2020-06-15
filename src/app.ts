@@ -158,27 +158,26 @@ app.post("/admin/carousel/upload", adminOnly, async (req :Request, res :Response
         if (err)
             res.status(400).send(err);
         const carouselImage :multyparty.File = files["carouselImage"][0];
-        const tmpPath :string = "public/upload/carousel/tmp/" + carouselImage.originalFilename;
-        fs.copyFile(carouselImage.path, tmpPath, err => {
+        const tmpPath :string = "public/upload/carousel" + carouselImage.path;
+        fs.rename(carouselImage.path, tmpPath, err => {
             if (err) {
                 res.status(500).send(err);
                 return;
             }
-            res.status(200).send({tmpItem: carouselImage.originalFilename});
+            res.status(200).send({tmpImagePath: carouselImage.path.replace(/^\/tmp\//, "")}); // strip /tmp/ before send the name
         })
     });
     return;
 });
 
 app.post("/admin/carousel", express.json(), adminOnly, async (req :Request, res :Response) => {
-    const db :Database = await database;
-    Carousel.updateCarouselItems(db, req.body.source, req.body.destination)
-        .then(() => {
-            res.sendStatus(200);
-        })
-        .catch(err => {
-            res.status(500).send(err);
-        });
+    try {
+        const db :Database = await database;
+        const updatedCarousel = await Carousel.updateCarouselItems(db, req.body.source, req.body.destination);
+        res.status(200).send(updatedCarousel);
+    } catch(err) {
+        res.status(500).send(err);
+    }
 });
 
 app.get("/404", (req :Request, res :Response) => {

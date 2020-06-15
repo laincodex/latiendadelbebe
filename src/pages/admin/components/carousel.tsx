@@ -96,10 +96,8 @@ export default ( { sourceCarouselItems } :CarouselProps ) => {
             body: data
         })  .then(res => res.json())
             .then(res => {
-                console.log(res);
-                if (res.tmpItem) {
-                    console.log("asd");
-                    carouselItems[index].image_url = "tmp/" + res.tmpItem;
+                if (res.tmpImagePath) {
+                    carouselItems[index].image_url = "tmp/" + res.tmpImagePath;
                     setHasAnyChangesFlag(true);
                     setCarouselItems([...carouselItems]);
                 }
@@ -132,11 +130,12 @@ export default ( { sourceCarouselItems } :CarouselProps ) => {
                 'Content-Type':'application/json'
             }
         })
-        .then(res => {
-            console.log(res);
+        .then(res => res.json())
+        .then( (updatedCarousel :TCarouselItem[]) => {
+            sourceCarouselItemsCopy.current = updatedCarousel.map(item => Object.assign({}, item));
             setHasAnyChangesFlag(false);
             setSnackbarActive(true);
-            sourceCarouselItemsCopy.current = carouselItems.map(b => Object.assign({}, b));
+            setCarouselItems(updatedCarousel.map(item => Object.assign({}, item)));
             setTimeout(() =>{
                 setSnackbarActive(false)}, 3000);
         })
