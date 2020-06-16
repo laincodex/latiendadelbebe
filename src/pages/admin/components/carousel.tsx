@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Tooltip from "../../home/components/Tooltip";
 import { TCarouselItem } from "../../../components/carousel";
+import Snackbar, {SnackbarTime} from "../../../components/Snackbar";
 
 import AddIcon from "../../../assets/icons/baseline-add.svg";
 import ArrowIcon from "../../../assets/icons/arrow_left-24px.svg";
@@ -20,6 +21,7 @@ export default ( { sourceCarouselItems } :CarouselProps ) => {
 
     const [hasAnyChangesFlag, setHasAnyChangesFlag] = useState<boolean>(false);
     const [snackbarActive, setSnackbarActive] = useState<boolean>(false);
+    const [snackbarErrorActive, setSnackbarErrorActive] = useState<boolean>(false);
 
     // Create two copies of the source carousel items to handle new edits and cancel functionality
     const [carouselItems, setCarouselItems] = useState<TCarouselItem[]>(sourceCarouselItems.map(a => Object.assign({}, a)));
@@ -43,7 +45,6 @@ export default ( { sourceCarouselItems } :CarouselProps ) => {
                                 {(index < carouselItems.length-1) ? <Tooltip title="Bajar" style={tooltipStyle} onClick={moveCarouselItemPosition(false, index)}><ArrowIcon className="rotate-270" /></Tooltip> : <ArrowIcon className="rotate-270 admin-carousel-disabled-icon" />}</li>
                             <li className="admin-carousel-upload">
                                 <Tooltip title="Subir imagen" style={tooltipStyle} onClick={promptImageUpload(index)}><InserPhotoIcon /></Tooltip>
-                                <input type="file" id={"admin-carousel-upload-"+index} onChange={uploadCarouselItem(index)} />
                             </li>
                             <li className="admin-carousel-remove">
                                 <Tooltip title="Eliminar" style={tooltipStyle} onClick={removeCarouselItem(index)}><RemoveIcon /></Tooltip>
@@ -83,26 +84,35 @@ export default ( { sourceCarouselItems } :CarouselProps ) => {
         }
     }
 
+    const uploadImageIndex = useRef<number>(0);
+
     const promptImageUpload = (index :number) => () => {
-        document.getElementById("admin-carousel-upload-"+index)?.click();
+        uploadImageIndex.current = index;
+        document.getElementById("admin-carousel-upload-image")?.click();
     }
 
-    const uploadCarouselItem = (index :number) => (ev :any) => {
+    const uploadImageOnChange = (ev :any) => {
         const file :File = ev.target.files[0];
         const data :FormData = new FormData();
         data.append('carouselImage', file);
+        // we need to clear the input value to have onChange working correctly for newer uploads
+        (document.getElementById("admin-carousel-upload-image") as HTMLInputElement).value = "";
+
         fetch("/admin/carousel/upload", {
             method: 'POST',
             body: data
         })  .then(res => res.json())
             .then(res => {
                 if (res.tmpImagePath) {
-                    carouselItems[index].image_url = "tmp/" + res.tmpImagePath;
+                    carouselItems[uploadImageIndex.current].image_url = "tmp/" + res.tmpImagePath;
                     setHasAnyChangesFlag(true);
                     setCarouselItems([...carouselItems]);
                 }
             })
-            .catch(err => console.log(err));
+            .catch(err => {
+                activeErrorSnackbar();
+                console.log(err);
+            });
     }
     
     const removeCarouselItem = (index :number) => () => {
@@ -133,25 +143,39 @@ export default ( { sourceCarouselItems } :CarouselProps ) => {
         .then(res => res.json())
         .then( (updatedCarousel :TCarouselItem[]) => {
             sourceCarouselItemsCopy.current = updatedCarousel.map(item => Object.assign({}, item));
+            activeSuccessSnackbar();
             setHasAnyChangesFlag(false);
-            setSnackbarActive(true);
             setCarouselItems(updatedCarousel.map(item => Object.assign({}, item)));
-            setTimeout(() =>{
-                setSnackbarActive(false)}, 3000);
+            
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+            activeErrorSnackbar();
+            console.log(err);
+        });
+    }
+
+    const activeSuccessSnackbar = () => {
+        setSnackbarActive(true);
+        setTimeout(() => setSnackbarActive(false), SnackbarTime);
+    };
+
+    const activeErrorSnackbar = () => {
+        setSnackbarErrorActive(true);
+        setTimeout(() => setSnackbarErrorActive(false), SnackbarTime);
     }
 
     return (
        <div className="admin-carousel-container">
             <div className="admin-carousel-add">
-                <Tooltip title="Agregar un nuevo carousel item" style={{marginTop: 35}} onClick={addCarouselItem}><AddIcon /></Tooltip>
+                <Tooltip title="Agregar un nuevo item al carousel" style={{marginTop: 35}} onClick={addCarouselItem}><AddIcon /></Tooltip>
             </div>
             <ul className="admin-carousel-content">
                 {renderCarouselItems()}
             </ul>
             { hasAnyChangesFlag && <div className="admin-carousel-savecancel-btns"><button className="main-btn" onClick={submitCarouselItems}>GUARDAR CAMBIOS</button><button className="cancel-btn" onClick={cancelChanges}>CANCELAR</button></div>}
-            <div id="admin-carousel-snackbar" className={snackbarActive ? "admin-carousel-snackbar-active" : undefined}>Se han guardado los cambios</div>
+            <Snackbar id="admin-carousel-snackbar" message="Se han guardado los cambios" isActive={snackbarActive} />
+            <Snackbar id="admin-carousel-snackbarerror" message="Hubo un error, por favor recarga la pagina." isActive={snackbarErrorActive} />
+            <input type="file" id={"admin-carousel-upload-image"} onChange={uploadImageOnChange} />
        </div>
    );
 }

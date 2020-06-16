@@ -158,6 +158,29 @@ body {
     }
 }
 
+.snackbar {
+    visibility: hidden;
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    background-color: $main-blue;
+    box-shadow: 0 4px 8px rgba($color: $main-blue, $alpha: 0.2);
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+.snackbar-active {
+    visibility: visible;
+    animation: snackbar 3s;
+}
+@keyframes snackbar {
+    0% {bottom: 0; opacity: 0;}
+    25% {bottom: 30px; opacity: 1;}
+    75% {bottom: 30px; opacity: 1;}
+    100% {bottom: 0; opacity: 0;}
+}
+
 // -- Home --
 
 header, footer {
@@ -1090,11 +1113,6 @@ footer {
                 cursor: default;
             }
         }
-        .admin-carousel-upload {
-            input[type="file"] {
-                display: none;
-            }
-        }
     }
     .admin-carousel-savecancel-btns {
         display: flex;
@@ -1114,28 +1132,16 @@ footer {
         font-weight: bold;
         border-radius: 5px;
     }
+
     #admin-carousel-snackbar {
-        visibility: hidden;
-        position: fixed;
-        bottom: 30px;
-        left: 50%;
         background-color: green;
         box-shadow: 0 4px 8px rgba($color: green, $alpha: 0.2);
-        color: white;
-        font-weight: bold;
-        padding: 10px 20px;
-        border-radius: 5px;
-
     }
-    #admin-carousel-snackbar.admin-carousel-snackbar-active {
-        visibility: visible;
-        animation: snackbar 3s;
+    #admin-carousel-snackbarerror {
+        background-color: red;
+        box-shadow: 0 4px 8px rgba($color: red, $alpha: 0.2);
     }
-    @keyframes snackbar {
-        0% {bottom: 0; opacity: 0;}
-        25% {bottom: 30px; opacity: 1;}
-        75% {bottom: 30px; opacity: 1;}
-        100% {bottom: 0; opacity: 0;}
+    #admin-carousel-upload-image {
+        display: none;
     }
-
 }
