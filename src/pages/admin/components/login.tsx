@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Logo from "../../home/components/Logo";
+import Snackbar, { SnackbarTime, SnackbarStyles } from "../../../components/Snackbar";
+
+import { useIsFirstRender } from "../../Utils";
 
 export default ({ error } : { error? :string}) => {
-    const loginError = () => {
-        if(!error)
-            return <span></span>;
-        return <span className="admin-login-error">{error}</span>;
-    }
+    const [errorSnackbarActive, setErrorSnackbarActive] = useState<boolean>(false);
+    const isFirstRender = useIsFirstRender();
+    useEffect(()=> {
+        if (isFirstRender && error) {
+            setErrorSnackbarActive(true);
+            setTimeout(() => setErrorSnackbarActive(false),SnackbarTime);
+        }
+    },[]);
     return (
         <div className="admin-login-container">
             <div className="admin-login-content">
@@ -15,10 +21,10 @@ export default ({ error } : { error? :string}) => {
                     <input type="text" placeholder="Usuario" name="username" required/>
                     <input type="password" placeholder="Contraseña" name="password" required/>
                     <button className="main-btn" type="submit">ENTRAR</button>
-                    {loginError()}
                 </form>
             </div>
             <a href="/"><button className="admin-login-backbtn">VOLVER</button></a>
+            <Snackbar type={SnackbarStyles.ERROR} message={error || ""} isActive={errorSnackbarActive} />
         </div>
     );
 }

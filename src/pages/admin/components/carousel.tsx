@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Tooltip from "../../home/components/Tooltip";
 import { TCarouselItem } from "../../../components/carousel";
-import Snackbar, {SnackbarTime} from "../../../components/Snackbar";
+import Snackbar, {SnackbarTime, SnackbarStyles} from "../../../components/Snackbar";
 
 import AddIcon from "../../../assets/icons/baseline-add.svg";
 import ArrowIcon from "../../../assets/icons/arrow_left-24px.svg";
@@ -173,8 +173,8 @@ export default ( { sourceCarouselItems } :CarouselProps ) => {
                 {renderCarouselItems()}
             </ul>
             { hasAnyChangesFlag && <div className="admin-carousel-savecancel-btns"><button className="main-btn" onClick={submitCarouselItems}>GUARDAR CAMBIOS</button><button className="cancel-btn" onClick={cancelChanges}>CANCELAR</button></div>}
-            <Snackbar id="admin-carousel-snackbar" message="Se han guardado los cambios" isActive={snackbarActive} />
-            <Snackbar id="admin-carousel-snackbarerror" message="Hubo un error, por favor recarga la pagina." isActive={snackbarErrorActive} />
+            <Snackbar type={SnackbarStyles.SUCCESS} message="Se han guardado los cambios" isActive={snackbarActive} />
+            <Snackbar type={SnackbarStyles.ERROR} message="Hubo un error, por favor recarga la pagina." isActive={snackbarErrorActive} />
             <input type="file" id={"admin-carousel-upload-image"} onChange={uploadImageOnChange} />
        </div>
    );

@@ -163,6 +163,7 @@ body {
     position: fixed;
     bottom: 30px;
     left: 50%;
+    transform: translateX(-50%);
     background-color: $main-blue;
     box-shadow: 0 4px 8px rgba($color: $main-blue, $alpha: 0.2);
     color: white;
@@ -173,6 +174,14 @@ body {
 .snackbar-active {
     visibility: visible;
     animation: snackbar 3s;
+}
+.snackbar-success {
+    background-color: green;
+    box-shadow: 0 4px 8px rgba($color: green, $alpha: 0.2);
+}
+.snackbar-error {
+    background-color: red;
+    box-shadow: 0 4px 8px rgba($color: red, $alpha: 0.2);
 }
 @keyframes snackbar {
     0% {bottom: 0; opacity: 0;}
@@ -1132,16 +1141,17 @@ footer {
         font-weight: bold;
         border-radius: 5px;
     }
-
-    #admin-carousel-snackbar {
-        background-color: green;
-        box-shadow: 0 4px 8px rgba($color: green, $alpha: 0.2);
-    }
-    #admin-carousel-snackbarerror {
-        background-color: red;
-        box-shadow: 0 4px 8px rgba($color: red, $alpha: 0.2);
-    }
     #admin-carousel-upload-image {
         display: none;
+    }
+}
+
+.admin-products-container {
+    display: flex;
+    flex-direction: column;
+    width: 92%;
+    .paginator {
+        display: flex;
+        justify-content: center;
     }
 }

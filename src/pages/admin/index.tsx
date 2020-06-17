@@ -1,6 +1,7 @@
 import React from "react";
 
 import CarouselPage, { CarouselProps } from "./components/carousel";
+import ProductsPage, { ProductsProps } from "./components/products";
 
 import ExitIcon from "../../assets/icons/baseline-exit_to_app.svg";
 import CarouselIcon from "../../assets/icons/collections-24px.svg";
@@ -29,7 +30,7 @@ export default ( { section, ...props } : { section? :string }) => {
                         switch (section) {
                             case "productos":
                             case undefined:
-                                return <div>Products</div>;
+                                return <ProductsPage {...props as ProductsProps} />;
                             case "carousel":
                                 return <CarouselPage {...props as CarouselProps} />;
                             case "categorias":
