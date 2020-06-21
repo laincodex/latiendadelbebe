@@ -19,7 +19,7 @@ import AdminPage from "./pages/admin";
 import AdminLogin from "./pages/admin/components/login";
 
 import * as Carousel from "./components/carousel";
-
+import * as Products from "./components/products";
 
 const database = openDatabase({
     filename: "database.db",
@@ -32,10 +32,9 @@ app.use(express.static("public"));
 app.use(express.urlencoded({extended: true}));
 app.set("jwt-secret", "6x7fSQ7z6JXDDfBa6Lrdozrd9rHK");
 
-//app.use(file.Upload());
-
 // const
 const carouselImagesTmpPath = __dirname + "/public/upload/carousel/tmp";
+const ADMIN_PRODUCTS_PER_PAGE = 10;
 
 app.get("/", (req, res) => {
     res.send(HtmlTemplate({
@@ -125,11 +124,30 @@ const renderAdminTemplate = (props :any, res :Response) => {
 
 app.get("/admin", adminOnly ,(req :Request, res :Response) => res.redirect("/admin/productos"));
 
-app.get("/admin/productos", adminOnly, (req :Request, res :Response) => {
-    const props = {
-        section: "productos"
-    };
-    renderAdminTemplate(props, res);
+app.get("/admin/productos(/page?/:page?)?", adminOnly, async (req :Request, res :Response) => {
+    try {
+        const db :Database = await database;
+        const productsCount :number = await Products.getProductsCount(db);
+
+        let requestedPage = parseInt(req.params.page, 10);
+        requestedPage = isNaN(requestedPage) ? 1 : requestedPage;
+        if (requestedPage < 1) 
+            throw("Incorrect number of page");
+            
+        // in case productsCount is 10 then it should return 1 page, so we need to divide by 9 instead of 10
+        // and if productsCount is less than 10, we should return 1 page too
+        const productsPageCount :number = Math.floor(productsCount / (ADMIN_PRODUCTS_PER_PAGE -1)) + 1;
+        const products :Products.TProduct[] = await Products.getProducts(db, ADMIN_PRODUCTS_PER_PAGE, (requestedPage - 1) * ADMIN_PRODUCTS_PER_PAGE);
+        const featuredProducts :Products.TProduct[] = await Products.getFeaturedProducts(db);
+        const props = {
+            section: "productos",
+            products: products,
+            featuredProducts: featuredProducts,
+            productsPageCount: productsPageCount,
+            currentPage: requestedPage
+        };
+        renderAdminTemplate(props, res);
+    } catch (err) { console.log("error"); res.status(500).send(err); }
 });
 
 app.get("/admin/carousel", adminOnly, async (req :Request, res :Response) => {

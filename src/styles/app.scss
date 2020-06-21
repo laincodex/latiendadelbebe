@@ -74,6 +74,7 @@ body {
         position: absolute;
         transition: visibility 0.3s linear, opacity 0.3s ease-in-out;
         box-shadow: 2px 2px 8px rgba($color: #000000, $alpha: 0.2);
+        text-align: center;
     }
     &:hover .tooltip-text {
         opacity: 1;
@@ -1037,26 +1038,28 @@ footer {
     min-width: 600px;
 }
 
-.admin-carousel-container {
-    display: flex;
-    flex-direction: column;
-    width: 92%;
+.admin-nav-add {
+    background-color: white;
+    border-radius: 7px;
+    height: 40px;
+    transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    margin-bottom: 10px;
     svg {
         width: 24px;
         height: 24px;
     }
-    .admin-carousel-add {
-        background-color: white;
-        border-radius: 7px;
-        height: 40px;
-        transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        &:hover {
-            cursor: pointer;
-            color: white;
-            background-color: $main-blue;
-            box-shadow: 0 4px 8px rgba($color: $main-blue, $alpha: 0.5);
-        }
+    &:hover {
+        cursor: pointer;
+        color: white;
+        background-color: $main-blue;
+        box-shadow: 0 4px 8px rgba($color: $main-blue, $alpha: 0.5);
     }
+}
+
+.admin-carousel-container {
+    display: flex;
+    flex-direction: column;
+    width: 92%;
     .admin-carousel-content {
         list-style-type: none;
         display: flex;
@@ -1150,8 +1153,79 @@ footer {
     display: flex;
     flex-direction: column;
     width: 92%;
+    &>ul {
+        margin-bottom: 50px;
+    }
     .paginator {
         display: flex;
         justify-content: center;
+    }
+    .admin-product-item {
+        background-color: white;
+        border-radius: 12px;
+        margin-top: 20px;
+        list-style-type: none;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        transition: transform 0.3s ease-in-out;
+        &:hover {
+            transform: scale(1.02,1.02);
+        }
+        .admin-product-data {
+            display: flex;
+            width: calc(100% - 100px); // actions width
+            padding: 20px 0;
+            &:hover {
+                cursor: pointer;
+            }
+        }
+        .admin-product-description {
+            width: 70%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #777;
+        }
+        .admin-product-title {
+            font-weight: bold;
+            width: 20%;
+            display: flex;
+            font-size: 18px;
+
+        }
+        .admin-product-date {
+            width: 10%;
+            display: flex;
+            justify-content: center;
+            color: #777;
+        }
+    }
+    .admin-product-item-actions {
+        list-style-type: none;
+        display: flex;
+        justify-content: space-around;
+        width: 100px;
+    }
+    .admin-product-star-active {
+        color: #FFB629;
+        &:hover {
+            color: #C4C4C4;
+            cursor: pointer;
+        }
+    }
+    .admin-product-star {
+        color: #C4C4C4;
+        &:hover {
+            color: #FFB629;
+            cursor: pointer;
+        }
+    }
+    .admin-product-remove-icon {
+        transition: color 0.3s ease-in-out;
+        &:hover {
+            color: red;
+            cursor: pointer;
+        }
     }
 }

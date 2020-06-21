@@ -14,7 +14,7 @@ export interface CarouselProps {
 
 export default ( { sourceCarouselItems } :CarouselProps ) => {
     const tooltipStyle :React.CSSProperties = {
-        width: 85,
+        width: 95,
         marginTop: 30,
         fontSize: 14
     }
@@ -166,7 +166,7 @@ export default ( { sourceCarouselItems } :CarouselProps ) => {
 
     return (
        <div className="admin-carousel-container">
-            <div className="admin-carousel-add">
+            <div className="admin-nav-add">
                 <Tooltip title="Agregar un nuevo item al carousel" style={{marginTop: 35}} onClick={addCarouselItem}><AddIcon /></Tooltip>
             </div>
             <ul className="admin-carousel-content">
