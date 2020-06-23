@@ -8,27 +8,39 @@ import Tooltip from "../../home/components/Tooltip";
 import StarIcon from "../../../assets/icons/star-24px.svg";
 import RemoveIcon from "../../../assets/icons/remove_circle-24px.svg";
 import AddIcon from "../../../assets/icons/baseline-add.svg";
+import SearchIcon from "../../../assets/icons/search-24px.svg";
+import ArrowIcon from "../../../assets/icons/arrow_back-24px.svg";
 
 export interface ProductsProps {
     products :TProduct[],
     featuredProducts :TProduct[],
     productsPageCount : number,
-    currentPage :number
+    currentPage :number,
+    searchName :string,
+    filter :string
 }
-export default ({products, featuredProducts, productsPageCount, currentPage} : ProductsProps)  => {
+export default ({products, featuredProducts, productsPageCount, currentPage, searchName, filter} : ProductsProps)  => {
     const renderFeaturedProducts = () :JSX.Element[] => {
         const renderedProducts :JSX.Element[] = [];
-        featuredProducts.forEach( (product, index) => {
-            renderedProducts.push(renderProductItem(product, index));
-        });
+        if (featuredProducts.length > 0) {
+            featuredProducts.forEach( (product, index) => {
+                renderedProducts.push(renderProductItem(product, index));
+            });
+        } else {
+            renderedProducts.push(<li key={0} className="admin-product-empty">No hay ning&uacute;n producto destacado.</li>)
+        }
         return renderedProducts;
     };
     
     const renderProducts = () :JSX.Element[] => {
         const renderedProducts :JSX.Element[] = [];
-        products.forEach((product, index) => {
-            renderedProducts.push(renderProductItem(product, index));
-        });
+        if(products.length > 0) {
+            products.forEach((product, index) => {
+                renderedProducts.push(renderProductItem(product, index));
+            });
+        } else {
+            renderedProducts.push(<li key={0} className="admin-product-empty">No hay ning&uacute;n producto, a&ntilde;ade uno.</li>)
+        }
         return renderedProducts;
     }
     
@@ -53,7 +65,7 @@ export default ({products, featuredProducts, productsPageCount, currentPage} : P
     };
 
     const goToPage = (page :number) => () => {
-        document.location.href = "/admin/productos/page/" + page;
+        document.location.href = "/admin/productos/page/" + page + document.location.search;
     }
 
     const addProduct = () => {
@@ -64,14 +76,6 @@ export default ({products, featuredProducts, productsPageCount, currentPage} : P
         (document.getElementById("admin-products-search") as HTMLFormElement).submit();
     }
 
-    if (products.length <= 0)
-        return (
-            <div className="admin-products-empty">
-                <span>No hay ningun producto, añade uno.</span>
-                <button className="admin-circle-add-btn" />
-            </div>
-        );
-
     return (
         <div className="admin-products-container">
             <div className="admin-nav-add">
@@ -81,10 +85,15 @@ export default ({products, featuredProducts, productsPageCount, currentPage} : P
             <ul>{renderFeaturedProducts()}</ul>
             <SectionTitle title="TODOS" />
             <div className="admin-products-search-nav">
-                <form className="admin-products-search" id="admin-products-search">
-                    <input type="text" name="name" id="admin-products-search"/>
-                    <button type="submit">S</button>
-                    <select name="filter" id="admin-products-date-filter" onChange={submitSearchForm}>
+                <form className="admin-products-search-form" id="admin-products-search">
+                    <div className="admin-products-search-input">
+                        <div className="admin-products-search-input-bar">
+                            <SearchIcon />
+                            <input type="text" name="name" id="admin-products-search" defaultValue={searchName} placeholder="Ingrese nombre a buscar"/>
+                        </div>
+                        <button type="submit"><ArrowIcon className="rotate-180" /></button>
+                    </div>
+                    <select name="filter" className="main-select admin-products-date-filter" defaultValue={filter} onChange={submitSearchForm}>
                         <option value="recent">Fecha de ingreso (m&aacute;s reciente)</option>
                         <option value="older">Fecha de ingreso (m&aacute;s antiguo)</option>
                         <option value="nostock">Sin stock</option>

@@ -4,7 +4,7 @@ import Snackbar, { SnackbarTime, SnackbarStyles } from "../../../components/Snac
 
 import { useIsFirstRender } from "../../Utils";
 
-export default ({ error } : { error? :string}) => {
+export default ({ error, refUrl } : { error? :string, refUrl :string}) => {
     const [errorSnackbarActive, setErrorSnackbarActive] = useState<boolean>(false);
     const isFirstRender = useIsFirstRender();
     useEffect(()=> {
@@ -17,7 +17,7 @@ export default ({ error } : { error? :string}) => {
         <div className="admin-login-container">
             <div className="admin-login-content">
                 <Logo />
-                <form method="POST" action="/admin/login">
+                <form method="POST" action={"/admin/login?ref=" + escape(refUrl)}>
                     <input type="text" placeholder="Usuario" name="username" required/>
                     <input type="password" placeholder="Contraseña" name="password" required/>
                     <button className="main-btn" type="submit">ENTRAR</button>

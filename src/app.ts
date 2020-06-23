@@ -21,6 +21,8 @@ import AdminLogin from "./pages/admin/components/login";
 import * as Carousel from "./components/carousel";
 import * as Products from "./components/products";
 
+import { getRefUrl, StringUtils } from "./pages/Utils";
+
 const database = openDatabase({
     filename: "database.db",
     driver: sqlite3.Database
@@ -61,30 +63,36 @@ const adminOnly = (req :Request, res :Response, next :NextFunction) => {
     if (token) {
         jwt.verify(token, app.get("jwt-secret"), (err :any) => {
             if (err) {
-                res.clearCookie("token").status(401).redirect("/admin/login");
+                res.clearCookie("token").status(401).redirect("/admin/login?ref=" + escape(req.url));
             } else {
                 next();
             }
         }); 
     } else {
-        res.clearCookie("token").status(401).redirect("/admin/login");
+        res.clearCookie("token").status(401).redirect("/admin/login?ref=" + escape(req.url));
     }
 }
 
 app.get("/admin/login", (req :Request, res :Response) => {
     const token = req.cookies.token;
+    const refUrl = getRefUrl(req, "/admin");
     if (!token) {
+        const props = {
+            error: undefined,
+            refUrl: refUrl
+        };
         res.send(HtmlTemplate({
-            content: renderToString(React.createElement(AdminLogin)),
-            props: '""',
+            content: renderToString(React.createElement(AdminLogin, props)),
+            props: JSON.stringify(props),
             head: "<title>La Tienda del BEBE - Panel del administrador - Login</title>"
         }));
     } else {
-        res.redirect("/admin");
+        res.redirect(refUrl);
     }
 });
 
 app.post("/admin/login", (req :Request, res :Response) => {
+    const refUrl = getRefUrl(req, "/admin");
     if(req.body.username == "admin" && req.body.password == "admin") {
         const token = jwt.sign( {username: "admin"}, app.get("jwt-secret"), {
             algorithm: "HS256",
@@ -95,11 +103,12 @@ app.post("/admin/login", (req :Request, res :Response) => {
             sameSite: true,
             //secure: true,
             maxAge: 3600*1000
-        })
-        res.redirect("/admin");
+        });
+        res.redirect(refUrl);
     } else {
         let props = {
-            error: "Usuario y/o contraseña incorrectos."
+            error: "Usuario y/o contraseña incorrectos.",
+            refUrl: refUrl
         };
         res.send(HtmlTemplate({
             content: renderToString(React.createElement(AdminLogin, props)),
@@ -126,28 +135,33 @@ app.get("/admin", adminOnly ,(req :Request, res :Response) => res.redirect("/adm
 
 app.get("/admin/productos(/page?/:page?)?", adminOnly, async (req :Request, res :Response) => {
     try {
+        const searchName = StringUtils.sanitizeString(req.query.name as string);
+        const filter = StringUtils.sanitizeString(req.query.filter as string);
+
         const db :Database = await database;
-        const productsCount :number = await Products.getProductsCount(db);
 
         let requestedPage = parseInt(req.params.page, 10);
         requestedPage = isNaN(requestedPage) ? 1 : requestedPage;
         if (requestedPage < 1) 
             throw("Incorrect number of page");
-            
+
         // in case productsCount is 10 then it should return 1 page, so we need to divide by 9 instead of 10
         // and if productsCount is less than 10, we should return 1 page too
+        const productsCount :number = await Products.getProductsCount(db, searchName, filter);
         const productsPageCount :number = Math.floor(productsCount / (ADMIN_PRODUCTS_PER_PAGE -1)) + 1;
-        const products :Products.TProduct[] = await Products.getProducts(db, ADMIN_PRODUCTS_PER_PAGE, (requestedPage - 1) * ADMIN_PRODUCTS_PER_PAGE);
+        const products :Products.TProduct[] = await Products.getProducts(db, searchName, filter, ADMIN_PRODUCTS_PER_PAGE, (requestedPage - 1) * ADMIN_PRODUCTS_PER_PAGE);
         const featuredProducts :Products.TProduct[] = await Products.getFeaturedProducts(db);
         const props = {
             section: "productos",
             products: products,
             featuredProducts: featuredProducts,
             productsPageCount: productsPageCount,
-            currentPage: requestedPage
+            currentPage: requestedPage,
+            searchName: searchName,
+            filter: filter
         };
         renderAdminTemplate(props, res);
-    } catch (err) { console.log("error"); res.status(500).send(err); }
+    } catch (err) { console.log(err); res.status(500).send(err); }
 });
 
 app.get("/admin/carousel", adminOnly, async (req :Request, res :Response) => {
