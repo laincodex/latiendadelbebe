@@ -8,7 +8,8 @@ export interface TProduct {
     date :number,
     categories :number[],
     available :boolean,
-    is_featured :boolean
+    is_featured :boolean,
+    primary_image_id :number
 };
 
 const getFilterSql = (filter :string ) :string => {
@@ -19,26 +20,59 @@ const getFilterSql = (filter :string ) :string => {
             return 'ORDER BY date ASC';
         case 'nostock':
             return 'AND available = false ORDER BY id ASC';
+        case 'titledesc':
+            return 'ORDER BY title DESC';
+        case 'titleasc':
         default:
-            return 'ORDER BY id ASC';
+            return 'ORDER BY title ASC';
     }
-}
+};
+
+export const getProductDetail = async (database :Database, id :number) :Promise<TProduct|undefined> => {
+    const sql = 'SELECT id, title, description, date, categories, available, is_featured, primary_image_id from products WHERE id = ?';
+    return await database.get(sql, id);
+};
 
 export const getProducts = async (database :Database, searchName :string, filter :string, limit :number = 10, from :number = 0) :Promise<TProduct[]> => {
     // this implementation is better performant than using offset
     let searchNameSql = searchName ? "title LIKE '%" + searchName + "%' AND " : '';
     const filterSql = getFilterSql(filter);
-    let sql = `select id, title, description, date, categories, available, is_featured from products where ${searchNameSql}oid not in ( select oid from products order by id asc limit ${from}) ${filterSql} limit ${limit}`;
+    let sql = `select id, title, description, date, categories, available, is_featured, primary_image_id from products where ${searchNameSql}oid not in ( select oid from products order by id asc limit ${from}) ${filterSql} limit ${limit}`;
     //console.log("executing query: \n", sql);
     return await database.all(sql);
 };
 
 export const getFeaturedProducts = async (database :Database) :Promise<TProduct[]> => {
-    return await database.all("select * from products where products.is_featured = true;");
+    return await database.all("select id, title, description, date, categories, available, is_featured, primary_image_id from products where products.is_featured = true;");
 };
 
 export const getProductsCount = async (database :Database, searchName :string, filter :string) :Promise<number> => {
     const filterSql = getFilterSql(filter);
-    let sql = `select count(*) as count from products${searchName ? " where title LIKE '%" + searchName + "%'" : ' where 1=1'} ${filterSql};`
+    let sql = `select count(oid) as count from products${searchName ? " where title LIKE '%" + searchName + "%'" : ' where 1=1'} ${filterSql};`;
     return (await database.get(sql)).count || 0;
+};
+
+export const updateProduct = async (database :Database, id :number, fields :any) => {
+    const updateSql :string[] = [];
+    const productInterface = ["title", "description", "date", "categories", "available", "is_featured"];
+    productInterface.forEach(f => {
+        if (typeof fields[f] != 'undefined')
+            updateSql.push(f + ' = ' + fields[f]);
+    });
+    if (updateSql.length == 0)
+        throw("Empty fields body, cannot update" + id);
+    let sql = `UPDATE products SET ${updateSql.join(',')} WHERE id = ?;`;
+    return await database.run(sql, id);
+};
+
+export const deleteProduct = async (database :Database, id :number) => {
+    const sql = 'DELETE FROM products WHERE id = ?';
+    return await database.run(sql, id);
+};
+
+
+export interface TProductImages {
+    id :number,
+    product_id :number,
+    image_url :string
 };

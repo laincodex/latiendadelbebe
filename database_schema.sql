@@ -12,7 +12,8 @@ create table products (
     date integer not null,
     categories varchar not null,
     available boolean not null,
-    is_featured boolean not null
+    is_featured boolean not null,
+    primary_image_id integer not null
 );
 
 create table categories (
@@ -21,11 +22,9 @@ create table categories (
 );
 
 create table product_images (
-    id integer primary key,
+    id integer primary key autoincrement,
     product_id integer not null,
-    image_full varchar null,
-    thumbnail varchar null, 
-    thumbnail_preview varchar null
+    image_url varchar null
 );
 
 create table carousel (
@@ -42,17 +41,30 @@ insert into carousel(image_url, label) values('carousel_1.png', 'Tenemos todo pa
 insert into carousel(image_url, label) values('carousel_2.png', 'Y para ellas');
 insert into carousel_positions(id) values('2'), ('1');
 
-insert into products(title, description, date, categories, available, is_featured) values
-    ('Producto 1', '1 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', 'now'), "[1,2]", true, false),
-    ('Producto 2', '2 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', 'now'), "[1,3]",true, false),
-    ('Producto 3', '3 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', 'now'), "[2,3]",true, true),
-    ('Producto 4', '4 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', 'now'), "[4]",false, true),
-    ('Producto 5', '5 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', 'now'), "[5]",false, false),
-    ('Producto 6', '6 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', 'now'), "[5]",false, false),
-    ('Producto 7', '7 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', 'now'), "[5]",false, false),
-    ('Producto 8', '8 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', 'now'), "[5]",false, false),
-    ('Producto 9', '9 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', 'now'), "[5]",false, false),
-    ('Producto 10', '10 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', 'now'), "[5]",false, false),
-    ('Producto 11', '11 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', 'now'), "[5]",false, false);
+insert into products(title, description, date, categories, available, is_featured, primary_image_id) values
+    ('Producto 1', '1 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', '2020-06-18'), "[1,2]", true, false, '1'),
+    ('Producto 2', '2 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', '2020-06-20'), "[1,3]",true, false, '2'),
+    ('Producto 3', '3 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', '2020-06-21'), "[2,3]",true, true, '3'),
+    ('Producto 4', '4 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', '2020-06-21'), "[4]",false, true, '4'),
+    ('Producto 5', '5 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', '2020-06-21'), "[5]",false, false, '5'),
+    ('Producto 6', '6 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', '2020-06-21'), "[5]",false, false, '6'),
+    ('Producto 7', '7 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', '2020-06-21'), "[5]",false, false, '7'),
+    ('Producto 8', '8 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', '2020-06-21'), "[5]",false, false, '8'),
+    ('Producto 9', '9 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', '2020-06-21'), "[5]",false, false, '9'),
+    ('Producto 10', '10 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', '2020-06-21'), "[5]",false, false, '10'),
+    ('Producto 11', '11 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', '2020-06-21'), "[5]",false, false, '11');
 
 insert into categories(name) values ("Remeras"), ("Conjuntos"), ("Buzos"), ("Zapatillas"), ("Accesorios");
+
+insert into product_images(product_id, image_url) values 
+    ('1', 'product-1.jpg'),
+    ('2', 'product-2.jpg'),
+    ('3', 'product-1.jpg'),
+    ('4', 'product-2.jpg'),
+    ('5', 'product-1.jpg'),
+    ('6', 'product-2.jpg'),
+    ('7', 'product-1.jpg'),
+    ('8', 'product-2.jpg'),
+    ('9', 'product-1.jpg'),
+    ('10', 'product-2.jpg'),
+    ('11', 'product-1.jpg');

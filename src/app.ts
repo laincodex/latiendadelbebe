@@ -133,6 +133,24 @@ const renderAdminTemplate = (props :any, res :Response) => {
 
 app.get("/admin", adminOnly ,(req :Request, res :Response) => res.redirect("/admin/productos"));
 
+app.get("/admin/productos/:productId", adminOnly, async (req :Request, res :Response) => {
+    try {
+        const db :Database = await database;
+        const id = parseInt(req.params.productId, 10);
+        if (!isNaN(id)) {
+            const product :Products.TProduct | undefined = await Products.getProductDetail(db, id);
+            if (typeof product === 'undefined')
+                throw("Product not found");
+            const props = {
+                section: "productDetail",
+                product: product,
+                refUrl: getRefUrl(req, "/admin/productos")
+            };
+            renderAdminTemplate(props, res);
+        } else res.sendStatus(400);
+    } catch (err) { console.log(err); res.status(500).send(err); }
+});
+
 app.get("/admin/productos(/page?/:page?)?", adminOnly, async (req :Request, res :Response) => {
     try {
         const searchName = StringUtils.sanitizeString(req.query.name as string);
@@ -143,16 +161,15 @@ app.get("/admin/productos(/page?/:page?)?", adminOnly, async (req :Request, res 
         let requestedPage = parseInt(req.params.page, 10);
         requestedPage = isNaN(requestedPage) ? 1 : requestedPage;
         if (requestedPage < 1) 
-            throw("Incorrect number of page");
+            throw("Page number should be higher than 0");
 
-        // in case productsCount is 10 then it should return 1 page, so we need to divide by 9 instead of 10
-        // and if productsCount is less than 10, we should return 1 page too
         const productsCount :number = await Products.getProductsCount(db, searchName, filter);
-        const productsPageCount :number = Math.floor(productsCount / (ADMIN_PRODUCTS_PER_PAGE -1)) + 1;
+        const productsPageCount :number = Math.ceil(productsCount / ADMIN_PRODUCTS_PER_PAGE);
+        requestedPage = (requestedPage > productsPageCount) ? productsPageCount : requestedPage; // cap requested page to max page
         const products :Products.TProduct[] = await Products.getProducts(db, searchName, filter, ADMIN_PRODUCTS_PER_PAGE, (requestedPage - 1) * ADMIN_PRODUCTS_PER_PAGE);
         const featuredProducts :Products.TProduct[] = await Products.getFeaturedProducts(db);
         const props = {
-            section: "productos",
+            section: "products",
             products: products,
             featuredProducts: featuredProducts,
             productsPageCount: productsPageCount,
@@ -161,6 +178,33 @@ app.get("/admin/productos(/page?/:page?)?", adminOnly, async (req :Request, res 
             filter: filter
         };
         renderAdminTemplate(props, res);
+    } catch (err) { console.log(err); res.status(500).send(err); }
+});
+
+app.put("/admin/productos/:productId", adminOnly, express.json(), async (req :Request, res :Response) => {
+    try {
+        const db :Database = await database;
+        const id = parseInt(req.params.productId, 10);
+        const product = req.body;
+        if (!isNaN(id) && product) {
+            await Products.updateProduct(db, id, product);
+            res.sendStatus(200);
+        } else {
+            res.sendStatus(400);
+        }
+    } catch (err) { console.log(err); res.status(500).send(err); }
+});
+
+app.delete("/admin/productos/:productId", adminOnly, async (req :Request, res :Response) => {
+    try {
+        const db :Database = await database;
+        const id = parseInt(req.params.productId, 10);
+        if (!isNaN(id)) {
+            await Products.deleteProduct(db, id);
+            res.sendStatus(200);
+        } else {
+            res.sendStatus(400);
+        }
     } catch (err) { console.log(err); res.status(500).send(err); }
 });
 
