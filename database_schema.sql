@@ -52,12 +52,14 @@ insert into products(title, description, date, categories, available, is_feature
     ('Producto 8', '8 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', '2020-06-21'), "[5]",false, false, '8'),
     ('Producto 9', '9 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', '2020-06-21'), "[5]",false, false, '9'),
     ('Producto 10', '10 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', '2020-06-21'), "[5]",false, false, '10'),
-    ('Producto 11', '11 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', '2020-06-21'), "[5]",false, false, '11');
+    ('Producto 11', '11 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', '2020-06-21'), "[5]",false, false, '11'),
+    ('Producto 12', '12 - Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper', strftime('%s', '2020-06-26'), "[1,2,3,4,5]",false, false, '11');
 
 insert into categories(name) values ("Remeras"), ("Conjuntos"), ("Buzos"), ("Zapatillas"), ("Accesorios");
 
 insert into product_images(product_id, image_url) values 
     ('1', 'product-1.jpg'),
+    ('1', 'product-2.jpg'),
     ('2', 'product-2.jpg'),
     ('3', 'product-1.jpg'),
     ('4', 'product-2.jpg'),

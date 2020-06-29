@@ -139,11 +139,15 @@ app.get("/admin/productos/:productId", adminOnly, async (req :Request, res :Resp
         const id = parseInt(req.params.productId, 10);
         if (!isNaN(id)) {
             const product :Products.TProduct | undefined = await Products.getProductDetail(db, id);
+            const productImages : Products.TProductImage[] = await Products.getProductImages(db, id);
+            const categories : Products.TCategory[] = await Products.getCategories(db);
             if (typeof product === 'undefined')
                 throw("Product not found");
             const props = {
                 section: "productDetail",
                 product: product,
+                productImages: productImages,
+                categories: categories,
                 refUrl: getRefUrl(req, "/admin/productos")
             };
             renderAdminTemplate(props, res);

@@ -63,7 +63,7 @@ export default ({selectedProduct, productOverlayOpen, closeProductOverlay} :
                     key={i} 
                     className={(i == currentPhoto) ? "product-overlay-thumbnails-active" : ""}
                     style={{
-                        backgroundImage: `url("/upload/products/${selectedProduct.id}/thumbnails/${thumbnailsData[i-1]}")` 
+                        backgroundImage: `url("/upload/products/${selectedProduct.id}/thumb_${thumbnailsData[i-1]}")` 
                     }}
                     onClick={goToImage(i)}
                 ></li>

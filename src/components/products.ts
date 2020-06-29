@@ -6,7 +6,7 @@ export interface TProduct {
     title :string,
     description :string,
     date :number,
-    categories :number[],
+    categories :string,
     available :boolean,
     is_featured :boolean,
     primary_image_id :number
@@ -66,13 +66,25 @@ export const updateProduct = async (database :Database, id :number, fields :any)
 };
 
 export const deleteProduct = async (database :Database, id :number) => {
-    const sql = 'DELETE FROM products WHERE id = ?';
+    const sql = 'DELETE FROM products WHERE id = ?;';
     return await database.run(sql, id);
 };
 
-
-export interface TProductImages {
+export interface TProductImage {
     id :number,
-    product_id :number,
     image_url :string
+};
+
+export const getProductImages = async (database :Database, id :number) :Promise<TProductImage[]> => {
+    const sql = 'SELECT id, image_url FROM product_images WHERE product_id = ?;';
+    return await database.all(sql, id);
+};
+
+export interface TCategory {
+    id :number,
+    name :string
+};
+export const getCategories = async (database :Database) :Promise<TCategory[]> => {
+    const sql = 'SELECT id, name FROM categories;';
+    return await database.all(sql);
 };
