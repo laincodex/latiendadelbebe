@@ -68,5 +68,5 @@ module.exports = {
         ignoreOrder: false, // Enable to remove warnings about conflicting order
         }),
     ],
-    externals: ["utf-8-validate", "bufferutil", "uws", {express: 'commonjs express'}, {sqlite3: 'commonjs sqlite3'}]
+    externals: ["utf-8-validate", "bufferutil", "uws", {express: 'commonjs express'}, {sqlite3: 'commonjs sqlite3'}, {sharp: 'commonjs sharp'}]
 }

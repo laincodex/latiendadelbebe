@@ -3,6 +3,7 @@
     "build": "gulp build",
     "deploy": "NODE_ENV=production gulp build",
     "deploy-win": "set NODE_ENV=production&& gulp build",
+    "deploy-docker": "set NODE_ENV=production gulp deploydocker",
     "buildjs": "gulp buildjs",
     "buildreact": "gulp buildreact",
     "dev": "gulp dev",
@@ -16,7 +17,8 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
-    "sqlite": "^4.0.10",
+    "sharp": "^0.25.4",
+    "sqlite": "^4.0.11",
     "sqlite3": "^4.2.0"
   },
   "devDependencies": {
@@ -29,6 +31,7 @@
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.7",
     "@types/react-router-dom": "^5.1.5",
+    "@types/sharp": "^0.25.0",
     "@types/sqlite3": "^3.1.6",
     "awesome-typescript-loader": "^5.2.1",
     "css-loader": "^3.5.3",

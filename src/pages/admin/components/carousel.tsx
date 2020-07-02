@@ -162,7 +162,7 @@ export default ( { sourceCarouselItems } :CarouselProps ) => {
     const activeErrorSnackbar = () => {
         setSnackbarErrorActive(true);
         setTimeout(() => setSnackbarErrorActive(false), SnackbarTime);
-    }
+    };
 
     return (
        <div className="admin-carousel-container">

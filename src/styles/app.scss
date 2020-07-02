@@ -1107,7 +1107,6 @@ footer {
     }
     .admin-panel-sectionactive a {
         color: $main-blue;
-        cursor: default;
     }
     .admin-panel-exit {
         margin-top: 20px;
@@ -1384,9 +1383,11 @@ footer {
 
 .admin-product-star-active {
     color: #FFB629;
+    cursor: pointer;
 }
 .admin-product-star {
     color: #C4C4C4;
+    cursor: pointer;
 }
 
 .admin-product-detail-container {
@@ -1669,5 +1670,8 @@ footer {
         &:hover {
             box-shadow: 4px 8px 16px rgba($color: red, $alpha: 0.3);;
         }
+    }
+    #admin-product-upload-images {
+        display: none;
     }
 }

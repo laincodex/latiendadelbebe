@@ -35,11 +35,16 @@ async function server() {
     });
 }
 
+async function deploydocker() {
+    
+}
+
 // Switch these two if you don't need isomorphic rendering
 //exports.build = gulp.series(buildjs, buildreact);
 exports.build = buildreact;
 
 exports.dev = gulp.series(this.build, server, watch);
+exports.deploydocker = gulp.series(buildreact, deploydocker);
 exports.buildreact = buildreact;
 exports.buildjs = buildjs;
 exports.server = server;

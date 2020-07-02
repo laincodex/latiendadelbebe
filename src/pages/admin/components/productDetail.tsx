@@ -8,8 +8,8 @@ import StarIcon from "../../../assets/icons/star-24px.svg";
 import RemoveIcon from "../../../assets/icons/remove_circle-24px.svg";
 import AddIcon from "../../../assets/icons/baseline-add.svg";
 import CloseIcon from "../../../assets/icons/close.svg";
-import { title } from "process";
 import Overlay from "../../home/components/Overlay";
+import Snackbar, {SnackbarTime, SnackbarStyles} from "../../../components/Snackbar";
 
 export interface ProductDetailProps {
     product: TProduct,
@@ -22,6 +22,8 @@ export default ({ product, productImages, categories, refUrl } :ProductDetailPro
     const [productState, setProductState] = useState<TProduct>(product);
     const [productImagesState, setProductImagesState] = useState<TProductImage[]>(productImages);
     const [hasAnyChangesFlag, setHasAnyChangesFlag] = useState<boolean>(false);
+    const [snackbarActive, setSnackbarActive] = useState<boolean>(false);
+    const [snackbarErrorActive, setSnackbarErrorActive] = useState<boolean>(false);
     const [categoriesToAdd, setCategoriesToAdd] = useState<TCategory[]>([]);
     const [addCategoriesOverlay, setAddCategoriesOverlay] = useState<boolean>(false);
 
@@ -108,11 +110,22 @@ export default ({ product, productImages, categories, refUrl } :ProductDetailPro
     }
 
     const removeImage = (id :number) => () => {
-        const newProductImagesState = productImagesState.filter(i => i.id !== id);
-        productState.primary_image_id = newProductImagesState[0]?.id || 0;
-        setHasAnyChangesFlag(true);
-        setProductImagesState(newProductImagesState);
-        setProductState({...productState});
+        if (confirm("Estas seguro de borrar esta imagen?")) {
+            const newProductImagesState = productImagesState.filter(i => i.id !== id);
+            productState.primary_image_id = newProductImagesState[0]?.id || 0;
+            fetch(`/admin/productos/images/${id}/${productState.primary_image_id}`, {
+                method: 'DELETE',
+            }).then(res => {
+                if(res.ok) {
+                    setHasAnyChangesFlag(true);
+                    setProductImagesState(newProductImagesState);
+                    setProductState({...productState});
+                } else {
+                    console.log("error: ", res);
+                    activeErrorSnackbar();
+                }
+            }).catch(err => console.log(err));
+        }
     };
 
     const setPrimaryImage = (id :number) => () => {
@@ -145,7 +158,66 @@ export default ({ product, productImages, categories, refUrl } :ProductDetailPro
 
     const cancelChanges = () => {
         location.reload();
+    };
+
+    const removeProduct = () => {
+        if (confirm("Estas seguro de borrar el producto?")) {
+            fetch("/admin/productos/" + productState.id, {
+                method: "DELETE",
+            }).then(res => {
+                if (res.ok) {
+                    goBack();
+                } else {
+                    console.log("hubo un error");
+                    activeErrorSnackbar();
+                }
+            });
+        }
     }
+
+    const promptImagesUpload = (productId :number) => () => {
+        document.getElementById("admin-product-upload-images")?.click();
+    }
+
+    const uploadImagesOnChange = (ev :any) => {
+        const files :FileList = ev.target.files;
+        const data :FormData = new FormData();
+        for (let i = 0; i< files.length; i++) {
+            data.append('productImages', files[i]);
+        }
+        // we need to clear the input value to have onChange working correctly for newer uploads
+        (document.getElementById("admin-product-upload-images") as HTMLInputElement).value = "";
+
+        data.append('productId', product.id.toString());
+        fetch("/admin/productos/uploadImages", {
+            method: 'POST',
+            body: data
+        })  .then(res => res.json())
+            .then(res => {
+                if (res.images) {
+                    const images :TProductImage[] = res.images;
+                    const productImages = [...productImagesState];
+                    images.forEach(image => {
+                        productImages.push(image);
+                    });
+                    setProductImagesState(productImages);
+                }
+            })
+            .catch(err => {
+                activeErrorSnackbar();
+                console.log(err);
+            });
+    };
+
+    const activeSuccessSnackbar = () => {
+        setSnackbarActive(true);
+        setTimeout(() => setSnackbarActive(false), SnackbarTime);
+    };
+
+    const activeErrorSnackbar = () => {
+        setSnackbarErrorActive(true);
+        setTimeout(() => setSnackbarErrorActive(false), SnackbarTime);
+    };
 
     return (
         <div className="admin-product-detail-container">
@@ -168,9 +240,9 @@ export default ({ product, productImages, categories, refUrl } :ProductDetailPro
             <h3>Fotos</h3>
             <ul className="admin-product-detail-photos">
                 {renderPhotos()}
-                <div className="admin-product-detail-photos-add"><AddIcon /></div>
+                <div className="admin-product-detail-photos-add" onClick={promptImagesUpload(product.id)}><AddIcon /></div>
             </ul>
-            <div className="admin-product-detail-remove"><RemoveIcon />ELIMINAR PRODUCTO</div>
+            <div className="admin-product-detail-remove" onClick={removeProduct}><RemoveIcon />ELIMINAR PRODUCTO</div>
             {(hasAnyChangesFlag) && 
                 <div className="admin-product-detail-savecancel">
                     <button className="admin-product-details-save" onClick={saveChanges}>GUARDAR CAMBIOS</button>
@@ -184,6 +256,9 @@ export default ({ product, productImages, categories, refUrl } :ProductDetailPro
                     <button onClick={closeAddCategories}>CANCELAR</button>
                 </div>
             </Overlay>
+            <input type="file" id="admin-product-upload-images" multiple={true} onChange={uploadImagesOnChange}/>
+            <Snackbar type={SnackbarStyles.SUCCESS} message="Se han guardado los cambios" isActive={snackbarActive} />
+            <Snackbar type={SnackbarStyles.ERROR} message="Hubo un error, por favor recarga la pagina." isActive={snackbarErrorActive} />
         </div>
     );
 };

@@ -8,6 +8,7 @@ import http from "http";
 import jwt from "jsonwebtoken";
 import sqlite3 from "sqlite3";
 import { open as openDatabase, Database} from "sqlite";
+import sharp from "sharp";
 
 const app :Application = express();
 const server : http.Server = http.createServer(app);
@@ -36,6 +37,7 @@ app.set("jwt-secret", "6x7fSQ7z6JXDDfBa6Lrdozrd9rHK");
 
 // const
 const carouselImagesTmpPath = __dirname + "/public/upload/carousel/tmp";
+const productImagesTmpPath = __dirname + "/public/upload/products/tmp";
 const ADMIN_PRODUCTS_PER_PAGE = 10;
 
 app.get("/", (req, res) => {
@@ -205,11 +207,76 @@ app.delete("/admin/productos/:productId", adminOnly, async (req :Request, res :R
         const id = parseInt(req.params.productId, 10);
         if (!isNaN(id)) {
             await Products.deleteProduct(db, id);
+            // TODO remove upload folder
             res.sendStatus(200);
         } else {
             res.sendStatus(400);
         }
     } catch (err) { console.log(err); res.status(500).send(err); }
+});
+
+if (!fs.existsSync(productImagesTmpPath)) {
+    console.log("creating products images temporal folder...");
+    fs.mkdirSync(productImagesTmpPath, 0o744);
+}
+app.post("/admin/productos/uploadImages", adminOnly, async (req :Request, res :Response) => {
+    const form = new multyparty.Form();
+    try {
+        const db :Database = await database;
+        form.parse(req, async (err, fields, files) => {
+            if (err) {
+                res.status(400).send(err);
+                return;
+            }
+            const productId = parseInt(fields.productId[0],10);
+            if (isNaN(productId))
+                throw("Bad product id");
+            const productTempImages :multyparty.File[] = files["productImages"];
+            const productImagesPath :string = `public/upload/products/${productId}/`;
+            const productImagesResolved :Products.TProductImage[] = [];
+            if (!fs.existsSync(productImagesPath)) 
+                fs.mkdirSync(productImagesPath);
+            for (let tempImageIndex = 0; tempImageIndex < productTempImages.length; tempImageIndex++) {
+                const newImageFilename :string = productTempImages[tempImageIndex].path.replace(/^\/tmp\//, "");
+                fs.renameSync(productTempImages[tempImageIndex].path, productImagesPath + newImageFilename);
+                const newProductImage :Products.TProductImage = await Products.newProductImage(db, productId, newImageFilename);
+                // create a thumbnail
+                const thumbnailFilename :string = "thumb_" + newImageFilename;
+                await sharp(productImagesPath + newImageFilename).resize({width: 500}).toFile(productImagesPath + thumbnailFilename);
+                productImagesResolved.push(newProductImage);
+            }
+            res.status(200).send({images: productImagesResolved});
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(400).send(err);
+    }
+});
+
+app.delete("/admin/productos/images/:imageId/:primary_image_id", adminOnly, async (req :Request, res :Response) => {
+    try {
+        const db :Database = await database;
+        const imageId = parseInt(req.params.imageId, 10);
+        const primaryImageId = parseInt(req.params.primary_image_id, 10);
+        if (isNaN(imageId) || isNaN(primaryImageId))
+            throw("Wrong image id");
+        const image :Products.TProductImage | undefined = await Products.getProductImage(db, imageId);
+        if (typeof image === 'undefined')
+            throw("Image not found");
+        await Products.setProductPrimaryImage(db, image.product_id, primaryImageId);
+        await Products.deleteProductImage(db, imageId);
+        const productImagesPath :string = `public/upload/products/${image.product_id}/`;
+        if (fs.existsSync(productImagesPath + image.image_url)) {
+            fs.unlinkSync(productImagesPath + image.image_url);
+        }
+        if (fs.existsSync(productImagesPath + "thumb_" + image.image_url)) {
+            fs.unlinkSync(productImagesPath + "thumb_" + image.image_url);
+        }
+        res.status(200).send({ok: true});
+    } catch (err) {
+        console.log(err);
+        res.status(400).send(err);
+    }
 });
 
 app.get("/admin/carousel", adminOnly, async (req :Request, res :Response) => {
@@ -226,7 +293,6 @@ app.get("/admin/carousel", adminOnly, async (req :Request, res :Response) => {
         .catch(err => res.send(err));
     } catch(err) {res.send(err);}
 });
-
 
 if (!fs.existsSync(carouselImagesTmpPath)) {
     console.log("creating carousel images temporal folder...");
