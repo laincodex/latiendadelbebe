@@ -15,10 +15,11 @@ export interface ProductDetailProps {
     product: TProduct,
     productImages :TProductImage[],
     categories :TCategory[],
-    refUrl :string
+    refUrl :string,
+    isNewProduct? :boolean
 }
 
-export default ({ product, productImages, categories, refUrl } :ProductDetailProps) => {
+export default ({ product, productImages, categories, refUrl, isNewProduct} :ProductDetailProps) => {
     const [productState, setProductState] = useState<TProduct>(product);
     const [productImagesState, setProductImagesState] = useState<TProductImage[]>(productImages);
     const [hasAnyChangesFlag, setHasAnyChangesFlag] = useState<boolean>(false);
@@ -117,7 +118,6 @@ export default ({ product, productImages, categories, refUrl } :ProductDetailPro
                 method: 'DELETE',
             }).then(res => {
                 if(res.ok) {
-                    setHasAnyChangesFlag(true);
                     setProductImagesState(newProductImagesState);
                     setProductState({...productState});
                 } else {
@@ -140,6 +140,12 @@ export default ({ product, productImages, categories, refUrl } :ProductDetailPro
         setProductState({...productState});
     };
 
+    const toggleStock = () => {
+        productState.available = !productState.available;
+        setHasAnyChangesFlag(true);
+        setProductState({...productState});
+    };
+
     const closeAddCategories = () => {
         setAddCategoriesOverlay(false);
     };
@@ -152,8 +158,25 @@ export default ({ product, productImages, categories, refUrl } :ProductDetailPro
         return rendered;
     }
 
-    const saveChanges = () => {
-
+    const submitProduct = () => {
+        fetch("/admin/productos/" + productState.id, {
+            method: "PUT",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(productState)
+        }).then(res => res.json()).then(res => {
+            if (res.id) {
+                document.location.href = "/admin/productos/"+res.id;
+            }
+            if (res.ok) {
+                activeSuccessSnackbar();
+                setHasAnyChangesFlag(false);
+            } else throw(res);
+        }).catch(err => {
+            console.log(err);
+            activeErrorSnackbar();
+        });
     };
 
     const cancelChanges = () => {
@@ -201,6 +224,10 @@ export default ({ product, productImages, categories, refUrl } :ProductDetailPro
                         productImages.push(image);
                     });
                     setProductImagesState(productImages);
+                    if(productImages.length == 1) {
+                        productState.primary_image_id = productImages[0].id;
+                        setProductState({...productState});;
+                    }
                 }
             })
             .catch(err => {
@@ -228,7 +255,7 @@ export default ({ product, productImages, categories, refUrl } :ProductDetailPro
                 <div className="admin-product-detail-data">
                     <div className={"admin-product-star" + (productState.is_featured ? "-active" : "")} onClick={toggleFeatured}><Tooltip style={{marginTop: 50, width: 250}} title={"Haga click para " + (productState.is_featured ? "dejar de " : "")  + "destacar"}><StarIcon /></Tooltip></div>
                     <div className="admin-product-detail-date">{parseDate(new Date(productState.date*1000))}</div>
-                    <div className={"admin-product-detail" + (productState.available ? "-stock" : "-nostock")}><Tooltip style={{marginTop: 38}} title={(productState.available ? "Deshabilitar el stock" : "Habilitar el stock")}>{productState.available ? "EN STOCK" : "SIN STOCK"}</Tooltip></div>
+                    <div className={"admin-product-detail" + (productState.available ? "-stock" : "-nostock")} onClick={toggleStock}><Tooltip style={{marginTop: 38}} title={(productState.available ? "Deshabilitar el stock" : "Habilitar el stock")}>{productState.available ? "EN STOCK" : "SIN STOCK"}</Tooltip></div>
                 </div>
             </div>
             <h3>Descripcion del producto</h3>
@@ -238,14 +265,15 @@ export default ({ product, productImages, categories, refUrl } :ProductDetailPro
                 {renderCategories()}
             </ul>
             <h3>Fotos</h3>
-            <ul className="admin-product-detail-photos">
+            {!isNewProduct ? <ul className="admin-product-detail-photos">
                 {renderPhotos()}
                 <div className="admin-product-detail-photos-add" onClick={promptImagesUpload(product.id)}><AddIcon /></div>
-            </ul>
-            <div className="admin-product-detail-remove" onClick={removeProduct}><RemoveIcon />ELIMINAR PRODUCTO</div>
-            {(hasAnyChangesFlag) && 
+            </ul> : <div className="admin-product-detail-photos-newproductmsg">Para agregar fotos primero crea el producto.</div>}
+            {!isNewProduct ? <div className="admin-product-detail-remove" onClick={removeProduct}><RemoveIcon />ELIMINAR PRODUCTO</div>
+                : <div className="admin-product-detail-create" onClick={submitProduct}><AddIcon />CREAR PRODUCTO</div>}
+            {!isNewProduct && hasAnyChangesFlag && 
                 <div className="admin-product-detail-savecancel">
-                    <button className="admin-product-details-save" onClick={saveChanges}>GUARDAR CAMBIOS</button>
+                    <button className="admin-product-details-save" onClick={submitProduct}>GUARDAR CAMBIOS</button>
                     <button className="admin-product-details-cancel" onClick={cancelChanges}>CANCELAR</button>
                 </div>}
             <Overlay openState={addCategoriesOverlay} closeCallback={closeAddCategories}>

@@ -51,12 +51,28 @@ export const getProductsCount = async (database :Database, searchName :string, f
     return (await database.get(sql)).count || 0;
 };
 
+export const newProduct = async (database :Database, product :TProduct) :Promise<number> => {
+    const sql = "INSERT INTO products(title, description, date, categories, available, is_featured, primary_image_id) VALUES(?,?,?,?,?,?,?);"
+    await database.run(sql, product.title, product.description, product.date, product.categories, product.available, product.is_featured, product.primary_image_id);
+    const newProductId = await database.get("SELECT last_insert_rowid() as id;");
+    return newProductId.id;
+};
+
 export const updateProduct = async (database :Database, id :number, fields :any) => {
     const updateSql :string[] = [];
-    const productInterface = ["title", "description", "date", "categories", "available", "is_featured"];
+    const productInterface = ["title", "description", "date", "categories", "available", "is_featured", "primary_image_id"];
     productInterface.forEach(f => {
-        if (typeof fields[f] != 'undefined')
-            updateSql.push(f + ' = ' + fields[f]);
+        if (typeof fields[f] != 'undefined') {
+            switch (typeof fields[f]){
+                case 'number':
+                case 'boolean': 
+                    updateSql.push(f + ' = ' + fields[f]);
+                    break;
+                case 'string':
+                    updateSql.push(f + ' = "' + fields[f] + '"');
+                    break;
+            }
+        }
     });
     if (updateSql.length == 0)
         throw("Empty fields body, cannot update" + id);

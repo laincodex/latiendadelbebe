@@ -1286,9 +1286,11 @@ footer {
         .admin-product-title {
             font-weight: bold;
             width: 20%;
-            display: flex;
             font-size: 18px;
-
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            padding-right: 10px;
         }
         .admin-product-date {
             width: 10%;
@@ -1539,6 +1541,11 @@ footer {
             margin-right: 30px;
         }
     }
+    .admin-product-detail-photos-newproductmsg {
+        color: #777;
+        display: flex;
+        justify-content: center;
+    }
     .admin-product-detail-photos-item {
         width: 110px;
         height: 110px;
@@ -1609,7 +1616,7 @@ footer {
             }
         }
     }
-    .admin-product-detail-remove {
+    .admin-product-detail-remove, .admin-product-detail-create {
         background-color: white;
         align-self: flex-end;
         display: flex;
@@ -1620,15 +1627,12 @@ footer {
                 color 0.3s ease-in-out,
                 box-shadow 0.3s ease-in-out;
         svg {
-            color: red;
             margin-right: 10px;
             transition: color 0.3s ease-in-out,
                 transform 0.3s ease-in-out;
         }
         &:hover {
-            box-shadow: 4px 8px 16px rgba($color: red, $alpha: 0.3);;
             cursor: pointer;
-            background-color: red;
             color: white;
             svg {
                 color: white;
@@ -1636,6 +1640,25 @@ footer {
             }
         }
     }
+    .admin-product-detail-remove {
+        svg {
+            color: red
+        }
+        &:hover {
+            box-shadow: 4px 8px 16px rgba($color: red, $alpha: 0.3);
+            background-color: red;
+        }
+    }
+    .admin-product-detail-create {
+        svg {
+            color: $main-blue
+        }
+        &:hover {
+            box-shadow: 4px 8px 16px rgba($color: $main-blue, $alpha: 0.3);
+            background-color: $main-blue;
+        }
+    }
+    
     .admin-product-detail-savecancel {
         align-self: center;
         display: flex;

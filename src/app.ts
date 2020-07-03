@@ -135,6 +135,32 @@ const renderAdminTemplate = (props :any, res :Response) => {
 
 app.get("/admin", adminOnly ,(req :Request, res :Response) => res.redirect("/admin/productos"));
 
+app.get("/admin/productos/nuevo", adminOnly, async (req :Request, res :Response) => {
+    try {
+        const db :Database = await database;
+        const product :Products.TProduct = {
+            id: 0,
+            title: "",
+            description: "",
+            date: Date.now()/1000,
+            categories: "[]",
+            available: true,
+            is_featured: false,
+            primary_image_id: 0
+        };
+        const categories : Products.TCategory[] = await Products.getCategories(db);
+        const props = {
+            section: "productDetail",
+            product: product,
+            productImages: [],
+            categories: categories,
+            refUrl: getRefUrl(req, "/admin/productos"),
+            isNewProduct: true
+        };
+        renderAdminTemplate(props, res);
+    } catch (err) { console.log(err); res.status(500).send(err); }
+});
+
 app.get("/admin/productos/:productId", adminOnly, async (req :Request, res :Response) => {
     try {
         const db :Database = await database;
@@ -191,10 +217,16 @@ app.put("/admin/productos/:productId", adminOnly, express.json(), async (req :Re
     try {
         const db :Database = await database;
         const id = parseInt(req.params.productId, 10);
-        const product = req.body;
-        if (!isNaN(id) && product) {
-            await Products.updateProduct(db, id, product);
-            res.sendStatus(200);
+        const product :Products.TProduct = req.body;
+        if (!isNaN(id) && (typeof product !== 'undefined')) {
+            if(product.id === 0) {
+                const newProductId = await Products.newProduct(db, product);
+                res.status(200).send({id: newProductId});
+                return;
+            } else {
+                await Products.updateProduct(db, id, product);
+            }
+            res.status(200).send({ok: true});
         } else {
             res.sendStatus(400);
         }
@@ -244,6 +276,9 @@ app.post("/admin/productos/uploadImages", adminOnly, async (req :Request, res :R
                 const thumbnailFilename :string = "thumb_" + newImageFilename;
                 await sharp(productImagesPath + newImageFilename).resize({width: 500}).toFile(productImagesPath + thumbnailFilename);
                 productImagesResolved.push(newProductImage);
+            }
+            if(productImagesResolved.length == 1) {
+                await Products.setProductPrimaryImage(db, productId, productImagesResolved[0].id);
             }
             res.status(200).send({images: productImagesResolved});
         });
