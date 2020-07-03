@@ -7,6 +7,7 @@ import ArrowBackIcon from "../../../assets/icons/arrow_back-24px.svg";
 import StarIcon from "../../../assets/icons/star-24px.svg";
 import RemoveIcon from "../../../assets/icons/remove_circle-24px.svg";
 import AddIcon from "../../../assets/icons/baseline-add.svg";
+import DoneIcon from "../../../assets/icons/done-24px.svg";
 import CloseIcon from "../../../assets/icons/close.svg";
 import Overlay from "../../home/components/Overlay";
 import Snackbar, {SnackbarTime, SnackbarStyles} from "../../../components/Snackbar";
@@ -65,7 +66,7 @@ export default ({ product, productImages, categories, refUrl, isNewProduct} :Pro
     const getCategory = (id :number) => {
         const category = categories.find(c => c.id == id);
         if (!category)
-            return {id: 0, name: "error"};
+            return {id: id, name: "categoria inexistente"};
         return category;
     }
 
@@ -224,7 +225,7 @@ export default ({ product, productImages, categories, refUrl, isNewProduct} :Pro
                         productImages.push(image);
                     });
                     setProductImagesState(productImages);
-                    if(productImages.length == 1) {
+                    if(res.previousProductImagesCount === 0) {
                         productState.primary_image_id = productImages[0].id;
                         setProductState({...productState});;
                     }
@@ -273,8 +274,8 @@ export default ({ product, productImages, categories, refUrl, isNewProduct} :Pro
                 : <div className="admin-product-detail-create" onClick={submitProduct}><AddIcon />CREAR PRODUCTO</div>}
             {!isNewProduct && hasAnyChangesFlag && 
                 <div className="admin-product-detail-savecancel">
-                    <button className="admin-product-details-save" onClick={submitProduct}>GUARDAR CAMBIOS</button>
-                    <button className="admin-product-details-cancel" onClick={cancelChanges}>CANCELAR</button>
+                    <button className="btn-light-blue btn-icon-rotate360" onClick={submitProduct}><DoneIcon />GUARDAR CAMBIOS</button>
+                    <button className="btn-light-red" onClick={cancelChanges}><CloseIcon/> CANCELAR</button>
                 </div>}
             <Overlay openState={addCategoriesOverlay} closeCallback={closeAddCategories}>
                 <div className="selector-container" onClick={closeAddCategories}>

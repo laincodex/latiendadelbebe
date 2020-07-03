@@ -3,12 +3,12 @@ import React from "react";
 import CarouselPage, { CarouselProps } from "./components/carousel";
 import ProductsPage, { ProductsProps } from "./components/products";
 import ProductDetailPage, { ProductDetailProps } from "./components/productDetail";
+import CategoriesPage, { CategoriesProps } from "./components/categories";
 
 import ExitIcon from "../../assets/icons/baseline-exit_to_app.svg";
 import CarouselIcon from "../../assets/icons/collections-24px.svg";
 import ProductsIcon from "../../assets/icons/local_mall-24px.svg";
 import CategoriesIcon from "../../assets/icons/local_offer-24px.svg";
-import ContactIcon from "../../assets/icons/contact_mail-24px.svg";
 
 export default ( { section, ...props } : { section? :string }) => {
     const isCurrentSection = (inputSection :string) => (section == inputSection) ? "admin-panel-sectionactive" : "";
@@ -22,7 +22,6 @@ export default ( { section, ...props } : { section? :string }) => {
                         <li className={isCurrentSection("products") || isCurrentSection("productDetail")}><a href="/admin/productos"><ProductsIcon />Productos</a></li>
                         <li className={isCurrentSection("carousel")}><a href="/admin/carousel"><CarouselIcon />Carousel</a></li>
                         <li className={isCurrentSection("categorias")}><a href="/admin/categorias"><CategoriesIcon />Categorias</a></li>
-                        <li className={isCurrentSection("contacto")}><a href="/admin/contacto"><ContactIcon />Datos de contacto</a></li>
                     </ul>
                     <a href="/admin/logout" className="admin-panel-exit"><ExitIcon /> Salir</a>
                 </nav>
@@ -37,9 +36,7 @@ export default ( { section, ...props } : { section? :string }) => {
                             case "carousel":
                                 return <CarouselPage {...props as CarouselProps} />;
                             case "categorias":
-                                return <div>Categorias</div>;
-                            case "contacto":
-                                return <div>Contacto</div>;
+                                return <CategoriesPage {...props as CategoriesProps} />;
                         }
                     })()}
                 </div>

@@ -140,7 +140,7 @@ export default ({products, featuredProducts, productsPageCount, currentPage, sea
                 </form>
             </div>
             <ul>{renderProducts()}</ul>
-            <Paginator pages={productsPageCount} currentPage={currentPage} MAX_BUTTONS={5} MAX_SIDE_BUTTONS={2} callback={goToPage} />
+            {productsPageCount > 1 && <Paginator pages={productsPageCount} currentPage={currentPage} MAX_BUTTONS={5} MAX_SIDE_BUTTONS={2} callback={goToPage} />}
         </div>
     );
 }

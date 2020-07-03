@@ -37,7 +37,6 @@ app.set("jwt-secret", "6x7fSQ7z6JXDDfBa6Lrdozrd9rHK");
 
 // const
 const carouselImagesTmpPath = __dirname + "/public/upload/carousel/tmp";
-const productImagesTmpPath = __dirname + "/public/upload/products/tmp";
 const ADMIN_PRODUCTS_PER_PAGE = 10;
 
 app.get("/", (req, res) => {
@@ -239,7 +238,7 @@ app.delete("/admin/productos/:productId", adminOnly, async (req :Request, res :R
         const id = parseInt(req.params.productId, 10);
         if (!isNaN(id)) {
             await Products.deleteProduct(db, id);
-            // TODO remove upload folder
+            fs.rmdirSync("public/upload/products/" + id, {recursive: true});
             res.sendStatus(200);
         } else {
             res.sendStatus(400);
@@ -247,10 +246,6 @@ app.delete("/admin/productos/:productId", adminOnly, async (req :Request, res :R
     } catch (err) { console.log(err); res.status(500).send(err); }
 });
 
-if (!fs.existsSync(productImagesTmpPath)) {
-    console.log("creating products images temporal folder...");
-    fs.mkdirSync(productImagesTmpPath, 0o744);
-}
 app.post("/admin/productos/uploadImages", adminOnly, async (req :Request, res :Response) => {
     const form = new multyparty.Form();
     try {
@@ -268,6 +263,10 @@ app.post("/admin/productos/uploadImages", adminOnly, async (req :Request, res :R
             const productImagesResolved :Products.TProductImage[] = [];
             if (!fs.existsSync(productImagesPath)) 
                 fs.mkdirSync(productImagesPath);
+            
+            // verify if product hasn't any image in order to set new primary image
+            const productImagesCount = await Products.getProductImagesCount(db, productId);
+
             for (let tempImageIndex = 0; tempImageIndex < productTempImages.length; tempImageIndex++) {
                 const newImageFilename :string = productTempImages[tempImageIndex].path.replace(/^\/tmp\//, "");
                 fs.renameSync(productTempImages[tempImageIndex].path, productImagesPath + newImageFilename);
@@ -277,10 +276,11 @@ app.post("/admin/productos/uploadImages", adminOnly, async (req :Request, res :R
                 await sharp(productImagesPath + newImageFilename).resize({width: 500}).toFile(productImagesPath + thumbnailFilename);
                 productImagesResolved.push(newProductImage);
             }
-            if(productImagesResolved.length == 1) {
+
+            if(productImagesCount == 0 && productImagesResolved.length > 0) {
                 await Products.setProductPrimaryImage(db, productId, productImagesResolved[0].id);
             }
-            res.status(200).send({images: productImagesResolved});
+            res.status(200).send({images: productImagesResolved, previousProductImagesCount: productImagesCount});
         });
     } catch (err) {
         console.log(err);
@@ -356,6 +356,53 @@ app.post("/admin/carousel", express.json(), adminOnly, async (req :Request, res 
         const db :Database = await database;
         const updatedCarousel = await Carousel.updateCarouselItems(db, req.body.source, req.body.destination);
         res.status(200).send(updatedCarousel);
+    } catch(err) {
+        res.status(500).send(err);
+    }
+});
+
+app.get("/admin/categorias", adminOnly, async (req :Request, res :Response) => {
+    try {
+        const db :Database = await database;
+        const categories :Products.TCategory[] = await Products.getCategories(db);
+        const props = {
+            section: "categorias",
+            categories: categories,
+        };
+        renderAdminTemplate(props, res);
+    } catch(err) {
+        res.status(500).send(err);
+    }
+});
+
+app.put("/admin/categorias", express.json(), adminOnly, async (req :Request, res :Response) => {
+    try {
+        const db :Database = await database;
+        const categories :Products.TCategory[] = req.body;
+        const categoriesToAdd :Products.TCategory[] = [];
+        for (let catIndex = 0; catIndex < categories.length; catIndex++) {
+            if (categories[catIndex].id === 0){
+                categoriesToAdd.push(categories[catIndex]);
+            } else {
+                await Products.updateCategory(db, categories[catIndex]);
+            }
+        }
+        await Products.newCategories(db, categoriesToAdd);
+        res.sendStatus(200);
+    } catch(err) {
+        console.log(err);
+        res.status(500).send(err);
+    }
+});
+
+app.delete("/admin/categorias/:categoryId", adminOnly, async (req :Request, res :Response) => {
+    try {
+        const db :Database = await database;
+        const categoryId = parseInt(req.params.categoryId, 10);
+        if (isNaN(categoryId))
+            throw("Wrong category id");
+        await Products.deleteCategory(db, categoryId);
+        res.sendStatus(200);
     } catch(err) {
         res.status(500).send(err);
     }

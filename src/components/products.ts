@@ -1,5 +1,4 @@
 import { Database } from "sqlite";
-import fs from "fs"
 
 export interface TProduct {
     id :number,
@@ -101,6 +100,11 @@ export const getProductImages = async (database :Database, id :number) :Promise<
     return await database.all(sql, id);
 };
 
+export const getProductImagesCount = async (database :Database, id :number) :Promise<number> => {
+    const sql = 'SELECT count(oid) as count FROM product_images WHERE product_id = ?;';
+    return (await database.get(sql, id)).count || 0;
+};
+
 export const newProductImage = async (database :Database, productId :number, imageUrl :string) :Promise<TProductImage> => {
     const sql = 'INSERT INTO product_images(product_id, image_url) VALUES (?,?);';
     await database.run(sql, productId, imageUrl);
@@ -126,7 +130,30 @@ export interface TCategory {
     id :number,
     name :string
 };
+
 export const getCategories = async (database :Database) :Promise<TCategory[]> => {
     const sql = 'SELECT id, name FROM categories;';
     return await database.all(sql);
+};
+
+export const newCategories = async (database :Database, categories :TCategory[]) => {
+    if (categories.length > 0) {
+        let sql = "INSERT INTO categories(name) VALUES ";
+        categories.forEach((cat, index) => {
+            if (index > 0)
+                sql += ",";
+            sql += `("${cat.name}")`;
+        });
+        return await database.run(sql);
+    }
+};
+
+export const updateCategory = async (database :Database, category :TCategory) => {
+    const sql = "UPDATE categories SET name = ? WHERE id = ?;"
+    return await database.run(sql, category.name, category.id);
+};
+
+export const deleteCategory = async (database :Database, id :number) => {
+    const sql = "DELETE FROM categories WHERE id = ?";
+    return await database.run(sql, id);
 };

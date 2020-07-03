@@ -7,6 +7,8 @@ import AddIcon from "../../../assets/icons/baseline-add.svg";
 import ArrowIcon from "../../../assets/icons/arrow_left-24px.svg";
 import InserPhotoIcon from "../../../assets/icons/insert_photo-24px.svg";
 import RemoveIcon from "../../../assets/icons/remove_circle-24px.svg";
+import DoneIcon from "../../../assets/icons/done-24px.svg";
+import CloseIcon from "../../../assets/icons/close.svg";
 
 export interface CarouselProps {
     sourceCarouselItems :Array<TCarouselItem>
@@ -172,7 +174,10 @@ export default ( { sourceCarouselItems } :CarouselProps ) => {
             <ul className="admin-carousel-content">
                 {renderCarouselItems()}
             </ul>
-            { hasAnyChangesFlag && <div className="admin-carousel-savecancel-btns"><button className="main-btn" onClick={submitCarouselItems}>GUARDAR CAMBIOS</button><button className="cancel-btn" onClick={cancelChanges}>CANCELAR</button></div>}
+            {hasAnyChangesFlag && <div className="admin-carousel-savecancel-btns">
+                <button className="btn-light-blue btn-icon-rotate360" onClick={submitCarouselItems}><DoneIcon />GUARDAR CAMBIOS</button>
+                <button className="btn-light-red" onClick={cancelChanges}><CloseIcon />CANCELAR</button>
+            </div>}
             <Snackbar type={SnackbarStyles.SUCCESS} message="Se han guardado los cambios" isActive={snackbarActive} />
             <Snackbar type={SnackbarStyles.ERROR} message="Hubo un error, por favor recarga la pagina." isActive={snackbarErrorActive} />
             <input type="file" id={"admin-carousel-upload-image"} onChange={uploadImageOnChange} />
