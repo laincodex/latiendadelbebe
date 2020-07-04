@@ -1,55 +1,27 @@
 import React, { useState, useEffect, useRef } from "react";
 import SectionTitle from "./sectiontitle";
-import Product, {TProduct} from "./product";
-import NewProducts from "./newproducts";
+import Product from "./product";
+import { TProduct, TCategory } from "../../../components/products";
+import FeaturedProducts from "./featuredProducts";
 import Paginator from "./paginator";
-import ProductListOverlay from "./productListOverlay";
 
 
 import SearchIcon from "../../../assets/icons/search-24px.svg";
 import BreadcrumbsIcon from "../../../assets/icons/breadcrumbs.svg";
 
-interface Category {
-    name :string,
-    id :number
-}
-
 interface Props {
-    newProductsEnabled :boolean,
+    featuredProducts :TProduct[],
     showSectionTitle? :boolean,
-    products :Array<TProduct>,
-    productId :number,
-    maxListedProducts? :number
+    products :TProduct[],
+    categories :TCategory[]
 }
 
 export default ({
-    newProductsEnabled = false,
+    featuredProducts,
     showSectionTitle = true,
-    products = [],
-    productId = 0,
-    maxListedProducts = 8
+    products,
+    categories
 } : Props) => {
-
-    const productExample :TProduct = {
-        id: 1,
-        name: "Product Test 1",
-        image: "product-1.jpg",
-        title: "Product test 1",
-        description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer ligula orci, vehicula eget neque eu, ultrices viverra nisi. Pellentesque aliquet odio id condimentum ullamcorper. "
-    };
-
-    const categories :Array<Category> = [
-        { 
-            name: "Remeras",
-            id: 1
-        }, {
-            name: "Conjuntos",
-            id: 2
-        }, {
-            name: "Buzos",
-            id: 3
-        }
-    ];
 
     const renderCategories = () :Array<JSX.Element> => {
         let list :Array<JSX.Element> = [];
@@ -68,29 +40,20 @@ export default ({
     }
 
     const renderProductList = () :Array<JSX.Element> => {
-        let products :Array<JSX.Element> = [];
-        for (let i =0; i< maxListedProducts;i++) {
-            products.push(<li key={i}><Product product={productExample} onClick={openProductOverlay(productExample.id)} /></li>);
-        }
-        return products;
-    }
+        let rendered :Array<JSX.Element> = [];
+        products.forEach((product, index) => {
+            rendered.push(<li key={index}><Product product={product} onClick={openProduct(product.id)} /></li>);
+        });
+        return rendered;
+    };
 
-    const [productOverlayOpen, setProductOverlayOpen] = useState<boolean>(false);
-    const [selectedProduct, setSelectedProduct] = useState<TProduct>(productExample);
-    const openProductOverlay = (productId :number) => (ev :any) => {
-        ev.preventDefault();
-        console.log("Opening product id: ", productId);
-        setSelectedProduct(productExample);
-        setProductOverlayOpen(true);
-    }
-    
-    const closeProductOverlay = () => {
-        setProductOverlayOpen(false);
-    }
+    const openProduct = (id :number) => () => {
+        document.location.href = "/productos/" + id + "?ref=" + escape(document.location.pathname + document.location.search);
+    };
 
     return (
         <div className="product-list-container">
-            {(newProductsEnabled) ? <NewProducts openProductOverlay={openProductOverlay} /> : <></>}
+            {(featuredProducts) && <FeaturedProducts featuredProducts={featuredProducts} />}
             <div className="product-list-content">
                 {(showSectionTitle) ? <SectionTitle title="PRODUCTOS" /> : <></>}
                 <section className="product-list-section">
@@ -108,7 +71,6 @@ export default ({
                                     <BreadcrumbsIcon />
                                     <div>Conjuntos</div>
                                 </div>
-                                <div className="flex-separator"></div>
                                 <div className="products-search-bar">
                                     <SearchIcon />
                                     <input type="text" placeholder="Ingresa para buscar" name="Search" id="product-search-text"/>
@@ -123,8 +85,7 @@ export default ({
                         <Paginator pages={17} currentPage={currentPage} callback={goToPage} />
                     </div>
                 </section>
-                <ProductListOverlay selectedProduct={selectedProduct} productOverlayOpen={productOverlayOpen} closeProductOverlay={closeProductOverlay} /> 
-            </div>
+                </div>
         </div>
     );
 }

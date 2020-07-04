@@ -8,7 +8,8 @@ export interface TProduct {
     categories :string,
     available :boolean,
     is_featured :boolean,
-    primary_image_id :number
+    primary_image_id :number,
+    primary_image_url? :string
 };
 
 const getFilterSql = (filter :string ) :string => {
@@ -32,16 +33,30 @@ export const getProductDetail = async (database :Database, id :number) :Promise<
     return await database.get(sql, id);
 };
 
-export const getProducts = async (database :Database, searchName :string, filter :string, limit :number = 10, from :number = 0) :Promise<TProduct[]> => {
+export const getProducts = async (database :Database, searchName :string, filter :string, limit :number = 10, from :number = 0, includePrimaryImage = false) :Promise<TProduct[]> => {
     // this implementation is better performant than using offset
     let searchNameSql = searchName ? "title LIKE '%" + searchName + "%' AND " : '';
     const filterSql = getFilterSql(filter);
-    let sql = `select id, title, description, date, categories, available, is_featured, primary_image_id from products where ${searchNameSql}oid not in ( select oid from products order by id asc limit ${from}) ${filterSql} limit ${limit}`;
+    let sql = "select p.id, title, description, date, categories, available, is_featured, primary_image_id ";
+    if (includePrimaryImage)
+        sql += ",image_url as primary_image_url ";
+    sql += "from products as p "; 
+    if (includePrimaryImage) {
+        sql += " LEFT JOIN product_images AS pi ON pi.id = p.primary_image_id "
+    }
+    sql += `where ${searchNameSql}p.oid not in ( select oid from products order by id asc limit ${from}) ${filterSql} limit ${limit}`;
     return await database.all(sql);
 };
 
-export const getFeaturedProducts = async (database :Database) :Promise<TProduct[]> => {
-    return await database.all("select id, title, description, date, categories, available, is_featured, primary_image_id from products where products.is_featured = true;");
+export const getFeaturedProducts = async (database :Database, includePrimaryImage = false) :Promise<TProduct[]> => {
+    let sql = "select p.id, title, description, date, categories, available, is_featured, primary_image_id "
+    if (includePrimaryImage)
+        sql += ",image_url as primary_image_url ";
+    sql += "from products as p ";
+    if (includePrimaryImage)
+        sql += "LEFT JOIN product_images AS pi ON pi.id = p.primary_image_id ";
+    sql += "WHERE p.is_featured = true ";
+    return await database.all(sql);
 };
 
 export const getProductsCount = async (database :Database, searchName :string, filter :string) :Promise<number> => {

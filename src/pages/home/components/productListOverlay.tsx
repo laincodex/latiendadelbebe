@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect} from "react";
 import Overlay from "./Overlay";
-import { TProduct } from "./product";
+import { TProduct } from "../../../components/products";
 
 import BreadcrumbsIcon from "../../../assets/icons/breadcrumbs.svg";
 import CloseIcon from "../../../assets/icons/close.svg";
@@ -103,7 +103,7 @@ export default ({selectedProduct, productOverlayOpen, closeProductOverlay} :
                     <div className="product-overlay-breadcrumbs no-select">
                         <span>Productos</span>
                         <BreadcrumbsIcon />
-                        <span>{selectedProduct.name}</span>
+                        <span>{selectedProduct.title}</span>
                     </div>
                     <div className="flex-separator" onClick={closeProductOverlayHandler}></div>
                     <div className="product-overlay-exit" onClick={closeProductOverlayHandler}><CloseIcon className="svg-24" /></div>
@@ -123,7 +123,7 @@ export default ({selectedProduct, productOverlayOpen, closeProductOverlay} :
                             </div>
                         </div>
                         <article className="product-overlay-data">
-                            <h1>{selectedProduct.name}</h1>
+                            <h1>{selectedProduct.title}</h1>
                             <p>{selectedProduct.description}</p>
                             <button className="main-btn">Preguntar</button>
                         </article>

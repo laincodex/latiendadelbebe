@@ -5,20 +5,23 @@ import Carousel from "./components/Carousel";
 import AboutUs from "./components/aboutus";
 import ProductList from "./components/productlist";
 import Footer from "./components/Footer";
-import { TProduct } from "./components/product";
+import { TProduct, TCategory } from "../../components/products";
+import { TCarouselItem } from "../../components/carousel";
 
-interface Props {
-    productId :number,
-    products :Array<TProduct>
-}
+export interface HomePageProps {
+    products :TProduct[],
+    carouselItems :TCarouselItem[],
+    featuredProducts :TProduct[],
+    categories :TCategory[]
+};
 
-export default ({ productId, products = [] } : Props) => {
+export default ({ products, carouselItems, featuredProducts, categories } : HomePageProps) => {
     return (
         <div className="app-container">
             <Header />
-            <Carousel />
+            <Carousel carouselItems={carouselItems} />
             <AboutUs />
-            <ProductList newProductsEnabled={true} products={products} productId={productId}/>
+            <ProductList featuredProducts={featuredProducts} products={products} categories={categories} />
             <Footer />
         </div>
     );

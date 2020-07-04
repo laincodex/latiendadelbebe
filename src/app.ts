@@ -14,7 +14,7 @@ const app :Application = express();
 const server : http.Server = http.createServer(app);
 import HtmlTemplate from "./components/HtmlTemplate";
 
-import HomePage from "./pages/home";
+import HomePage, {HomePageProps} from "./pages/home";
 import ProductsPage from "./pages/products";
 import AdminPage from "./pages/admin";
 import AdminLogin from "./pages/admin/components/login";
@@ -38,13 +38,44 @@ app.set("jwt-secret", "6x7fSQ7z6JXDDfBa6Lrdozrd9rHK");
 // const
 const carouselImagesTmpPath = __dirname + "/public/upload/carousel/tmp";
 const ADMIN_PRODUCTS_PER_PAGE = 10;
+const HOME_PRODUCTS_PER_PAGE = 8;
 
-app.get("/", (req, res) => {
-    res.send(HtmlTemplate({
-        content: renderToString(React.createElement(HomePage)),
-        props: '""',
-        head: "<title>La Tienda del BEBE</title>"
-    }));
+app.get("(/|/page/:page?)" || "/", async (req, res) => {
+    try {
+        const db :Database = await database;
+
+        const carouselItems :Carousel.TCarouselItem[] = await Carousel.getCarouselItems(db);
+        const featuredProducts :Products.TProduct[] = await Products.getFeaturedProducts(db, true);
+        
+        // getting products
+        const searchName = StringUtils.sanitizeString(req.query.name as string);
+        const filter = StringUtils.sanitizeString(req.query.filter as string);
+        let requestedPage = parseInt(req.params.page, 10);
+        requestedPage = isNaN(requestedPage) ? 1 : requestedPage;
+        if (requestedPage < 1) 
+            throw("Page number should be higher than 0");
+
+        const productsCount :number = await Products.getProductsCount(db, searchName, filter);
+        const productsPageCount :number = Math.ceil(productsCount / HOME_PRODUCTS_PER_PAGE);
+        requestedPage = (requestedPage > productsPageCount) ? productsPageCount : requestedPage; // cap requested page to max page
+        const products :Products.TProduct[] = await Products.getProducts(db, searchName, filter, HOME_PRODUCTS_PER_PAGE, (requestedPage - 1) * HOME_PRODUCTS_PER_PAGE, true);
+        
+        // getting categories
+        const categories :Products.TCategory[] = await Products.getCategories(db);
+
+        const props :HomePageProps = {
+            products: products,
+            carouselItems :carouselItems,
+            featuredProducts: featuredProducts,
+            categories :categories
+        };
+        res.send(HtmlTemplate({
+            content: renderToString(React.createElement(HomePage, props)),
+            props: JSON.stringify(props),
+            head: "<title>La Tienda del BEBE</title>"
+        }));
+
+    } catch (err) { console.log(err); res.status(500).send(err); }
 });
 
 app.get("/productos/:productId?", (req, res) => {

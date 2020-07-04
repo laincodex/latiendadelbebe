@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { TCarouselItem } from "../../../components/carousel";
+
 import ArrowBackIcon from "../../../assets/icons/arrow_left-24px.svg";
 
+interface CarouselProps {
+    carouselItems :TCarouselItem[]
+}
 
-const carousel_images = ["carousel_1.png", "carousel_2.png"];
-const carousel_labels = ["Tenemos todo para ellos", "Y para ellas"];
-
-export default (props :any) => {
+export default ({carouselItems} : CarouselProps) => {
 
     const [index, setIndex] = useState<number>(0);
 
@@ -14,7 +16,7 @@ export default (props :any) => {
             if (index-1 >= 0)
                 setIndex(index-1);
         } else 
-            if (index+1 < carousel_images.length)
+            if (index+1 < carouselItems.length)
                 setIndex(index+1);
     }
 
@@ -22,7 +24,7 @@ export default (props :any) => {
         let enabled :boolean;
         if (back) {
             enabled = (index-1 >= 0);
-        } else enabled = (index+1 < carousel_images.length);
+        } else enabled = (index+1 < carouselItems.length);
 
         return (enabled) ? "carousel-nav-enable" : "";
     }
@@ -31,7 +33,7 @@ export default (props :any) => {
 
     useEffect( () => {
         let timer = setInterval(() => {
-            if (index+1 < carousel_images.length) {
+            if (index+1 < carouselItems.length) {
                 moveImage(false)();
             } else
                 setIndex(0);
@@ -43,14 +45,14 @@ export default (props :any) => {
         <div className="carousel-container">
             <div className="carousel-content"
                 style={{
-                    backgroundImage: `url("upload/carousel/${carousel_images[index]}")`
+                    backgroundImage: `url("/upload/carousel/${carouselItems[index].image_url}")`
                 }}>
                 <div className="carousel-nav">
                     <div className={isNavEnabled(true)} onClick={moveImage(true)}><ArrowBackIcon className="svg-24" /></div>
                     <div className="carousel-arrow-separator"></div>
                     <div className={isNavEnabled(false)} onClick={moveImage(false)}><ArrowBackIcon className="rotate-180 svg-24" /></div>
                 </div>
-                <div className="carousel-label">{carousel_labels[index]}</div>
+                <div className="carousel-label">{carouselItems[index].label}</div>
             </div>
         </div>
     );
