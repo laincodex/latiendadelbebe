@@ -48,26 +48,35 @@ app.get("(/|/page/:page?)" || "/", async (req, res) => {
         const featuredProducts :Products.TProduct[] = await Products.getFeaturedProducts(db, true);
         
         // getting products
-        const searchName = StringUtils.sanitizeString(req.query.name as string);
+        const requestedTitle = StringUtils.sanitizeString(req.query.title as string);
         const filter = StringUtils.sanitizeString(req.query.filter as string);
         let requestedPage = parseInt(req.params.page, 10);
         requestedPage = isNaN(requestedPage) ? 1 : requestedPage;
         if (requestedPage < 1) 
             throw("Page number should be higher than 0");
 
-        const productsCount :number = await Products.getProductsCount(db, searchName, filter);
+        let requestedCategory = parseInt(req.query.category as string, 10);
+        requestedCategory = isNaN(requestedCategory) ? 0 : requestedCategory;
+
+        const productsCount :number = await Products.getProductsCount(db, requestedTitle, filter);
         const productsPageCount :number = Math.ceil(productsCount / HOME_PRODUCTS_PER_PAGE);
         requestedPage = (requestedPage > productsPageCount) ? productsPageCount : requestedPage; // cap requested page to max page
-        const products :Products.TProduct[] = await Products.getProducts(db, searchName, filter, HOME_PRODUCTS_PER_PAGE, (requestedPage - 1) * HOME_PRODUCTS_PER_PAGE, true);
+        const products :Products.TProduct[] = await Products.getProducts(db, requestedTitle, requestedCategory, filter, HOME_PRODUCTS_PER_PAGE, (requestedPage - 1) * HOME_PRODUCTS_PER_PAGE, true);
         
         // getting categories
         const categories :Products.TCategory[] = await Products.getCategories(db);
 
-        const props :HomePageProps = {
-            products: products,
+        const props = {
             carouselItems :carouselItems,
+            products: products,
             featuredProducts: featuredProducts,
-            categories :categories
+            categories :categories,
+            productsPageCount: productsPageCount,
+            currentPage: requestedPage,
+            requestedTitle: requestedTitle,
+            requestedCategory :requestedCategory,
+            filter: filter
+
         };
         res.send(HtmlTemplate({
             content: renderToString(React.createElement(HomePage, props)),
@@ -215,7 +224,7 @@ app.get("/admin/productos/:productId", adminOnly, async (req :Request, res :Resp
 
 app.get("/admin/productos(/page?/:page?)?", adminOnly, async (req :Request, res :Response) => {
     try {
-        const searchName = StringUtils.sanitizeString(req.query.name as string);
+        const requestedTitle = StringUtils.sanitizeString(req.query.title as string);
         const filter = StringUtils.sanitizeString(req.query.filter as string);
 
         const db :Database = await database;
@@ -225,10 +234,13 @@ app.get("/admin/productos(/page?/:page?)?", adminOnly, async (req :Request, res 
         if (requestedPage < 1) 
             throw("Page number should be higher than 0");
 
-        const productsCount :number = await Products.getProductsCount(db, searchName, filter);
+        let requestedCategory = parseInt(req.query.category as string, 10);
+        requestedCategory = isNaN(requestedCategory) ? 0 : requestedCategory;
+
+        const productsCount :number = await Products.getProductsCount(db, requestedTitle, filter);
         const productsPageCount :number = Math.ceil(productsCount / ADMIN_PRODUCTS_PER_PAGE);
         requestedPage = (requestedPage > productsPageCount) ? productsPageCount : requestedPage; // cap requested page to max page
-        const products :Products.TProduct[] = await Products.getProducts(db, searchName, filter, ADMIN_PRODUCTS_PER_PAGE, (requestedPage - 1) * ADMIN_PRODUCTS_PER_PAGE);
+        const products :Products.TProduct[] = await Products.getProducts(db, requestedTitle, requestedCategory, filter, ADMIN_PRODUCTS_PER_PAGE, (requestedPage - 1) * ADMIN_PRODUCTS_PER_PAGE);
         const featuredProducts :Products.TProduct[] = await Products.getFeaturedProducts(db);
         const props = {
             section: "products",
@@ -236,7 +248,7 @@ app.get("/admin/productos(/page?/:page?)?", adminOnly, async (req :Request, res 
             featuredProducts: featuredProducts,
             productsPageCount: productsPageCount,
             currentPage: requestedPage,
-            searchName: searchName,
+            requestedTitle: requestedTitle,
             filter: filter
         };
         renderAdminTemplate(props, res);

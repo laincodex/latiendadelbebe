@@ -875,7 +875,7 @@ footer {
             flex-direction: column;
         }
     }
-    .product-list-nav {
+    .product-list-categories {
         width: 210px; //250
         list-style-type: none;
         background-color: $main-blue;
@@ -886,7 +886,7 @@ footer {
         li:last-child {
             margin-bottom: 20px;
         }
-        .product-list-nav-header {
+        .product-list-categories-header {
             font-weight: bold;
             border-radius: 12px 12px 0 0;
             display: flex;
@@ -900,12 +900,15 @@ footer {
             font-size: 24px;
             color: white;
         }
-        .product-list-nav-item {
+        .product-list-categories-item {
             cursor: pointer;
             transition: background 0.3s ease-in-out;
             &:hover {
                 background-color: #004AA0;
             }
+        }
+        .product-list-categories-item-active {
+            background-color: #003673;
         }
     }
     
@@ -931,9 +934,10 @@ footer {
         .product-list-breadcrumbs {
             display: flex;
             width: 300px;
-            height: 36px;
+            height: 50px;
+            font-size: 20px;
             background-color: white;
-            border-radius: 7px;
+            border-radius: 12px;
             align-items: center;
             div:last-child {
                 flex: 1;
@@ -947,34 +951,33 @@ footer {
                 cursor: pointer;
             }
             svg {
-                width: 20px;
-                height: 36px;
+                // 1.8 ratio
+                width: 27px;
+                height: 50px;
                 stroke: #d8d8d8;
             }
         }
         .products-search-bar {
             background-color: white;
             width: 300px;
-            border-radius: 7px;
-            height: 36px;
+            border-radius: 12px;
+            height: 50px;
             display: flex;
             align-items: center;
-            transition: transform 0.3s ease-in-out;
+            padding: 0 20px 0 10px;
             svg {
                 margin: 0 10px;
             }
             #product-search-text {
                 flex: 1;
                 border: none;
-                padding-right: 10px;
-                font-size: 14px;
+                font-size: 18px;
                 outline: none;
-                
             }
-            &:focus-within{
-                transform: scale(1.2, 1.2) translate(-25px,0px);
+            transition: box-shadow 0.3s ease-in-out;
+            &:focus-within {
+                box-shadow: 4px 8px 16px rgba($color: $main-blue, $alpha: 0.3);
             }
-            
         }
     }
 }

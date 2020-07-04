@@ -68,7 +68,7 @@ export default ({ product, productImages, categories, refUrl, isNewProduct} :Pro
         if (!category)
             return {id: id, name: "categoria inexistente"};
         return category;
-    }
+    };
 
     const openAddCategories = () => {
         const productCategories :number[] = JSON.parse(productState.categories);

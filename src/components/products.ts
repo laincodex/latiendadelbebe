@@ -33,7 +33,7 @@ export const getProductDetail = async (database :Database, id :number) :Promise<
     return await database.get(sql, id);
 };
 
-export const getProducts = async (database :Database, searchName :string, filter :string, limit :number = 10, from :number = 0, includePrimaryImage = false) :Promise<TProduct[]> => {
+export const getProducts = async (database :Database, searchName :string, category :number, filter :string, limit :number = 10, from :number = 0, includePrimaryImage = false) :Promise<TProduct[]> => {
     // this implementation is better performant than using offset
     let searchNameSql = searchName ? "title LIKE '%" + searchName + "%' AND " : '';
     const filterSql = getFilterSql(filter);
@@ -44,7 +44,8 @@ export const getProducts = async (database :Database, searchName :string, filter
     if (includePrimaryImage) {
         sql += " LEFT JOIN product_images AS pi ON pi.id = p.primary_image_id "
     }
-    sql += `where ${searchNameSql}p.oid not in ( select oid from products order by id asc limit ${from}) ${filterSql} limit ${limit}`;
+    let categorySql = (category !== 0) ? `AND categories GLOB '*[,[]${category}[],]*'` : "";
+    sql += `WHERE ${searchNameSql}p.oid not in ( select oid from products order by id asc limit ${from}) ${categorySql} ${filterSql} limit ${limit}`;
     return await database.all(sql);
 };
 

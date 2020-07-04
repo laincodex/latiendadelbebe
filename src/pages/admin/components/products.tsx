@@ -126,7 +126,7 @@ export default ({products, featuredProducts, productsPageCount, currentPage, sea
                     <div className="admin-products-search-input">
                         <div className="admin-products-search-input-bar">
                             <SearchIcon />
-                            <input type="text" name="name" id="admin-products-search" defaultValue={searchName} placeholder="Ingrese nombre a buscar"/>
+                            <input type="text" name="title" id="admin-products-search" defaultValue={searchName} placeholder="Ingrese nombre a buscar"/>
                         </div>
                         <button type="submit"><ArrowIcon className="rotate-180" /></button>
                     </div>
