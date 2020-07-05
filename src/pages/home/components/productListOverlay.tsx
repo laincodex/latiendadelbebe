@@ -5,7 +5,6 @@ import { TProduct } from "../../../components/products";
 import BreadcrumbsIcon from "../../../assets/icons/breadcrumbs.svg";
 import CloseIcon from "../../../assets/icons/close.svg";
 import ArrowBackIcon from "../../../assets/icons/arrow_left-24px.svg";
-import { url } from "inspector";
 
 export default ({selectedProduct, productOverlayOpen, closeProductOverlay} : 
     {   selectedProduct :TProduct, 

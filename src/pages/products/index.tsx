@@ -2,20 +2,20 @@ import React from "react";
 import "../../styles/app.scss";
 
 import Header from "../home/components/header";
-import ProductList from "../home/components/productlist";
+import ProductDetail, { ProductDetailProps } from "../products/components/productDetail";
+import ProductList, { ProductListProps } from "../home/components/productlist";
 import Footer from "../home/components/Footer";
 
 import { TProduct } from "../../components/products";
 
 interface Props {
-    productId : number,
-    products : Array<TProduct>
+    isProductPage :boolean
 }
-export default ({ productId = 0, products = []} : Props) => {
+export default ({ isProductPage = false, ...props} : Props) => {
     return (
         <div className="app-container">
             <Header />
-            {/* <ProductList featuredProductsEnabled={false} showSectionTitle={false} maxListedProducts={12} productId={productId} products={products} /> */}
+            {(isProductPage) ? <ProductDetail {...props as ProductDetailProps} /> : <ProductList {...props as ProductListProps} /> }
             <Footer />
         </div>
     );

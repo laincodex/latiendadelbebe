@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import SectionTitle from "./sectiontitle";
-import Product from "./product";
+import ProductItem from "./productItem";
 import { TProduct } from "../../../components/products";
 
 import ArrowBackIcon from "../../../assets/icons/arrow_left-24px.svg"
@@ -19,7 +19,7 @@ export default ( { featuredProducts } : FeaturedProductsProps) => {
         let renderedList : Array<JSX.Element> = [];
         let maxIndex = (index+PRODUCTS_LIMIT < products.length) ? index+PRODUCTS_LIMIT : products.length;
         for (let i = index; i < maxIndex; i++)
-            renderedList.push(<li key={i}><Product product={products[i]} onClick={openProduct(products[i].id)} /></li>);
+            renderedList.push(<li key={i}><ProductItem product={products[i]} onClick={openProduct(products[i].id)} /></li>);
         return renderedList;
     };
 

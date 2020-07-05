@@ -14,7 +14,7 @@ const app :Application = express();
 const server : http.Server = http.createServer(app);
 import HtmlTemplate from "./components/HtmlTemplate";
 
-import HomePage, {HomePageProps} from "./pages/home";
+import HomePage from "./pages/home";
 import ProductsPage from "./pages/products";
 import AdminPage from "./pages/admin";
 import AdminLogin from "./pages/admin/components/login";
@@ -40,7 +40,7 @@ const carouselImagesTmpPath = __dirname + "/public/upload/carousel/tmp";
 const ADMIN_PRODUCTS_PER_PAGE = 10;
 const HOME_PRODUCTS_PER_PAGE = 8;
 
-app.get("(/|/page/:page?)" || "/", async (req, res) => {
+app.get("(/|/productos|/page/:page?|/productos/page/:page?)" || "/", async (req :Request, res :Response) => {
     try {
         const db :Database = await database;
 
@@ -48,7 +48,7 @@ app.get("(/|/page/:page?)" || "/", async (req, res) => {
         const featuredProducts :Products.TProduct[] = await Products.getFeaturedProducts(db, true);
         
         // getting products
-        const requestedTitle = StringUtils.sanitizeString(req.query.title as string);
+        const requestedTitle = StringUtils.sanitizeString(req.query.title as string, true, true);
         const filter = StringUtils.sanitizeString(req.query.filter as string);
         let requestedPage = parseInt(req.params.page, 10);
         requestedPage = isNaN(requestedPage) ? 1 : requestedPage;
@@ -66,37 +66,73 @@ app.get("(/|/page/:page?)" || "/", async (req, res) => {
         // getting categories
         const categories :Products.TCategory[] = await Products.getCategories(db);
 
-        const props = {
-            carouselItems :carouselItems,
+        const commonProps = {
             products: products,
-            featuredProducts: featuredProducts,
             categories :categories,
             productsPageCount: productsPageCount,
             currentPage: requestedPage,
             requestedTitle: requestedTitle,
             requestedCategory :requestedCategory,
             filter: filter
-
         };
+        const productsPageProps = {
+            isProductPage: false,
+            showSectionTitle: false,
+            ...commonProps
+        };
+        const homePageProps = {
+            carouselItems: carouselItems,
+            featuredProducts: featuredProducts,
+            ...commonProps 
+        };
+
+        let pageToRender :React.ReactElement;
+        let propsToRender;
+        if (req.url.startsWith("/productos")) {
+            propsToRender = productsPageProps;
+            pageToRender = React.createElement(ProductsPage, productsPageProps);
+        } else {
+            propsToRender = homePageProps;
+            pageToRender = React.createElement(HomePage, homePageProps);
+        }
         res.send(HtmlTemplate({
-            content: renderToString(React.createElement(HomePage, props)),
-            props: JSON.stringify(props),
+            content: renderToString(pageToRender),
+            props: JSON.stringify(propsToRender),
             head: "<title>La Tienda del BEBE</title>"
         }));
 
     } catch (err) { console.log(err); res.status(500).send(err); }
 });
 
-app.get("/productos/:productId?", (req, res) => {
-    let props = {
-        productId: parseInt(req.params.productId, 10) || 0,
-        products: [],
-    };
-    res.send(HtmlTemplate({
-        content: renderToString(React.createElement(ProductsPage, props)),
-        props: JSON.stringify(props),
-        head: "<title>La Tienda del BEBE - Productos</title>"
-    }));
+app.get("/productos/:productId", async (req :Request, res :Response) => {
+    try {
+        const db :Database = await database;
+
+        const requestedProduct :number = parseInt(req.params.productId, 10);
+        if (isNaN(requestedProduct) || requestedProduct <= 0) {
+            res.redirect("/productos");
+            return;
+        }
+
+        const product :Products.TProduct | undefined = await Products.getProductDetail(db, requestedProduct);
+        const productImages : Products.TProductImage[] = await Products.getProductImages(db, requestedProduct);
+        const categories : Products.TCategory[] = await Products.getCategories(db);
+        if (typeof product === 'undefined')
+            throw("Product not found");
+        const props = {
+            isProductPage: true,
+            product: product,
+            productImages: productImages,
+            categories: categories,
+            refUrl: getRefUrl(req, "/productos")
+        };
+        
+        res.send(HtmlTemplate({
+            content: renderToString(React.createElement(ProductsPage, props)),
+            props: JSON.stringify(props),
+            head: "<title>La Tienda del BEBE - Productos</title>"
+        }));
+    } catch (err) { console.log(err); res.status(500).send(err); }
 });
 
 const adminOnly = (req :Request, res :Response, next :NextFunction) => {

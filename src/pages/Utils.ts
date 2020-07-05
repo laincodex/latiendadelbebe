@@ -35,13 +35,20 @@ export namespace StringUtils {
         }
     };
 
-    export const sanitizeString = (input :string, allowWhiteSpace :boolean = true) :string => {
+    export const sanitizeString = (input :string, allowWhiteSpace :boolean = true, allowAccentMark :boolean = false ) :string => {
         if (typeof input === 'undefined')
             return '';
+        
+        let regex :string = "[^a-zA-Z0-9";
         if (allowWhiteSpace) {
-            return input.replace(/[^a-zA-Z0-9\s]/g, "");
-        } else {
-            return input.replace(/[^a-zA-Z0-9]/g, "")
+            regex += "\\s";
+            // return input.replace(/[^a-zA-Z0-9\s]/g, "");
         }
+
+        if (allowAccentMark) {
+            regex += "áÁéÉíÍóÓúÚñÑ";
+        }
+        regex += "]";
+        return input.replace(new RegExp(regex, 'g'), "");
     };
 };

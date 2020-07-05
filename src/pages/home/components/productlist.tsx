@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import SectionTitle from "./sectiontitle";
-import Product from "./product";
+import ProductItem from "./productItem";
 import { TProduct, TCategory } from "../../../components/products";
 import FeaturedProducts from "./featuredProducts";
 import Paginator from "./paginator";
@@ -36,8 +36,10 @@ export default ({
 
     const isFirstRender = useIsFirstRender();
     useEffect(() => {
-        if (isFirstRender)
+        if (isFirstRender) {
             document.body.scrollTop = parseInt(localStorage.getItem("scrollPosition") || "0", 10);
+            localStorage.setItem("scrollPosition", "0");
+        }
     },[]);
 
     const renderCategories = () :Array<JSX.Element> => {
@@ -69,7 +71,7 @@ export default ({
     const renderProductList = () :Array<JSX.Element> => {
         let rendered :Array<JSX.Element> = [];
         products.forEach((product, index) => {
-            rendered.push(<li key={index}><Product product={product} onClick={openProduct(product.id)} /></li>);
+            rendered.push(<li key={index}><ProductItem product={product} onClick={openProduct(product.id)} /></li>);
         });
         return rendered;
     };
@@ -89,7 +91,7 @@ export default ({
         <div className="product-list-container">
             {(featuredProducts) && <FeaturedProducts featuredProducts={featuredProducts} />}
             <div className="product-list-content">
-                {(showSectionTitle) ? <SectionTitle title="PRODUCTOS" /> : <></>}
+                {(showSectionTitle) && <SectionTitle title="PRODUCTOS" />}
                 <form className="product-list-section" id="product-list-form" onSubmit={submitForm}>
                     <div className="product-list">
                         <div className="product-list-categories-container no-select">
