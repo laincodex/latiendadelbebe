@@ -51,4 +51,8 @@ export namespace StringUtils {
         regex += "]";
         return input.replace(new RegExp(regex, 'g'), "");
     };
+
+    export const slugify = (input :string) :string => {
+        return input.toLowerCase().replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, '-');
+    };
 };

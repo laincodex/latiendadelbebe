@@ -76,7 +76,8 @@ export default ({
         return rendered;
     };
 
-    const openProduct = (id :number) => () => {
+    const openProduct = (id :number) => (ev:any) => {
+        ev?.preventDefault();
         document.location.href = "/productos/" + id + "?ref=" + escape(document.location.pathname + document.location.search);
     };
 

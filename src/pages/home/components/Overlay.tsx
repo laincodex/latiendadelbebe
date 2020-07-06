@@ -4,10 +4,12 @@ import { useIsFirstRender } from "../../Utils";
 interface Props extends React.DOMAttributes<HTMLElement> {
     openState :boolean, 
     closeCallback: Function, 
+    centered? :boolean,
+    style? :React.CSSProperties,
     children :React.ReactNode
 }
 
-export default ({openState, closeCallback, children, ...rest}: Props) => {
+export default ({openState, closeCallback, centered, style, children, ...rest}: Props) => {
     var mouseDownTarget :any;
     const oldScrollSize = useRef<number>(0);
     const oldOverflowStyle = useRef<string>("");
@@ -79,7 +81,7 @@ export default ({openState, closeCallback, children, ...rest}: Props) => {
     return (
         <div className="overlay" style={isVisible()}>
             <div className="overlay-background"></div>
-            <div className="overlay-content" ref={contentRef} tabIndex={0} onKeyUp={handleEscape} onMouseDown={captureMouseDownTarget} onMouseUp={closeOverlay} id="overlay-content" {...rest}>{children}</div>
+            <div className={"overlay-content " + (centered ? "overlay-content-centered":"")} ref={contentRef} tabIndex={0} onKeyUp={handleEscape} onMouseDown={captureMouseDownTarget} onMouseUp={closeOverlay} id="overlay-content" style={style} {...rest}>{openState && children}</div>
         </div>
     );
 }

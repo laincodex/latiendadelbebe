@@ -18,8 +18,10 @@ export default ( { featuredProducts } : FeaturedProductsProps) => {
     const renderProducts = (products :TProduct[], index :number) :Array<JSX.Element> => {
         let renderedList : Array<JSX.Element> = [];
         let maxIndex = (index+PRODUCTS_LIMIT < products.length) ? index+PRODUCTS_LIMIT : products.length;
-        for (let i = index; i < maxIndex; i++)
+        for (let i = index; i < maxIndex; i++) {
+            products[i].is_featured = false;
             renderedList.push(<li key={i}><ProductItem product={products[i]} onClick={openProduct(products[i].id)} /></li>);
+        }
         return renderedList;
     };
 

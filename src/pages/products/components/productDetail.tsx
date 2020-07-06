@@ -1,20 +1,30 @@
-import React, { useState } from "react";
-import { TProduct, TProductImage } from "../../../components/products";
+import React, { useState, useEffect } from "react";
+import { TProduct, TProductImage, TCategory } from "../../../components/products";
+import Overlay from "../../home/components/Overlay";
 
 import ArrowBackIcon from "../../../assets/icons/arrow_back-24px.svg";
 import BreadcrumbsIcon from "../../../assets/icons/breadcrumbs.svg";
+import CheckOutlineIcon from "../../../assets/icons/check_circle_outline-24px.svg";
+import HighlightOffIcon from "../../../assets/icons/highlight_off-24px.svg";
+import StarIcon from "../../../assets/icons/star-24px.svg";
+import CloseIcon from "../../../assets/icons/close.svg";
+import FacebookIcon from "../../../assets/icons/f_logo_RGB-Blue_1024.svg";
+import { useIsFirstRender, StringUtils } from "../../Utils";
 
 export interface ProductDetailProps {
     product :TProduct,
-    productImages :TProductImage[]
+    productImages :TProductImage[],
+    categories :TCategory[],
+    refUrl :string
 };
 
-export default ({product, productImages} :ProductDetailProps) => {
+export default ({product, productImages, categories, refUrl} :ProductDetailProps) => {
 
     const MAX_PHOTOS :number = 5;
     const MAX_SIDE_PHOTOS :number = 2;
 
-    const [currentPhoto, setCurrentPhoto] = useState<number>(1);
+    const [currentPhoto, setCurrentPhoto] = useState<number>(productImages.findIndex(i => i.id === product.primary_image_id) + 1);
+    const [photoOverlayOpen, setPhotoOverlayOpen] = useState<boolean>(false);
 
     const renderOverlayThumbnails = () :Array<JSX.Element> => {
         let renderedThumbnails :Array<JSX.Element> = [];
@@ -42,7 +52,7 @@ export default ({product, productImages} :ProductDetailProps) => {
             renderedThumbnails.push(
                 <li 
                     key={i} 
-                    className={(i == currentPhoto) ? "product-overlay-thumbnails-active" : ""}
+                    className={(i == currentPhoto) ? "product-detail-thumbnails-active" : ""}
                     style={{
                         backgroundImage: `url("/upload/products/${product.id}/thumb_${productImages[i-1].image_url}")` 
                     }}
@@ -51,6 +61,31 @@ export default ({product, productImages} :ProductDetailProps) => {
             );
         }
         return renderedThumbnails;
+    };
+
+    const renderCategories = () :JSX.Element[] => {
+        const rendered :JSX.Element[] = [];
+        const productCategories :number[] = JSON.parse(product.categories);
+        productCategories.forEach((cat, index) => {
+            const category = getCategory(cat);
+            rendered.push(
+                <li key={index} className="product-detail-category-item" onClick={goToCategory(category.id)}>
+                    <span>{category.name.toUpperCase()}</span>
+                </li>
+            );
+        });
+        return rendered;
+    };
+
+    const getCategory = (id :number) => {
+        const category = categories.find(c => c.id == id);
+        if (!category)
+            return {id: id, name: "categoria inexistente"};
+        return category;
+    };
+
+    const goToCategory = (id :number) => () => {
+        document.location.href = "/productos?category=" + id;
     };
 
     const goToImage = (imageNumber :number) => () => {
@@ -73,35 +108,75 @@ export default ({product, productImages} :ProductDetailProps) => {
         }
     };
 
+    const goToProductsPage = () => {
+        document.location.href = "/productos";
+    };
 
-    return (<div className="product-detail">
-    <div className="product-detail-topnav">
-        <div className="product-detail-breadcrumbs no-select">
-            <span>Productos</span>
-            <BreadcrumbsIcon />
-            <span>{product.title}</span>
-        </div>
-    </div>
-    <div className="product-detail-body-container">
-        <div className="product-detail-body">
-            <div className="product-detail-gallery-container">
-                <div className="product-detail-gallery">
-                    <div className="product-detail-nav">
-                        <div className="product-detail-arrow" onClick={movePhotoIndex(false)}><ArrowBackIcon /></div>
-                        <div className="product-detail-photo" style={{backgroundImage: `url("/upload/products/${product.id}/thumb_${productImages[currentPhoto-1].image_url}")`}}></div>
-                        <div className="product-detail-arrow" onClick={movePhotoIndex()}><ArrowBackIcon className="rotate-180" /></div>
+    const goBack = () => {
+        document.location.href = refUrl;
+    };
+
+    const openPhotoOverlay = () => {
+        setPhotoOverlayOpen(true);
+    };
+
+    const closePhotoOverlay = () => {
+        setPhotoOverlayOpen(false);
+    };
+
+    const isFirstRender = useIsFirstRender();
+    useEffect(() => {
+        if (isFirstRender) {
+            window.history.replaceState('productdetail','La Tienda del Bebe Producto', `/productos/${product.id}/${StringUtils.slugify(product.title)}${document.location.search}`);
+        }
+    }, [])
+
+    return (
+        <div className="product-detail-container">
+            <div className="product-detail-content">
+                <div className="product-detail-topnav">
+                    <div className="product-detail-goback btn-light-blue btn-icon-rotate360" onClick={goBack}><ArrowBackIcon /> Volver</div>
+                    <div className="product-detail-breadcrumbs">
+                        <span onClick={goToProductsPage}>Productos</span>
+                        <BreadcrumbsIcon />
+                        <span>{product.title}</span>
                     </div>
-                    <ul className="product-overlay-thumbnails">
-                        {renderOverlayThumbnails()}
-                    </ul>
+                </div>
+                <div className="product-detail-body-container">
+                    <div className="product-detail-body">
+                        <div className="product-detail-gallery-container">
+                            <div className="product-detail-gallery">
+                                <div className="product-detail-nav">
+                                    <div className="product-detail-arrow" onClick={movePhotoIndex(false)}><ArrowBackIcon /></div>
+                                    <div className="product-detail-photo" onClick={openPhotoOverlay} style={{backgroundImage: `url("/upload/products/${product.id}/thumb_${productImages[currentPhoto-1].image_url}")`}}></div>
+                                    <div className="product-detail-arrow" onClick={movePhotoIndex()}><ArrowBackIcon className="rotate-180" /></div>
+                                </div>
+                                <ul className="product-detail-thumbnails">
+                                    {renderOverlayThumbnails()}
+                                </ul>
+                            </div>
+                        </div>
+                        <article className="product-detail-data">
+                            <div className="product-detail-data-stockfeature-container no-select">
+                                {product.available ? <div className="product-detail-data-stock"><CheckOutlineIcon />EN STOCK</div>
+                                : <div className="product-detail-data-nostock"><HighlightOffIcon />SIN STOCK</div>}
+                                {product.is_featured ? <div className="product-detail-data-featured"><StarIcon /> PRODUCTO DESTACADO</div> : ""}
+                            </div>
+                            <p>{product.description}</p>
+                            <div className="product-detail-categories">{renderCategories()}</div>
+                            <button className="btn-light-blue btn-icon-rotate360"><FacebookIcon /> Preguntar</button>
+                        </article>
+                    </div>
                 </div>
             </div>
-            <article className="product-overlay-data">
-                <h1>{product.title}</h1>
-                <p>{product.description}</p>
-                <button className="main-btn">Preguntar</button>
-            </article>
+            <Overlay openState={photoOverlayOpen} closeCallback={closePhotoOverlay} centered={true}>
+                <div className="product-detail-photo-overlay">
+                    <div className="product-detail-photo-overlay-content">
+                        <div className="close-overlay-button" onClick={closePhotoOverlay}><CloseIcon /></div>
+                        <img src={`/upload/products/${product.id}/${productImages[currentPhoto-1].image_url}`} />
+                    </div>
+                </div>
+            </Overlay>
         </div>
-    </div>
-</div>);
+    );
 };

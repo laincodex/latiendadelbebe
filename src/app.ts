@@ -104,7 +104,7 @@ app.get("(/|/productos|/page/:page?|/productos/page/:page?)" || "/", async (req 
     } catch (err) { console.log(err); res.status(500).send(err); }
 });
 
-app.get("/productos/:productId", async (req :Request, res :Response) => {
+app.get("(/productos/:productId|/productos/:productId/*)?", async (req :Request, res :Response) => {
     try {
         const db :Database = await database;
 
