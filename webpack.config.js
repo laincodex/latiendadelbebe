@@ -2,15 +2,15 @@ const path = require("path");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
     entry: {
-        app: "./src/app.ts",
-        "public/client": "./src/client.tsx"
+        "public/home": "./src/pages/home/client.tsx",
+        "public/admin": "./src/pages/admin/client.tsx",
     },
     output: {
         filename: "[name].js",
         path: path.resolve(__dirname,"dist"),
     },
     devtool: "source-map",
-    target: 'node',
+    // target: 'node',
     node: {
         __dirname: false
     },
@@ -58,15 +58,27 @@ module.exports = {
             }
         ]
     },
-
+    optimization: {
+        splitChunks: {
+            chunks: 'all',
+            cacheGroups: {
+                vendors: false,
+                default: false,
+                vendor: {
+                    name: "vendor",
+                    test: /[\\/]node_modules[\\/]/,
+                    filename: "public/vendor.js"
+                }
+            }
+        },
+    },
     plugins: [
         new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output
         // all options are optional
-        filename: 'public/styles/[name].css',
+        filename: 'public/styles/app.css',
         chunkFilename: '[id].css',
         ignoreOrder: false, // Enable to remove warnings about conflicting order
         }),
     ],
-    externals: ["utf-8-validate", "bufferutil", "uws", {express: 'commonjs express'}, {sqlite3: 'commonjs sqlite3'}, {sharp: 'commonjs sharp'}]
 }

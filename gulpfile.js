@@ -1,6 +1,7 @@
 const gulp = require("gulp");
 const ts = require("gulp-typescript");
-const webpack = require("webpack-stream");
+const webpack = require("webpack");
+const gulpWebpack = require("webpack-stream");
 const spawn = require("child_process").spawn;
 
 var nodeprocess;
@@ -12,20 +13,30 @@ function buildjs() {
         .pipe(gulp.dest("dist/public/scripts"));
 }
 
-function buildreact() {
+function buildApp() {
+    return gulp.src("src/app.ts")
+        .pipe(gulpWebpack(require("./webpack.server.config.js"), webpack))
+        .pipe(gulp.dest("dist"));
+}
+
+function buildReact() {
     gulp.src("src/assets/images/favicon.ico").pipe(gulp.dest("dist/public"));
     gulp.src("src/assets/upload/**/*")
         .pipe(gulp.dest("dist/public/upload"));
     gulp.src("database.db").pipe(gulp.dest("dist"));
     return gulp.src("src/*")
-        .pipe(webpack(require("./webpack.config.js")))
+        .pipe(gulpWebpack(require("./webpack.config.js"), webpack))
         .pipe(gulp.dest("dist"));
 }
 
 function watch() {
-    //gulp.watch("src/pages/**/*.ts", buildjs);
-    gulp.watch("src", gulp.series(buildreact, server));
+    gulp.watch("src/app.ts", gulp.series(buildApp, server));
+    gulp.watch("src", {
+        ignored: 'src/app.ts'
+    }, gulp.series(buildReact, server));
+    
 }
+
 async function server() {
     if(nodeprocess) nodeprocess.kill();
     nodeprocess = await spawn("node", ["app"], {stdio: "inherit", cwd: "dist/"});
@@ -41,12 +52,12 @@ async function deploydocker() {
 }
 
 // Switch these two if you don't need isomorphic rendering
-//exports.build = gulp.series(buildjs, buildreact);
-exports.build = buildreact;
+//exports.build = gulp.series(buildjs, buildReact);
+exports.build = gulp.series(buildApp, buildReact);
 
-exports.dev = gulp.series(this.build, server, watch);
-exports.deploydocker = gulp.series(buildreact, deploydocker);
-exports.buildreact = buildreact;
+exports.dev = gulp.series(buildApp, buildReact, server, watch);
+exports.deploydocker = gulp.series(buildApp, buildReact, deploydocker);
+exports.buildreact = buildReact;
 exports.buildjs = buildjs;
 exports.server = server;
 exports.default = this.build;

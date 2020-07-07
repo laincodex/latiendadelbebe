@@ -1,4 +1,4 @@
-export default ({content, props, head} : {content :string, props :string, head :string}) => `
+export default ({client, content, props, head} : {client :string, content :string, props :string, head :string}) => `
 <html>
 <head>
     ${head}
@@ -9,7 +9,8 @@ export default ({content, props, head} : {content :string, props :string, head :
 <body>
     <div id="app">${content}</div>
     <script>window._initialProps=${props}</script>
-    <script src="/client.js"></script>
+    <script src="/vendor.js"></script>
+    <script src="/${client}.js"></script>
 </body>
 </html>
 `;

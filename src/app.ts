@@ -97,6 +97,7 @@ app.get("(/|/productos|/page/:page?|/productos/page/:page?)" || "/", async (req 
             pageToRender = React.createElement(HomePage, homePageProps);
         }
         res.send(HtmlTemplate({
+            client: "home",
             content: renderToString(pageToRender),
             props: JSON.stringify(propsToRender),
             head: "<title>La Tienda del BEBE</title>"
@@ -129,6 +130,7 @@ app.get("(/productos/:productId|/productos/:productId/*)?", async (req :Request,
         };
         
         res.send(HtmlTemplate({
+            client: "home",
             content: renderToString(React.createElement(ProductsPage, props)),
             props: JSON.stringify(props),
             head: "<title>La Tienda del BEBE - Productos</title>"
@@ -160,6 +162,7 @@ app.get("/admin/login", (req :Request, res :Response) => {
             refUrl: refUrl
         };
         res.send(HtmlTemplate({
+            client: "admin",
             content: renderToString(React.createElement(AdminLogin, props)),
             props: JSON.stringify(props),
             head: "<title>La Tienda del BEBE - Panel del administrador - Login</title>"
@@ -189,6 +192,7 @@ app.post("/admin/login", (req :Request, res :Response) => {
             refUrl: refUrl
         };
         res.send(HtmlTemplate({
+            client: "admin",
             content: renderToString(React.createElement(AdminLogin, props)),
             props: JSON.stringify(props),
             head: "<title>La Tienda del BEBE - Panel del administrador - Login</title>"
@@ -203,6 +207,7 @@ app.get("/admin/logout", (req :Request, res :Response) => {
 
 const renderAdminTemplate = (props :any, res :Response) => {
     res.send(HtmlTemplate({
+        client: "admin",
         content: renderToString(React.createElement(AdminPage, props)),
         props: JSON.stringify(props),
         head: "<title>La Tienda del BEBE - Panel del administrador</title>"
@@ -493,9 +498,10 @@ app.delete("/admin/categorias/:categoryId", adminOnly, async (req :Request, res 
 
 app.get("/404", (req :Request, res :Response) => {
     res.send(HtmlTemplate({
+        client: "home",
         content: renderToString(React.createElement(NotFoundPage)),
-        props: '',
-        head: "<title>La Tienda del BEBE - Pagina no encontrada</title>"
+        props: '""',
+        head: "<title>La Tienda del BEBE - Oops, pagina no encontrada</title>"
     }));
 });
 
