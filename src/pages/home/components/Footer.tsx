@@ -3,6 +3,7 @@ import Logo from "./Logo";
 import MapImageSrc from "../../../assets/images/map.png";
 import Tooltip from "./Tooltip";
 import Overlay from "./Overlay";
+import BgWithPlaceholder from "../../home/components/bgWithPlaceholder";
 
 import FacebookIcon from "../../../assets/icons/f_logo_RGB-Blue_1024.svg";
 import HomeIcon from "../../../assets/icons/home-24px.svg";
@@ -38,7 +39,7 @@ export default () => {
     return (
         <footer>
             <div className="footer-content content-width">
-                <div className="footer-map">
+                <BgWithPlaceholder className="footer-map">
                     <Tooltip title="Haz click para agrandar el mapa!" onClick={openMapOverlay}>
                         <img src={MapImageSrc}/>
                     </Tooltip>
@@ -49,7 +50,7 @@ export default () => {
                             </div>
                         </div>
                     </Overlay>
-                </div>
+                </BgWithPlaceholder>
                 <div className="footer-sns">
                     <ul>
                         <li><h1>Visitanos!</h1></li>

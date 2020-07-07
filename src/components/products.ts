@@ -19,7 +19,7 @@ const getFilterSql = (filter :string ) :string => {
         case 'older':
             return 'ORDER BY date ASC';
         case 'nostock':
-            return 'AND available = false ORDER BY id ASC';
+            return 'AND available = false ORDER BY p.id ASC';
         case 'titledesc':
             return 'ORDER BY title DESC';
         case 'titleasc':
@@ -62,7 +62,7 @@ export const getFeaturedProducts = async (database :Database, includePrimaryImag
 
 export const getProductsCount = async (database :Database, searchName :string, filter :string) :Promise<number> => {
     const filterSql = getFilterSql(filter);
-    let sql = `select count(oid) as count from products${searchName ? " where title LIKE '%" + searchName + "%'" : ' where 1=1'} ${filterSql};`;
+    let sql = `select count(oid) as count from products as p${searchName ? " where title LIKE '%" + searchName + "%'" : ' where 1=1'} ${filterSql};`;
     return (await database.get(sql)).count || 0;
 };
 
@@ -149,7 +149,9 @@ export interface TCategory {
 
 export const getCategories = async (database :Database) :Promise<TCategory[]> => {
     const sql = 'SELECT id, name FROM categories;';
-    return await database.all(sql);
+    const categories  :TCategory[] = await database.all(sql);
+    categories.unshift({id: 0, name: "Todas las categorías"});
+    return categories;
 };
 
 export const newCategories = async (database :Database, categories :TCategory[]) => {

@@ -278,14 +278,17 @@ app.get("/admin/productos(/page?/:page?)?", adminOnly, async (req :Request, res 
         requestedPage = (requestedPage > productsPageCount) ? productsPageCount : requestedPage; // cap requested page to max page
         const products :Products.TProduct[] = await Products.getProducts(db, requestedTitle, requestedCategory, filter, ADMIN_PRODUCTS_PER_PAGE, (requestedPage - 1) * ADMIN_PRODUCTS_PER_PAGE);
         const featuredProducts :Products.TProduct[] = await Products.getFeaturedProducts(db);
+        const categories :Products.TCategory[] = await Products.getCategories(db);
         const props = {
             section: "products",
             products: products,
+            categories: categories,
             featuredProducts: featuredProducts,
             productsPageCount: productsPageCount,
             currentPage: requestedPage,
             requestedTitle: requestedTitle,
-            filter: filter
+            filter: filter,
+            requestedCategory: requestedCategory
         };
         renderAdminTemplate(props, res);
     } catch (err) { console.log(err); res.status(500).send(err); }

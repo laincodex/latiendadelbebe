@@ -9,6 +9,8 @@ import HighlightOffIcon from "../../../assets/icons/highlight_off-24px.svg";
 import StarIcon from "../../../assets/icons/star-24px.svg";
 import CloseIcon from "../../../assets/icons/close.svg";
 import FacebookIcon from "../../../assets/icons/f_logo_RGB-Blue_1024.svg";
+import BgWithPlaceholder from "../../home/components/bgWithPlaceholder";
+
 import { useIsFirstRender, StringUtils } from "../../Utils";
 
 export interface ProductDetailProps {
@@ -23,7 +25,7 @@ export default ({product, productImages, categories, refUrl} :ProductDetailProps
     const MAX_PHOTOS :number = 5;
     const MAX_SIDE_PHOTOS :number = 2;
 
-    const [currentPhoto, setCurrentPhoto] = useState<number>(productImages.findIndex(i => i.id === product.primary_image_id) + 1);
+    const [currentPhoto, setCurrentPhoto] = useState<number>(productImages.length > 0 ? productImages.findIndex(i => i.id === product.primary_image_id) + 1 : 1);
     const [photoOverlayOpen, setPhotoOverlayOpen] = useState<boolean>(false);
 
     const renderOverlayThumbnails = () :Array<JSX.Element> => {
@@ -53,11 +55,10 @@ export default ({product, productImages, categories, refUrl} :ProductDetailProps
                 <li 
                     key={i} 
                     className={(i == currentPhoto) ? "product-detail-thumbnails-active" : ""}
-                    style={{
-                        backgroundImage: `url("/upload/products/${product.id}/thumb_${productImages[i-1].image_url}")` 
-                    }}
                     onClick={goToImage(i)}
-                ></li>
+                ><BgWithPlaceholder style={{
+                        backgroundImage: `url("/upload/products/${product.id}/thumb_${getImage(i).image_url}")` 
+                    }} /></li>
             );
         }
         return renderedThumbnails;
@@ -129,7 +130,15 @@ export default ({product, productImages, categories, refUrl} :ProductDetailProps
         if (isFirstRender) {
             window.history.replaceState('productdetail','La Tienda del Bebe Producto', `/productos/${product.id}/${StringUtils.slugify(product.title)}${document.location.search}`);
         }
-    }, [])
+    }, []);
+
+    const getImage = (position :number) => {
+        if (productImages.length >= position) {
+            return productImages[position - 1];
+        } else {
+            return { id: 0, product_id: product.id,  image_url: ""} as TProductImage;
+        }
+    };
 
     return (
         <div className="product-detail-container">
@@ -148,7 +157,7 @@ export default ({product, productImages, categories, refUrl} :ProductDetailProps
                             <div className="product-detail-gallery">
                                 <div className="product-detail-nav">
                                     <div className="product-detail-arrow" onClick={movePhotoIndex(false)}><ArrowBackIcon /></div>
-                                    <div className="product-detail-photo" onClick={openPhotoOverlay} style={{backgroundImage: `url("/upload/products/${product.id}/thumb_${productImages[currentPhoto-1].image_url}")`}}></div>
+                                    <BgWithPlaceholder className="product-detail-photo" onClick={openPhotoOverlay} style={{backgroundImage: `url("/upload/products/${product.id}/thumb_${getImage(currentPhoto).image_url}")`}} />
                                     <div className="product-detail-arrow" onClick={movePhotoIndex()}><ArrowBackIcon className="rotate-180" /></div>
                                 </div>
                                 <ul className="product-detail-thumbnails">
@@ -173,7 +182,7 @@ export default ({product, productImages, categories, refUrl} :ProductDetailProps
                 <div className="product-detail-photo-overlay">
                     <div className="product-detail-photo-overlay-content">
                         <div className="close-overlay-button" onClick={closePhotoOverlay}><CloseIcon /></div>
-                        <img src={`/upload/products/${product.id}/${productImages[currentPhoto-1].image_url}`} />
+                        <img src={`/upload/products/${product.id}/${getImage(currentPhoto).image_url}`} />
                     </div>
                 </div>
             </Overlay>

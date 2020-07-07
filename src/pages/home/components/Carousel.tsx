@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { TCarouselItem } from "../../../components/carousel";
 
 import ArrowBackIcon from "../../../assets/icons/arrow_left-24px.svg";
+import BgWithPlaceholder from "../../home/components/bgWithPlaceholder";
 
 interface CarouselProps {
     carouselItems :TCarouselItem[]
@@ -13,47 +14,38 @@ export default ({carouselItems} : CarouselProps) => {
 
     const moveImage = (back :boolean) => () => {
         if (back) {
-            if (index-1 >= 0)
+            if (index-1 >= 0) {
                 setIndex(index-1);
-        } else 
-            if (index+1 < carouselItems.length)
+            } else {
+                setIndex(carouselItems.length-1);
+            }
+        } else {
+            if (index+1 < carouselItems.length) {
                 setIndex(index+1);
+            } else {
+                setIndex(0)
+            }
+        }
     }
-
-    const isNavEnabled = (back :boolean) => {
-        let enabled :boolean;
-        if (back) {
-            enabled = (index-1 >= 0);
-        } else enabled = (index+1 < carouselItems.length);
-
-        return (enabled) ? "carousel-nav-enable" : "";
-    }
-    
-    let counter = 0;
 
     useEffect( () => {
-        let timer = setInterval(() => {
-            if (index+1 < carouselItems.length) {
-                moveImage(false)();
-            } else
-                setIndex(0);
-        },10000);  
+        let timer = setInterval(() => moveImage(false)(),10000);  
         return () => clearInterval(timer);      
     });
     
     return (
         <div className="carousel-container">
-            <div className="carousel-content"
+            <BgWithPlaceholder className="carousel-content"
                 style={{
                     backgroundImage: `url("/upload/carousel/${carouselItems[index].image_url}")`
                 }}>
                 <div className="carousel-nav">
-                    <div className={isNavEnabled(true)} onClick={moveImage(true)}><ArrowBackIcon className="svg-24" /></div>
+                    <div className="carousel-arrow" onClick={moveImage(true)}><ArrowBackIcon className="svg-24" /></div>
                     <div className="carousel-arrow-separator"></div>
-                    <div className={isNavEnabled(false)} onClick={moveImage(false)}><ArrowBackIcon className="rotate-180 svg-24" /></div>
+                    <div className="carousel-arrow" onClick={moveImage(false)}><ArrowBackIcon className="rotate-180 svg-24" /></div>
                 </div>
-                <div className="carousel-label">{carouselItems[index].label}</div>
-            </div>
+                <div className="carousel-label no-select">{carouselItems[index].label}</div>
+            </BgWithPlaceholder>
         </div>
     );
 }

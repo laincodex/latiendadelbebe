@@ -1,6 +1,6 @@
 import React from "react";
 import Paginator from "../../home/components/paginator";
-import { TProduct } from "../../../components/products";
+import { TProduct, TCategory } from "../../../components/products";
 import SectionTitle from "../../home/components/sectiontitle";
 import { parseDate } from "../../Utils";
 import Tooltip from "../../home/components/Tooltip";
@@ -10,16 +10,19 @@ import RemoveIcon from "../../../assets/icons/remove_circle-24px.svg";
 import AddIcon from "../../../assets/icons/baseline-add.svg";
 import SearchIcon from "../../../assets/icons/search-24px.svg";
 import ArrowIcon from "../../../assets/icons/arrow_back-24px.svg";
+import categories from "./categories";
 
 export interface ProductsProps {
     products :TProduct[],
     featuredProducts :TProduct[],
+    categories :TCategory[],
     productsPageCount : number,
     currentPage :number,
     searchName :string,
-    filter :string
+    filter :string,
+    requestedCategory :number
 }
-export default ({products, featuredProducts, productsPageCount, currentPage, searchName, filter} : ProductsProps)  => {
+export default ({products, featuredProducts, categories, productsPageCount, currentPage, searchName, filter, requestedCategory} : ProductsProps)  => {
     const renderFeaturedProducts = () :JSX.Element[] => {
         const renderedProducts :JSX.Element[] = [];
         if (featuredProducts.length > 0) {
@@ -58,6 +61,14 @@ export default ({products, featuredProducts, productsPageCount, currentPage, sea
                     <li onClick={deleteProduct(product.id)} className="admin-product-remove-icon"><Tooltip style={{marginTop:35}} title="Eliminar"><RemoveIcon /></Tooltip></li>
                 </ul>
             </li>);
+    };
+
+    const renderCategoriesSelector = () :JSX.Element[] => {
+        const renderedCategories :JSX.Element[] = [];
+        categories.forEach((cat, index) => {
+            renderedCategories.push(<option key={index} value={cat.id}>{cat.name}</option>);
+        });
+        return renderedCategories;
     };
 
     const openProduct = (productId :number) => () => {
@@ -111,7 +122,7 @@ export default ({products, featuredProducts, productsPageCount, currentPage, sea
 
     const submitSearchForm = (ev :any) => {
         (document.getElementById("admin-products-search") as HTMLFormElement).submit();
-    }
+    };
 
     return (
         <div className="admin-products-container">
@@ -130,7 +141,10 @@ export default ({products, featuredProducts, productsPageCount, currentPage, sea
                         </div>
                         <button type="submit"><ArrowIcon className="rotate-180" /></button>
                     </div>
-                    <select name="filter" className="main-select admin-products-date-filter" defaultValue={filter} onChange={submitSearchForm}>
+                    <select name="category" className="main-select" defaultValue={requestedCategory} onChange={submitSearchForm}>
+                        {renderCategoriesSelector()}
+                    </select>
+                    <select name="filter" className="main-select" defaultValue={filter} onChange={submitSearchForm}>
                         <option value="titleasc">Titulo (A-Z)</option>
                         <option value="titledesc">Titulo (Z-A)</option>
                         <option value="recent">Fecha de ingreso (m&aacute;s reciente)</option>

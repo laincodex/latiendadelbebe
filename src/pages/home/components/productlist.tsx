@@ -6,7 +6,6 @@ import FeaturedProducts from "./featuredProducts";
 import Paginator from "./paginator";
 import { useIsFirstRender } from "../../Utils";
 
-
 import SearchIcon from "../../../assets/icons/search-24px.svg";
 import BreadcrumbsIcon from "../../../assets/icons/breadcrumbs.svg";
 
@@ -44,8 +43,8 @@ export default ({
 
     const renderCategories = () :Array<JSX.Element> => {
         let rendered :Array<JSX.Element> = [];
-        categories.map( (cat, index) => {
-            rendered.push(<li className={`product-list-categories-item ${cat.id === requestedCategory ? "product-list-categories-item-active": ""}`} key={index} onClick={goToCategory(cat.id.toString())}>{cat.name}</li>);
+        categories.forEach( (cat, index) => {
+            rendered.push(<li className={`product-list-categories-item ${cat.id === requestedCategory ? "product-list-categories-item-active": ""}`} key={index} onClick={goToCategory(cat.id.toString())}>{cat.id === 0 ? "Todas" : cat.name}</li>);
         });
         return rendered;
     };
@@ -109,6 +108,13 @@ export default ({
                                     <BreadcrumbsIcon />
                                     <div>{getCategory(requestedCategory).name}</div>
                                 </div>
+                                <select name="filter" className="main-select" defaultValue={filter} onChange={submitForm}>
+                                    <option value="titleasc">Titulo (A-Z)</option>
+                                    <option value="titledesc">Titulo (Z-A)</option>
+                                    <option value="recent">Fecha de ingreso (m&aacute;s reciente)</option>
+                                    <option value="older">Fecha de ingreso (m&aacute;s antiguo)</option>
+                                    <option value="nostock">Sin stock</option>
+                                </select>
                                 <div className="products-search-bar">
                                     <SearchIcon />
                                     <input type="text" defaultValue={requestedTitle} placeholder="Ingresa para buscar" name="title" id="product-search-text"/>
