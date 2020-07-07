@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import HomePage from "./pages/home";
+import NotFoundPage from "./pages/404";
 import ProductsPage from "./pages/products";
 import AdminPage from "./pages/admin";
 import AdminLogin from "./pages/admin/components/login";
@@ -14,6 +15,7 @@ const App = () => (
             <Route path="/productos">{React.createElement(ProductsPage, initialProps)}</Route>
             <Route path="/admin/login">{React.createElement(AdminLogin, initialProps)}</Route>
             <Route path="/admin">{React.createElement(AdminPage, initialProps)}</Route>
+            <Route path="/404" exact={true}>{React.createElement(NotFoundPage, initialProps)}</Route>
             <Route path="/">{React.createElement(HomePage, initialProps)}</Route>
         </Switch>
     </BrowserRouter>

@@ -13,6 +13,7 @@ function buildjs() {
 }
 
 function buildreact() {
+    gulp.src("src/assets/images/favicon.ico").pipe(gulp.dest("dist/public"));
     gulp.src("src/assets/upload/**/*")
         .pipe(gulp.dest("dist/public/upload"));
     gulp.src("database.db").pipe(gulp.dest("dist"));

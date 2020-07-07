@@ -18,6 +18,7 @@ import HomePage from "./pages/home";
 import ProductsPage from "./pages/products";
 import AdminPage from "./pages/admin";
 import AdminLogin from "./pages/admin/components/login";
+import NotFoundPage from "./pages/404";
 
 import * as Carousel from "./components/carousel";
 import * as Products from "./components/products";
@@ -491,7 +492,11 @@ app.delete("/admin/categorias/:categoryId", adminOnly, async (req :Request, res 
 });
 
 app.get("/404", (req :Request, res :Response) => {
-    res.send("Not found lol");
+    res.send(HtmlTemplate({
+        content: renderToString(React.createElement(NotFoundPage)),
+        props: '',
+        head: "<title>La Tienda del BEBE - Pagina no encontrada</title>"
+    }));
 });
 
 app.get("*", (req :Request, res :Response) => res.redirect("/404"));
