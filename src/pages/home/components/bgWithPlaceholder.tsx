@@ -9,7 +9,7 @@ interface Props extends React.DOMAttributes<HTMLElement>{
 export default ( {style, className = "", children, ...rest} :Props) => {
     return (
         <div className={"bgimage-placeholder " + className}>
-            <div className="bgimage-placebolder-svg "><ImagePlaceholder className={className} /></div>
+            <div className="bgimage-placeholder-svg"><ImagePlaceholder className={className} /></div>
             <div className={"bgimage-placeholder-children " + className} style={style} {...rest}>{children}</div>
         </div>
     );

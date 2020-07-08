@@ -373,7 +373,7 @@ body {
         position: relative;
         width: 100%;
         height: 100%;
-    .bgimage-placebolder-svg {
+    .bgimage-placeholder-svg {
         position: absolute;
         width: 100%;
         height: 100%;
@@ -490,21 +490,12 @@ footer {
 
     .logo-text-container {
         flex: 1;
-        font-family: 'Passion One', cursive;
-        font-size: 48px;
         color: white;
         display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: flex-start;
-        .logo-text-bottom {
-            display: flex;
-            margin-top: -15px;
-        }
-        .logo-text-2 {
-            font-size: 36px;
-            transform: rotate(-20deg);
-            margin: 5px 20px 0 25px;
+        justify-content: flex-start;
+        align-items: center;
+        svg {
+            width: 250px;
         }
     }
 }
@@ -732,6 +723,7 @@ footer {
         bottom: 0;
         transform: translate(-50%);
         margin-bottom: 25px;
+        z-index: 2;
     }
     .product-item-featured {
         background-color: white;
@@ -747,6 +739,7 @@ footer {
         transform: translate(-50%);
         margin-top: -12px;
         font-size: 15px;
+        z-index: 2;
         svg {
             height: 20px;
             width: 20px;
@@ -1265,7 +1258,10 @@ footer {
         align-items: center;
         color: $main-blue;
         font-size: 28px;
-        font-family: 'Passion One', cursive;
+        font-weight: bold;
+        .logo-text-container {
+            color: $main-blue;
+        }
     }
     .admin-panel-content {
         display: flex;

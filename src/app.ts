@@ -261,7 +261,7 @@ app.get("/admin/productos/:productId", adminOnly, async (req :Request, res :Resp
             };
             renderAdminTemplate(props, res);
         } else res.sendStatus(400);
-    } catch (err) { console.log(err); res.status(500).send(err); }
+    } catch (err) {res.status(500).send(err);}
 });
 
 app.get("/admin/productos(/page?/:page?)?", adminOnly, async (req :Request, res :Response) => {
@@ -304,7 +304,7 @@ app.put("/admin/productos/:productId", adminOnly, express.json(), async (req :Re
     try {
         const db :Database = await database;
         const id = parseInt(req.params.productId, 10);
-        const product :Products.TProduct = req.body;
+        const product :Products.TProduct = req.body.data;
         if (!isNaN(id) && (typeof product !== 'undefined')) {
             if(product.id === 0) {
                 const newProductId = await Products.newProduct(db, product);
@@ -423,26 +423,26 @@ if (!fs.existsSync(carouselImagesTmpPath)) {
 }
 app.post("/admin/carousel/upload", adminOnly, async (req :Request, res :Response) => {
     const form = new multyparty.Form();
-    form.parse(req, (err, fields, files) => {
-        if (err)
+    form.parse(req, async (err, fields, files) => {
+        if (err) {
             res.status(400).send(err);
+            console.log(err);
+            return;
+        }
         const carouselImage :multyparty.File = files["carouselImage"][0];
         const tmpPath :string = "public/upload/carousel" + carouselImage.path;
-        fs.rename(carouselImage.path, tmpPath, err => {
-            if (err) {
-                res.status(500).send(err);
-                return;
-            }
-            res.status(200).send({tmpImagePath: carouselImage.path.replace(/^\/tmp\//, "")}); // strip /tmp/ before send the name
-        })
+        await sharp(carouselImage.path).resize({width: 1270}).toFile(tmpPath);
+        res.status(200).send({tmpImagePath: carouselImage.path.replace(/^\/tmp\//, "")}); // strip /tmp/ before send the name
     });
     return;
 });
 
 app.post("/admin/carousel", express.json(), adminOnly, async (req :Request, res :Response) => {
     try {
+        const sourceCarousel :Carousel.TCarouselItem[] = req.body.data.source;
+        const destCarousel :Carousel.TCarouselItem[] = req.body.data.destination;
         const db :Database = await database;
-        const updatedCarousel = await Carousel.updateCarouselItems(db, req.body.source, req.body.destination);
+        const updatedCarousel = await Carousel.updateCarouselItems(db, sourceCarousel, destCarousel);
         res.status(200).send(updatedCarousel);
     } catch(err) {
         res.status(500).send(err);
@@ -466,10 +466,10 @@ app.get("/admin/categorias", adminOnly, async (req :Request, res :Response) => {
 app.put("/admin/categorias", express.json(), adminOnly, async (req :Request, res :Response) => {
     try {
         const db :Database = await database;
-        const categories :Products.TCategory[] = req.body;
+        const categories :Products.TCategory[] = req.body.data;
         const categoriesToAdd :Products.TCategory[] = [];
         for (let catIndex = 0; catIndex < categories.length; catIndex++) {
-            if (categories[catIndex].id === 0){
+            if (categories[catIndex].id === -1){
                 categoriesToAdd.push(categories[catIndex]);
             } else {
                 await Products.updateCategory(db, categories[catIndex]);

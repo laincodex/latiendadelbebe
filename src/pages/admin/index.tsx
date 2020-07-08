@@ -4,6 +4,7 @@ import CarouselPage, { CarouselProps } from "./components/carousel";
 import ProductsPage, { ProductsProps } from "./components/products";
 import ProductDetailPage, { ProductDetailProps } from "./components/productDetail";
 import CategoriesPage, { CategoriesProps } from "./components/categories";
+import Logo from "../home/components/Logo";
 
 import ExitIcon from "../../assets/icons/baseline-exit_to_app.svg";
 import CarouselIcon from "../../assets/icons/collections-24px.svg";
@@ -14,7 +15,9 @@ export default ( { section, ...props } : { section? :string }) => {
     const isCurrentSection = (inputSection :string) => (section == inputSection) ? "admin-panel-sectionactive" : "";
     return (
         <div className="admin-panel-container">
-            <div className="admin-panel-topnav">LA TIENDA DEL BEBE</div>
+            <div className="admin-panel-topnav">
+                LA TIENDA DEL BEBE
+            </div>
             <div className="admin-panel-content">
                 <nav className="admin-panel-nav">
                     <ul className="admin-panel-menu">

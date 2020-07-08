@@ -1,16 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import Paginator from "../../home/components/paginator";
 import { TProduct, TCategory } from "../../../components/products";
 import SectionTitle from "../../home/components/sectiontitle";
 import { parseDate } from "../../Utils";
+import Axios from "axios";
 import Tooltip from "../../home/components/Tooltip";
+import Snackbar, {SnackbarTime, SnackbarStyles} from "../../../components/Snackbar";
 
 import StarIcon from "../../../assets/icons/star-24px.svg";
 import RemoveIcon from "../../../assets/icons/remove_circle-24px.svg";
 import AddIcon from "../../../assets/icons/baseline-add.svg";
 import SearchIcon from "../../../assets/icons/search-24px.svg";
 import ArrowIcon from "../../../assets/icons/arrow_back-24px.svg";
-import categories from "./categories";
 
 export interface ProductsProps {
     products :TProduct[],
@@ -23,6 +24,8 @@ export interface ProductsProps {
     requestedCategory :number
 }
 export default ({products, featuredProducts, categories, productsPageCount, currentPage, searchName, filter, requestedCategory} : ProductsProps)  => {
+    const [snackbarErrorActive, setSnackbarErrorActive] = useState<boolean>(false);
+
     const renderFeaturedProducts = () :JSX.Element[] => {
         const renderedProducts :JSX.Element[] = [];
         if (featuredProducts.length > 0) {
@@ -89,17 +92,14 @@ export default ({products, featuredProducts, categories, productsPageCount, curr
             is_featured: feature
         };
         if (consent) {
-            fetch("/admin/productos/" + id, {
-                method: "PUT", 
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(product)
+            Axios.put("/admin/productos/" + id, {
+                data: product
             }).then(res => {
-                if (res.ok) {
+                if (res.data.ok) {
                     location.reload();
                 } else {
-                    console.log("hubo un error");
+                    console.log("err", res);
+                    activeErrorSnackbar();
                 }
             });
         }
@@ -108,13 +108,12 @@ export default ({products, featuredProducts, categories, productsPageCount, curr
     const deleteProduct = (id :number) => () => {
         const consent = confirm("Borrar el producto?");
         if (consent) {
-            fetch("/admin/productos/" + id, {
-                method: "DELETE",
-            }).then(res => {
-                if (res.ok) {
+            Axios.delete("/admin/productos/" + id).then(res => {
+                if (res.status == 200) {
                     location.reload();
                 } else {
-                    console.log("hubo un error");
+                    console.log("err", res);
+                    activeErrorSnackbar();
                 }
             });
         }
@@ -122,6 +121,11 @@ export default ({products, featuredProducts, categories, productsPageCount, curr
 
     const submitSearchForm = (ev :any) => {
         (document.getElementById("admin-products-search") as HTMLFormElement).submit();
+    };
+
+    const activeErrorSnackbar = () => {
+        setSnackbarErrorActive(true);
+        setTimeout(() => setSnackbarErrorActive(false), SnackbarTime);
     };
 
     return (
@@ -155,6 +159,7 @@ export default ({products, featuredProducts, categories, productsPageCount, curr
             </div>
             <ul>{renderProducts()}</ul>
             {productsPageCount > 1 && <Paginator pages={productsPageCount} currentPage={currentPage} MAX_BUTTONS={5} MAX_SIDE_BUTTONS={2} callback={goToPage} />}
+            <Snackbar type={SnackbarStyles.ERROR} message="Hubo un error, por favor recarga la pagina." isActive={snackbarErrorActive} />
         </div>
     );
 }

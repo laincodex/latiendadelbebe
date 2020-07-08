@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Tooltip from "../../home/components/Tooltip";
 import { TCarouselItem } from "../../../components/carousel";
 import Snackbar, {SnackbarTime, SnackbarStyles} from "../../../components/Snackbar";
+import Axios from "axios";
 
 import AddIcon from "../../../assets/icons/baseline-add.svg";
 import ArrowIcon from "../../../assets/icons/arrow_left-24px.svg";
@@ -100,21 +101,17 @@ export default ( { sourceCarouselItems } :CarouselProps ) => {
         // we need to clear the input value to have onChange working correctly for newer uploads
         (document.getElementById("admin-carousel-upload-image") as HTMLInputElement).value = "";
 
-        fetch("/admin/carousel/upload", {
-            method: 'POST',
-            body: data
-        })  .then(res => res.json())
-            .then(res => {
-                if (res.tmpImagePath) {
-                    carouselItems[uploadImageIndex.current].image_url = "tmp/" + res.tmpImagePath;
-                    setHasAnyChangesFlag(true);
-                    setCarouselItems([...carouselItems]);
-                }
-            })
-            .catch(err => {
-                activeErrorSnackbar();
-                console.log(err);
-            });
+        Axios.post("/admin/carousel/upload", data).then(res => {
+            if (res.data.tmpImagePath) {
+                carouselItems[uploadImageIndex.current].image_url = "tmp/" + res.data.tmpImagePath;
+                setHasAnyChangesFlag(true);
+                setCarouselItems([...carouselItems]);
+            }
+        })
+        .catch(err => {
+            activeErrorSnackbar();
+            console.log(err);
+        });
     }
     
     const removeCarouselItem = (index :number) => () => {
@@ -132,18 +129,14 @@ export default ( { sourceCarouselItems } :CarouselProps ) => {
     }
 
     const submitCarouselItems = (ev :any) => {
-        fetch("/admin/carousel",{
-            method: 'POST',
-            body: JSON.stringify({
+        Axios.post("/admin/carousel", {
+            data: {
                 source: sourceCarouselItemsCopy.current,
                 destination: carouselItems
-            }),
-            headers: {
-                'Content-Type':'application/json'
             }
         })
-        .then(res => res.json())
-        .then( (updatedCarousel :TCarouselItem[]) => {
+        .then(res => {
+            const updatedCarousel :TCarouselItem[] = res.data;
             sourceCarouselItemsCopy.current = updatedCarousel.map(item => Object.assign({}, item));
             activeSuccessSnackbar();
             setHasAnyChangesFlag(false);

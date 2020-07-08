@@ -11,6 +11,7 @@ import DoneIcon from "../../../assets/icons/done-24px.svg";
 import CloseIcon from "../../../assets/icons/close.svg";
 import Overlay from "../../home/components/Overlay";
 import Snackbar, {SnackbarTime, SnackbarStyles} from "../../../components/Snackbar";
+import Axios from "axios";
 
 export interface ProductDetailProps {
     product: TProduct,
@@ -72,7 +73,7 @@ export default ({ product, productImages, categories, refUrl, isNewProduct} :Pro
 
     const openAddCategories = () => {
         const productCategories :number[] = JSON.parse(productState.categories);
-        setCategoriesToAdd(categories.filter(c => productCategories.indexOf(c.id) === -1));
+        setCategoriesToAdd(categories.filter(c => productCategories.indexOf(c.id) === -1 && c.id !== 0));
         setAddCategoriesOverlay(true);
     };
 
@@ -115,10 +116,9 @@ export default ({ product, productImages, categories, refUrl, isNewProduct} :Pro
         if (confirm("Estas seguro de borrar esta imagen?")) {
             const newProductImagesState = productImagesState.filter(i => i.id !== id);
             productState.primary_image_id = newProductImagesState[0]?.id || 0;
-            fetch(`/admin/productos/images/${id}/${productState.primary_image_id}`, {
-                method: 'DELETE',
-            }).then(res => {
-                if(res.ok) {
+            Axios.delete(`/admin/productos/images/${id}/${productState.primary_image_id}`)
+            .then(res => {
+                if(res.status === 200) {
                     setProductImagesState(newProductImagesState);
                     setProductState({...productState});
                 } else {
@@ -160,17 +160,13 @@ export default ({ product, productImages, categories, refUrl, isNewProduct} :Pro
     }
 
     const submitProduct = () => {
-        fetch("/admin/productos/" + productState.id, {
-            method: "PUT",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(productState)
-        }).then(res => res.json()).then(res => {
-            if (res.id) {
-                document.location.href = "/admin/productos/"+res.id;
+        Axios.put("/admin/productos/" + productState.id, {
+            data: productState
+        }).then(res => {
+            if (res.data.id) {
+                document.location.href = "/admin/productos/" + res.data.id;
             }
-            if (res.ok) {
+            if (res.data.ok) {
                 activeSuccessSnackbar();
                 setHasAnyChangesFlag(false);
             } else throw(res);
@@ -186,10 +182,8 @@ export default ({ product, productImages, categories, refUrl, isNewProduct} :Pro
 
     const removeProduct = () => {
         if (confirm("Estas seguro de borrar el producto?")) {
-            fetch("/admin/productos/" + productState.id, {
-                method: "DELETE",
-            }).then(res => {
-                if (res.ok) {
+            Axios.delete("/admin/productos/" + productState.id).then(res => {
+                if (res.status === 200) {
                     goBack();
                 } else {
                     console.log("hubo un error");
@@ -213,19 +207,16 @@ export default ({ product, productImages, categories, refUrl, isNewProduct} :Pro
         (document.getElementById("admin-product-upload-images") as HTMLInputElement).value = "";
 
         data.append('productId', product.id.toString());
-        fetch("/admin/productos/uploadImages", {
-            method: 'POST',
-            body: data
-        })  .then(res => res.json())
+        Axios.post("/admin/productos/uploadImages",data)
             .then(res => {
-                if (res.images) {
-                    const images :TProductImage[] = res.images;
+                if (res.data.images) {
+                    const images :TProductImage[] = res.data.images;
                     const productImages = [...productImagesState];
                     images.forEach(image => {
                         productImages.push(image);
                     });
                     setProductImagesState(productImages);
-                    if(res.previousProductImagesCount === 0) {
+                    if(res.data.previousProductImagesCount === 0) {
                         productState.primary_image_id = productImages[0].id;
                         setProductState({...productState});;
                     }

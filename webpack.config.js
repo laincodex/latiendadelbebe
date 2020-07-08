@@ -58,6 +58,10 @@ module.exports = {
             }
         ]
     },
+    performance: {
+        maxEntrypointSize: process.env.NODE_ENV === 'production' ? 512000 : 2048000,
+        maxAssetSize: process.env.NODE_ENV === 'production' ? 512000 : 2048000
+    },    
     optimization: {
         splitChunks: {
             chunks: 'all',

@@ -3,11 +3,13 @@ import { TCategory } from "../../../components/products";
 import SectionTitle from "../../home/components/sectiontitle";
 import Snackbar, {SnackbarTime, SnackbarStyles} from "../../../components/Snackbar";
 import Tooltip from "../../home/components/Tooltip";
+import Axios from "axios";
 
 import RemoveIcon from "../../../assets/icons/remove_circle-24px.svg";
 import AddIcon from "../../../assets/icons/baseline-add.svg";
 import DoneIcon from "../../../assets/icons/done-24px.svg";
 import CloseIcon from "../../../assets/icons/close.svg";
+
 
 export interface CategoriesProps {
     categories : TCategory[]
@@ -22,21 +24,21 @@ export default ({categories} : CategoriesProps) => {
     const renderCategories = () :JSX.Element[] => {
         const rendered :JSX.Element[] = [];
         categoriesState.forEach((cat, index) => {
-            rendered.push(<li key={index}>
-                <input type="text" defaultValue={cat.name} onChange={handleChangeCategoryName(index)} />
-                <div onClick={removeCategory(cat.id)}>
-                    <Tooltip title="Eliminar" style={{marginTop: 30}}><RemoveIcon /></Tooltip>
-                </div>
-            </li>);
+            if (cat.id !== 0) {
+                rendered.push(<li key={index}>
+                    <input type="text" defaultValue={cat.name} onChange={handleChangeCategoryName(index)} />
+                    <div onClick={removeCategory(cat.id)}>
+                        <Tooltip title="Eliminar" style={{marginTop: 30}}><RemoveIcon /></Tooltip>
+                    </div>
+                </li>);
+            }
         });
         return rendered;
     };
     const removeCategory = (id :number) => () => {
         if (confirm("Estas seguro de borrar la categoria?")) {
-            fetch("/admin/categorias/" + id, {
-                method: "DELETE"
-            }).then(res => {
-                if (res.ok) {
+            Axios.delete("/admin/categorias/" + id).then(res => {
+                if (res.status === 200) {
                     categoriesState.splice(categoriesState.findIndex(c => c.id === id),1);
                     setCategoriesState([...categoriesState]);
                     activeSuccessSnackbar();
@@ -48,14 +50,10 @@ export default ({categories} : CategoriesProps) => {
     };
 
     const submitCategories = (ev :any) => {
-        fetch("/admin/categorias", {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(categoriesState)
+        Axios.put("/admin/categorias", {
+            data: categoriesState
         }).then(res => {
-            if (res.ok) {
+            if (res.status === 200) {
                 location.reload();
             } else {
                 activeErrorSnackbar();
@@ -68,7 +66,7 @@ export default ({categories} : CategoriesProps) => {
         const newCategoryName :string = (document.getElementById("admin-categories-add-name") as any).value;
         if (newCategoryName !== "") {
             (document.getElementById("admin-categories-add-name") as any).value = "";
-            categoriesState.push({id: 0, name: newCategoryName});
+            categoriesState.push({id: -1, name: newCategoryName});
             setCategoriesState([...categoriesState]);
             setHasAnyChangesFlag(true);
         }
