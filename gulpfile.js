@@ -23,7 +23,7 @@ function buildClient() {
     gulp.src("src/assets/images/favicon.ico").pipe(gulp.dest("dist/public"));
     gulp.src("src/assets/upload/**/*")
         .pipe(gulp.dest("dist/public/upload"));
-    gulp.src("database.db").pipe(gulp.dest("dist"));
+    gulp.src("database.db").pipe(gulp.dest("dist/data"));
     return gulp.src("src/*")
         .pipe(gulpWebpack(require("./webpack.config.js"), webpack))
         .pipe(gulp.dest("dist"));

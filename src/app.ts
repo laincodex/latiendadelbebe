@@ -26,7 +26,7 @@ import * as Products from "./components/products";
 import { getRefUrl, StringUtils } from "./pages/Utils";
 
 const database = openDatabase({
-    filename: "database.db",
+    filename: "data/database.db",
     driver: sqlite3.Database
 });
 
