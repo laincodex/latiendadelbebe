@@ -19,11 +19,11 @@ export interface ProductsProps {
     categories :TCategory[],
     productsPageCount : number,
     currentPage :number,
-    searchName :string,
+    requestedTitle :string,
     filter :string,
     requestedCategory :number
 }
-export default ({products, featuredProducts, categories, productsPageCount, currentPage, searchName, filter, requestedCategory} : ProductsProps)  => {
+export default ({products, featuredProducts, categories, productsPageCount, currentPage, requestedTitle, filter, requestedCategory} : ProductsProps)  => {
     const [snackbarErrorActive, setSnackbarErrorActive] = useState<boolean>(false);
 
     const renderFeaturedProducts = () :JSX.Element[] => {
@@ -141,7 +141,7 @@ export default ({products, featuredProducts, categories, productsPageCount, curr
                     <div className="admin-products-search-input">
                         <div className="admin-products-search-input-bar">
                             <SearchIcon />
-                            <input type="text" name="title" id="admin-products-search" defaultValue={searchName} placeholder="Ingrese nombre a buscar"/>
+                            <input type="text" name="title" id="admin-products-search" defaultValue={requestedTitle} placeholder="Ingrese nombre a buscar"/>
                         </div>
                         <button type="submit"><ArrowIcon className="rotate-180" /></button>
                     </div>

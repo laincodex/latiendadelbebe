@@ -173,7 +173,7 @@ export default ({product, productImages, categories, refUrl} :ProductDetailProps
                             </div>
                             <p>{product.description}</p>
                             <div className="product-detail-categories">{renderCategories()}</div>
-                            <button className="btn-light-blue btn-icon-rotate360"><FacebookIcon /> Preguntar</button>
+                            <button className="btn-light-blue btn-icon-rotate360"><FacebookIcon />Consultar</button>
                         </article>
                     </div>
                 </div>

@@ -68,6 +68,8 @@ export default ({
     };
 
     const renderProductList = () :Array<JSX.Element> => {
+        if (products.length === 0)
+            return [<div key={0} className="product-list-item-empty">No se han encontrado productos con esa descripci&oacute;n.</div>];
         let rendered :Array<JSX.Element> = [];
         products.forEach((product, index) => {
             rendered.push(<li key={index}><ProductItem product={product} onClick={openProduct(product.id)} /></li>);

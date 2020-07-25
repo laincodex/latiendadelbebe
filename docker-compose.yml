@@ -5,7 +5,7 @@ services:
     container_name: latiendadelbebe
     restart: always
     ports:
-      - 127.0.0.1:8001:5000
+      - 127.0.0.1:8080:8080
     volumes:
       - upload:/app/public/upload
       - data:/app/data

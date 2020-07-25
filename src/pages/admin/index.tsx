@@ -16,7 +16,7 @@ export default ( { section, ...props } : { section? :string }) => {
     return (
         <div className="admin-panel-container">
             <div className="admin-panel-topnav">
-                LA TIENDA DEL BEBE
+                <a href="/"><Logo disableImage={true} inlineText={true}/></a>
             </div>
             <div className="admin-panel-content">
                 <nav className="admin-panel-nav">

@@ -8,8 +8,9 @@ export default () => {
                 <a href="/"><Logo /></a>
                 <div className="menu-container">
                     <ul>
+                        <li><a href="/">Home</a></li>
                         <li><a href="/productos">Productos</a></li>
-                        <li><a href="#">¿Donde estamos?</a></li>
+                        <li><a href="/contacto">Contacto</a></li>
                     </ul>
                 </div>
             </div>

@@ -53,7 +53,8 @@ export default ( { featuredProducts } : FeaturedProductsProps) => {
         return enable ? "featured-products-nav-enable" : "";
     };
 
-    const openProduct = (id :number) => () => {
+    const openProduct = (id :number) => (ev:any) => {
+        ev?.preventDefault();
         document.location.href = "/productos/" + id + "?ref=" + escape(document.location.pathname + document.location.search);
     };
 

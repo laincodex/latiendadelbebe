@@ -507,4 +507,4 @@ app.get("/404", (req :Request, res :Response) => {
 
 app.get("*", (req :Request, res :Response) => res.redirect("/404"));
 
-server.listen( process.env.PORT || 5000, () => console.log("Running..."))
+server.listen( process.env.PORT || 8080, () => console.log("Running..."))
