@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Logo from "../../home/components/Logo";
 import Snackbar, { SnackbarTime, SnackbarStyles } from "../../../components/Snackbar";
+import ArrowBackIcon from "../../../assets/icons/arrow_back-24px.svg";
 
 import { useIsFirstRender } from "../../Utils";
 
@@ -13,6 +14,11 @@ export default ({ error, refUrl } : { error? :string, refUrl :string}) => {
             setTimeout(() => setErrorSnackbarActive(false),SnackbarTime);
         }
     },[]);
+    
+    const goToMainSite = () => {
+        document.location.href = "/";
+    };
+
     return (
         <div className="admin-login-container">
             <div className="admin-login-content">
@@ -23,7 +29,7 @@ export default ({ error, refUrl } : { error? :string, refUrl :string}) => {
                     <button className="main-btn" type="submit">ENTRAR</button>
                 </form>
             </div>
-            <a href="/"><button className="admin-login-backbtn">VOLVER</button></a>
+            <button onClick={goToMainSite} className="btn-light-blue admin-login-backbtn"><ArrowBackIcon />Volver</button>
             <Snackbar type={SnackbarStyles.ERROR} message={error || ""} isActive={errorSnackbarActive} />
         </div>
     );

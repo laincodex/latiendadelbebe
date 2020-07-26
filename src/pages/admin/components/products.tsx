@@ -131,7 +131,7 @@ export default ({products, featuredProducts, categories, productsPageCount, curr
     return (
         <div className="admin-products-container">
             <div className="admin-nav-add">
-                <Tooltip title="Agregar un nuevo producto" style={{marginTop: 35}} onClick={addProduct}><AddIcon /></Tooltip>
+                <Tooltip title="Agregar un nuevo producto" style={{marginTop: 50}} onClick={addProduct}><AddIcon /></Tooltip>
             </div>
             <SectionTitle title="DESTACADOS" />
             <ul>{renderFeaturedProducts()}</ul>

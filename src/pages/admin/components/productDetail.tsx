@@ -240,7 +240,7 @@ export default ({ product, productImages, categories, refUrl, isNewProduct} :Pro
 
     return (
         <div className="admin-product-detail-container">
-            <div className="admin-product-detail-goback" onClick={goBack}><ArrowBackIcon /> Volver</div>
+            <button className="btn-light-blue admin-product-detail-goback" onClick={goBack}><ArrowBackIcon />VOLVER</button>
             <h3>Titulo</h3>
             <div className="admin-product-detail-header">
                 <input className="admin-product-detail-title" defaultValue={productState.title} onChange={handleTitleChange} placeholder="Ingrese el titulo del producto." />
