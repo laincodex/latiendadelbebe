@@ -394,6 +394,19 @@ body {
     }
 }
 
+.loading-circle {
+    border: 5px solid white;
+    border-radius: 50%;
+    border-top: 5px solid $main-blue;
+    width: 30px;
+    height: 30px;
+    animation: spin 2s linear infinite;
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+}
+
 // -- Home --
 
 header, footer {

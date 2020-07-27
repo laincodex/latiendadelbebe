@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { TProduct, TProductImage, TCategory } from "../../../components/products";
 import { parseDate } from "../../Utils";
 import Tooltip from "../../home/components/Tooltip";
+import LoadingCircle from "./LoadingCircle";
 
 import ArrowBackIcon from "../../../assets/icons/arrow_back-24px.svg";
 import StarIcon from "../../../assets/icons/star-24px.svg";
@@ -29,6 +30,7 @@ export default ({ product, productImages, categories, refUrl, isNewProduct} :Pro
     const [snackbarErrorActive, setSnackbarErrorActive] = useState<boolean>(false);
     const [categoriesToAdd, setCategoriesToAdd] = useState<TCategory[]>([]);
     const [addCategoriesOverlay, setAddCategoriesOverlay] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const goBack = () => {
         document.location.href = refUrl;
@@ -206,6 +208,7 @@ export default ({ product, productImages, categories, refUrl, isNewProduct} :Pro
         // we need to clear the input value to have onChange working correctly for newer uploads
         (document.getElementById("admin-product-upload-images") as HTMLInputElement).value = "";
 
+        setIsLoading(true);
         data.append('productId', product.id.toString());
         Axios.post("/admin/productos/uploadImages",data)
             .then(res => {
@@ -220,9 +223,11 @@ export default ({ product, productImages, categories, refUrl, isNewProduct} :Pro
                         productState.primary_image_id = productImages[0].id;
                         setProductState({...productState});;
                     }
+                    setIsLoading(false);
                 }
             })
             .catch(err => {
+                setIsLoading(false);
                 activeErrorSnackbar();
                 console.log(err);
             });
@@ -279,6 +284,7 @@ export default ({ product, productImages, categories, refUrl, isNewProduct} :Pro
             <input type="file" id="admin-product-upload-images" multiple={true} onChange={uploadImagesOnChange}/>
             <Snackbar type={SnackbarStyles.SUCCESS} message="Se han guardado los cambios" isActive={snackbarActive} />
             <Snackbar type={SnackbarStyles.ERROR} message="Hubo un error, por favor recarga la pagina." isActive={snackbarErrorActive} />
+            <LoadingCircle openState={isLoading} />
         </div>
     );
 };

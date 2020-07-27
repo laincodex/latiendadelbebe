@@ -37,6 +37,7 @@ app.use(express.urlencoded({extended: true}));
 app.set("jwt-secret", "6x7fSQ7z6JXDDfBa6Lrdozrd9rHK");
 
 // const
+const uploadProductImagesTmpDir = __dirname + "/public/upload/products/tmp/";
 const carouselImagesTmpPath = __dirname + "/public/upload/carousel/tmp";
 const ADMIN_PRODUCTS_PER_PAGE = 10;
 const HOME_PRODUCTS_PER_PAGE = 8;
@@ -334,9 +335,13 @@ app.delete("/admin/productos/:productId", adminOnly, async (req :Request, res :R
     } catch (err) { console.log(err); res.status(500).send(err); }
 });
 
+
+if (!fs.existsSync(uploadProductImagesTmpDir))
+    fs.mkdirSync(uploadProductImagesTmpDir);
+
 app.post("/admin/productos/uploadImages", adminOnly, async (req :Request, res :Response) => {
-    const form = new multyparty.Form();
     try {
+        const form = new multyparty.Form({uploadDir: uploadProductImagesTmpDir});
         const db :Database = await database;
         form.parse(req, async (err, fields, files) => {
             if (err) {
@@ -347,7 +352,7 @@ app.post("/admin/productos/uploadImages", adminOnly, async (req :Request, res :R
             if (isNaN(productId))
                 throw("Bad product id");
             const productTempImages :multyparty.File[] = files["productImages"];
-            const productImagesPath :string = `public/upload/products/${productId}/`;
+            const productImagesPath :string = __dirname + `/public/upload/products/${productId}/`;
             const productImagesResolved :Products.TProductImage[] = [];
             if (!fs.existsSync(productImagesPath)) 
                 fs.mkdirSync(productImagesPath);
@@ -356,7 +361,7 @@ app.post("/admin/productos/uploadImages", adminOnly, async (req :Request, res :R
             const productImagesCount = await Products.getProductImagesCount(db, productId);
 
             for (let tempImageIndex = 0; tempImageIndex < productTempImages.length; tempImageIndex++) {
-                const newImageFilename :string = productTempImages[tempImageIndex].path.replace(/^\/tmp\//, "");
+                const newImageFilename :string = productTempImages[tempImageIndex].path.replace(/.*tmp\//, "");
                 fs.renameSync(productTempImages[tempImageIndex].path, productImagesPath + newImageFilename);
                 const newProductImage :Products.TProductImage = await Products.newProductImage(db, productId, newImageFilename);
                 // create a thumbnail
@@ -417,24 +422,30 @@ app.get("/admin/carousel", adminOnly, async (req :Request, res :Response) => {
     } catch(err) {res.send(err);}
 });
 
-if (!fs.existsSync(carouselImagesTmpPath)) {
-    console.log("creating carousel images temporal folder...");
+if (!fs.existsSync(carouselImagesTmpPath))
     fs.mkdirSync(carouselImagesTmpPath, 0o744);
-}
+if (!fs.existsSync(carouselImagesTmpPath + "/uploaded"))
+    fs.mkdirSync(carouselImagesTmpPath + "/uploaded");
 app.post("/admin/carousel/upload", adminOnly, async (req :Request, res :Response) => {
-    const form = new multyparty.Form();
-    form.parse(req, async (err, fields, files) => {
-        if (err) {
-            res.status(400).send(err);
-            console.log(err);
-            return;
-        }
-        const carouselImage :multyparty.File = files["carouselImage"][0];
-        const tmpPath :string = "public/upload/carousel" + carouselImage.path;
-        await sharp(carouselImage.path).resize({width: 1270}).toFile(tmpPath);
-        res.status(200).send({tmpImagePath: carouselImage.path.replace(/^\/tmp\//, "")}); // strip /tmp/ before send the name
-    });
-    return;
+    try {
+        const form = new multyparty.Form({uploadDir: carouselImagesTmpPath + "/uploaded"});
+        form.parse(req, async (err, fields, files) => {
+            if (err) {
+                res.status(400).send(err);
+                console.log(err);
+                return;
+            }
+            const carouselImage :multyparty.File = files["carouselImage"][0];
+            const tmpPath :string = carouselImage.path.replace(/uploaded\//, "");
+            const carouselImageFileName :string = carouselImage.path.replace(/.*tmp\/uploaded\//, "");
+            await sharp(carouselImage.path).resize({width: 1270}).toFile(tmpPath);
+            await fs.unlinkSync(carouselImage.path);
+            res.status(200).send({tmpImagePath: carouselImageFileName}); // strip /tmp/ before send the name
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(400).send(err);
+    }
 });
 
 app.post("/admin/carousel", express.json(), adminOnly, async (req :Request, res :Response) => {
