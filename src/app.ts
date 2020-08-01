@@ -16,6 +16,7 @@ import HtmlTemplate from "./components/HtmlTemplate";
 
 import HomePage from "./pages/home";
 import ProductsPage from "./pages/products";
+import ContactPage from "./pages/contact";
 import AdminPage from "./pages/admin";
 import AdminLogin from "./pages/admin/components/login";
 import NotFoundPage from "./pages/404";
@@ -137,6 +138,15 @@ app.get("(/productos/:productId|/productos/:productId/*)?", async (req :Request,
             head: "<title>La Tienda del BEBE - Productos</title>"
         }));
     } catch (err) { console.log(err); res.status(500).send(err); }
+});
+
+app.get("/contacto", async (req :Request, res :Response) => {
+    res.send(HtmlTemplate({
+        client: "home",
+        content: renderToString(React.createElement(ContactPage)),
+        props: '""',
+        head: "<title>La Tienda del BEBE - Contacto</title>"
+    }))
 });
 
 const adminOnly = (req :Request, res :Response, next :NextFunction) => {

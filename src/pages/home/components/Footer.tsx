@@ -3,7 +3,7 @@ import Logo from "./Logo";
 import MapImageSrc from "../../../assets/images/map.png";
 import Tooltip from "./Tooltip";
 import Overlay from "./Overlay";
-import BgWithPlaceholder from "../../home/components/bgWithPlaceholder";
+import BgWithPlaceholder from "./bgWithPlaceholder";
 
 import FacebookIcon from "../../../assets/icons/f_logo_RGB-Blue_1024.svg";
 import HomeIcon from "../../../assets/icons/home-24px.svg";
@@ -18,24 +18,19 @@ export interface TSNSData {
 };
 
 export default () => {
-
     const [mapOverlayOpen, setMapOverlayOpen] = useState<boolean>(false);
-
     const snsData :TSNSData = {
         address: "Bv. Ameghino 695, Pergamino, Buenos Aires.",
         facebookUrl: "facebook.com/LTiendadelbebe",
         phone: "2477 - 777777",
         email: "hola@latiendadelbebe.com.ar"
-    }
-
+    };
     const openMapOverlay = () => {
         setMapOverlayOpen(true);
-    }
-    
+    };
     const closeMapOverlay = () => {
         setMapOverlayOpen(false);
-    }
-
+    };
     return (
         <footer>
             <div className="footer-content content-width">

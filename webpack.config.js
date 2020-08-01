@@ -2,8 +2,8 @@ const path = require("path");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
     entry: {
-        "public/home": "./src/pages/home/client.tsx",
-        "public/admin": "./src/pages/admin/client.tsx",
+        "public/home": "./src/clients/home.tsx",
+        "public/admin": "./src/clients/admin.tsx",
     },
     output: {
         filename: "[name].js",

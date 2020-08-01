@@ -10,6 +10,7 @@ import InserPhotoIcon from "../../../assets/icons/insert_photo-24px.svg";
 import RemoveIcon from "../../../assets/icons/remove_circle-24px.svg";
 import DoneIcon from "../../../assets/icons/done-24px.svg";
 import CloseIcon from "../../../assets/icons/close.svg";
+import LoadingCircle from "./LoadingCircle";
 
 export interface CarouselProps {
     sourceCarouselItems :Array<TCarouselItem>
@@ -25,6 +26,7 @@ export default ( { sourceCarouselItems } :CarouselProps ) => {
     const [hasAnyChangesFlag, setHasAnyChangesFlag] = useState<boolean>(false);
     const [snackbarActive, setSnackbarActive] = useState<boolean>(false);
     const [snackbarErrorActive, setSnackbarErrorActive] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     // Create two copies of the source carousel items to handle new edits and cancel functionality
     const [carouselItems, setCarouselItems] = useState<TCarouselItem[]>(sourceCarouselItems.map(a => Object.assign({}, a)));
@@ -101,14 +103,17 @@ export default ( { sourceCarouselItems } :CarouselProps ) => {
         // we need to clear the input value to have onChange working correctly for newer uploads
         (document.getElementById("admin-carousel-upload-image") as HTMLInputElement).value = "";
 
+        setIsLoading(true);
         Axios.post("/admin/carousel/upload", data).then(res => {
             if (res.data.tmpImagePath) {
                 carouselItems[uploadImageIndex.current].image_url = "tmp/" + res.data.tmpImagePath;
                 setHasAnyChangesFlag(true);
                 setCarouselItems([...carouselItems]);
+                setIsLoading(false);
             }
         })
         .catch(err => {
+            setIsLoading(false);
             activeErrorSnackbar();
             console.log(err);
         });
@@ -173,6 +178,7 @@ export default ( { sourceCarouselItems } :CarouselProps ) => {
             </div>}
             <Snackbar type={SnackbarStyles.SUCCESS} message="Se han guardado los cambios" isActive={snackbarActive} />
             <Snackbar type={SnackbarStyles.ERROR} message="Hubo un error, por favor recarga la pagina." isActive={snackbarErrorActive} />
+            <LoadingCircle openState={isLoading} />
             <input type="file" id={"admin-carousel-upload-image"} onChange={uploadImageOnChange} />
        </div>
    );
