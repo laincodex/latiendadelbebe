@@ -4,27 +4,15 @@ import MapImageSrc from "../../../assets/images/map.png";
 import Tooltip from "./Tooltip";
 import Overlay from "./Overlay";
 import BgWithPlaceholder from "./bgWithPlaceholder";
+import { SNSData } from "../../Utils";
 
 import FacebookIcon from "../../../assets/icons/f_logo_RGB-Blue_1024.svg";
 import HomeIcon from "../../../assets/icons/home-24px.svg";
-import PhoneIcon from "../../../assets/icons/phone-24px.svg";
+import WhatsappIcon from "../../../assets/icons/whatsapp-24px.svg";
 import EmailIcon from "../../../assets/icons/email-24px.svg";
-
-export interface TSNSData {
-    address :string,
-    facebookUrl :string,
-    phone :string,
-    email :string
-};
 
 export default () => {
     const [mapOverlayOpen, setMapOverlayOpen] = useState<boolean>(false);
-    const snsData :TSNSData = {
-        address: "Bv. Ameghino 695, Pergamino, Buenos Aires.",
-        facebookUrl: "facebook.com/LTiendadelbebe",
-        phone: "2477 - 777777",
-        email: "hola@latiendadelbebe.com.ar"
-    };
     const openMapOverlay = () => {
         setMapOverlayOpen(true);
     };
@@ -49,10 +37,10 @@ export default () => {
                 <div className="footer-sns">
                     <ul>
                         <li><h1>Visitanos!</h1></li>
-                        <li><HomeIcon />{snsData.address}</li>
-                        <li><FacebookIcon className="facebook-logo-svg" /><a target="_blank" href={"https://" + snsData.facebookUrl}>{snsData.facebookUrl}</a></li>
-                        <li><PhoneIcon />{snsData.phone}</li>
-                        <li><EmailIcon /><a href={"mailto:" + snsData.email}>{snsData.email}</a></li>
+                        <li><HomeIcon />{SNSData.address}</li>
+                        <li><FacebookIcon className="facebook-logo-svg" /><a target="_blank" href={"https://m.me/" + SNSData.facebookId}>/{SNSData.facebookId}</a></li>
+                        <li><WhatsappIcon /><a href={"https://wa.me/"+SNSData.phone}>{SNSData.phone}</a></li>
+                        <li><EmailIcon /><a href={"mailto:" + SNSData.email}>{SNSData.email}</a></li>
                     </ul>
                 </div>
                 <div className="footer-logo">

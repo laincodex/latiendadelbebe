@@ -9,9 +9,10 @@ import HighlightOffIcon from "../../../assets/icons/highlight_off-24px.svg";
 import StarIcon from "../../../assets/icons/star-24px.svg";
 import CloseIcon from "../../../assets/icons/close.svg";
 import FacebookIcon from "../../../assets/icons/f_logo_RGB-Blue_1024.svg";
+import WhatsappIcon from "../../../assets/icons/whatsapp-24px.svg";
 import BgWithPlaceholder from "../../home/components/bgWithPlaceholder";
 
-import { useIsFirstRender, StringUtils } from "../../Utils";
+import { useIsFirstRender, StringUtils, SNSData } from "../../Utils";
 
 export interface ProductDetailProps {
     product :TProduct,
@@ -173,7 +174,12 @@ export default ({product, productImages, categories, refUrl} :ProductDetailProps
                             </div>
                             <p>{product.description}</p>
                             <div className="product-detail-categories">{renderCategories()}</div>
-                            <button className="btn-light-blue btn-icon-rotate360"><FacebookIcon />Consultar por Facebook</button>
+                            <button className="btn-light-blue btn-icon-rotate360"><a href={`https://m.me/${SNSData.facebookId}?ref=${product.id}`} target="_blank"><FacebookIcon />Consultar por Facebook</a></button>
+                            <button className="btn-light-green btn-icon-rotate360">
+                                <a target="_blank" href={`https://wa.me/${SNSData.phone}?text=${escape(`Hola, te queria consultar por el producto "${product.title}" de https://www.latiendadelbebe.com.ar/productos/${product.id}/${StringUtils.slugify(product.title)}`)}"`}>
+                                    <WhatsappIcon />Consultar por Whatsapp
+                                </a>
+                            </button>
                         </article>
                     </div>
                 </div>

@@ -6,10 +6,11 @@ import Tooltip from "../home/components/Tooltip";
 import Overlay from "../home/components/Overlay";
 import BgWithPlaceholder from "../home/components/bgWithPlaceholder";
 import Logo from "../home/components/Logo";
+import { SNSData } from "../Utils";
 
 import FacebookIcon from "../../assets/icons/f_logo_RGB-Blue_1024.svg";
 import HomeIcon from "../../assets/icons/home-24px.svg";
-import PhoneIcon from "../../assets/icons/phone-24px.svg";
+import WhatsappIcon from "../../assets/icons/whatsapp-24px.svg";
 import EmailIcon from "../../assets/icons/email-24px.svg";
 export default () => {
     const [mapOverlayOpen, setMapOverlayOpen] = useState<boolean>(false);
@@ -25,7 +26,7 @@ export default () => {
             <div className="contacto-container">
                 <div className="contacto-content content-width">
                     <h1>¿Quienes somos?</h1>
-                    <span>Hola, somos una tienda ubicada en Ameghino 695, Pergamino, Buenos Aires. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ultricies ultricies vulputate. Nunc dapibus posuere eros, nec aliquam lacus congue vitae. Integer sollicitudin, nisi in tristique condimentum, eros urna malesuada leo, vel efficitur est risus vitae lacus. Praesent ut sem sed felis euismod consequat ut quis enim. Phasellus sit amet lorem rhoncus, malesuada dui nec, scelerisque arcu. </span>
+                    <span>{SNSData.contactText}</span>
                     <h1>¿Como contactarnos?</h1>
                     <div className="contacto-data">
                         <BgWithPlaceholder className="contacto-map">
@@ -39,10 +40,10 @@ export default () => {
                             </Overlay>
                         </BgWithPlaceholder>
                         <ul>
-                            <li><HomeIcon />Bv. Ameghino 695, Pergamino, Buenos Aires.</li>
-                            <li><a href="https://facebook.com/LTiendadelbebe" target="_blank"><FacebookIcon />facebook.com/LTiendadelbebe</a></li>
-                            <li><a href="mailto:hola@latiendadelbebe.com.ar"><EmailIcon />hola@latiendadelbebe.com.ar</a></li>
-                            <li><a href="https://api.whatsapp.com/send?phone=+5492364206002" target="_blank"><PhoneIcon />2477 - 777777</a></li>
+                            <li><HomeIcon />{SNSData.address}</li>
+                            <li><a href={"https://m.me/"+SNSData.facebookId} target="_blank"><FacebookIcon className="facebook-logo-svg" />/{SNSData.facebookId}</a></li>
+                            <li><a href={"mailto:"+SNSData.email}><EmailIcon />{SNSData.email}</a></li>
+                            <li><a href={"https://wa.me/"+SNSData.phone} target="_blank"><WhatsappIcon />{SNSData.phone}</a></li>
                         </ul>
                     </div>
                 </div>

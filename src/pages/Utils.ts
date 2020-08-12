@@ -1,6 +1,24 @@
 import { useRef, useEffect } from "react";
 import { Request } from "express";
 
+interface TSNSData {
+    address :string,
+    facebookId :string,
+    phone :string,
+    email :string,
+    contactText :string,
+    aboutUsText :string
+};
+
+export const SNSData :TSNSData = {
+    address: "Bv. Ameghino 695, Pergamino, Buenos Aires.",
+    facebookId: "LTiendadelbebe",
+    phone: "+5492477651909",
+    email: "hola@latiendadelbebe.com.ar",
+    contactText: "Hola, somos una tienda ubicada en Ameghino 695, Pergamino, Buenos Aires. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ultricies ultricies vulputate. Nunc dapibus posuere eros, nec aliquam lacus congue vitae. Integer sollicitudin, nisi in tristique condimentum, eros urna malesuada leo, vel efficitur est risus vitae lacus. Praesent ut sem sed felis euismod consequat ut quis enim. Phasellus sit amet lorem rhoncus, malesuada dui nec, scelerisque arcu. ",
+    aboutUsText: "Somos una tienda ubicada en bla bla bla, los esperamos!"
+};
+
 export const useIsFirstRender = () => {
     const firstRenderRef = useRef<boolean>(true);
     useEffect(()=> {
