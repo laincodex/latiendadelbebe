@@ -1,11 +1,9 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useLayoutEffect } from "react";
 import SectionTitle from "./sectiontitle";
 import ProductItem from "./productItem";
 import { TProduct } from "../../../components/products";
 
-import ArrowBackIcon from "../../../assets/icons/arrow_left-24px.svg"
-
-const PRODUCTS_LIMIT = 4; //Maximum products to show on New Products
+import ArrowBackIcon from "../../../assets/icons/arrow_left-24px.svg";
 
 interface FeaturedProductsProps {
     featuredProducts : TProduct[]
@@ -14,10 +12,11 @@ interface FeaturedProductsProps {
 export default ( { featuredProducts } : FeaturedProductsProps) => {
     const [renderedProducts, setRenderedProducts] = useState<Array<JSX.Element>>([]);
     const [sliceIndex, setSliceIndex] = useState<number>(0);
+    const productLimit = (typeof window != 'undefined' && window.innerWidth <= 700) ? 1 : 4;
     
     const renderProducts = (products :TProduct[], index :number) :Array<JSX.Element> => {
         let renderedList : Array<JSX.Element> = [];
-        let maxIndex = (index+PRODUCTS_LIMIT < products.length) ? index+PRODUCTS_LIMIT : products.length;
+        let maxIndex = (index+productLimit < products.length) ? index+productLimit : products.length;
         for (let i = index; i < maxIndex; i++) {
             products[i].is_featured = false;
             renderedList.push(<li key={i}><ProductItem product={products[i]} onClick={openProduct(products[i].id)} /></li>);
@@ -35,7 +34,7 @@ export default ( { featuredProducts } : FeaturedProductsProps) => {
             if (sliceIndex > 0)
                 setSliceIndex(sliceIndex-1);
         } else {
-            if (sliceIndex +1 <= featuredProducts.length - PRODUCTS_LIMIT) {
+            if (sliceIndex +1 <= featuredProducts.length - productLimit) {
                 setSliceIndex(sliceIndex+1);
             }
         }
@@ -47,7 +46,7 @@ export default ( { featuredProducts } : FeaturedProductsProps) => {
             if (sliceIndex > 0)
                 enable = true;
         } else {
-            if (sliceIndex + PRODUCTS_LIMIT < featuredProducts.length)
+            if (sliceIndex + productLimit < featuredProducts.length)
                 enable = true;
         }
         return enable ? "featured-products-nav-enable" : "";

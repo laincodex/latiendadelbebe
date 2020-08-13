@@ -41,7 +41,7 @@ export default () => {
                         </BgWithPlaceholder>
                         <ul>
                             <li><HomeIcon />{SNSData.address}</li>
-                            <li><a href={"https://m.me/"+SNSData.facebookId} target="_blank"><FacebookIcon className="facebook-logo-svg" />/{SNSData.facebookId}</a></li>
+                            <li><a href={"https://m.me/"+SNSData.facebookId} target="_blank"><FacebookIcon className="facebook-logo-svg" />{SNSData.facebookId}</a></li>
                             <li><a href={"mailto:"+SNSData.email}><EmailIcon />{SNSData.email}</a></li>
                             <li><a href={"https://wa.me/"+SNSData.phone} target="_blank"><WhatsappIcon />{SNSData.phone}</a></li>
                         </ul>

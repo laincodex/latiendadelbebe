@@ -60,8 +60,8 @@ export default ({products, featuredProducts, categories, productsPageCount, curr
                     <div className="admin-product-date">{parseDate(new Date(product.date*1000))}</div>
                 </ul>
                 <ul className="admin-product-item-actions">
-                    <li onClick={featureProduct(product.id, !product.is_featured)} className={"admin-product-star" + ((product.is_featured) ? "-active" : "")}><Tooltip style={{marginTop: 40, width: 250}} title={"Haga click para " + (product.is_featured ? "dejar de " : "")  + "destacar"}><StarIcon /></Tooltip></li>
-                    <li onClick={deleteProduct(product.id)} className="admin-product-remove-icon"><Tooltip style={{marginTop:35}} title="Eliminar"><RemoveIcon /></Tooltip></li>
+                    <li onClick={featureProduct(product.id, !product.is_featured)} className={"admin-product-star" + ((product.is_featured) ? "-active" : "")}><Tooltip style={{transform: "translate3d(-30px, 30px, 0)", width: 300}} title={"Haga click para " + (product.is_featured ? "dejar de " : "")  + "destacar"}><StarIcon /></Tooltip></li>
+                    <li onClick={deleteProduct(product.id)} className="admin-product-remove-icon"><Tooltip style={{transform: "translateY(30px)"}} title="Eliminar"><RemoveIcon /></Tooltip></li>
                 </ul>
             </li>);
     };
@@ -131,7 +131,7 @@ export default ({products, featuredProducts, categories, productsPageCount, curr
     return (
         <div className="admin-products-container">
             <div className="admin-nav-add">
-                <Tooltip title="Agregar un nuevo producto" style={{marginTop: 50}} onClick={addProduct}><AddIcon /></Tooltip>
+                <Tooltip title="Agregar un nuevo producto" style={{transform: "translateY(50px)"}} onClick={addProduct}><AddIcon /></Tooltip>
             </div>
             <SectionTitle title="DESTACADOS" />
             <ul>{renderFeaturedProducts()}</ul>

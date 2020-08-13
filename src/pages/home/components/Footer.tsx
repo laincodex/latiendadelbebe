@@ -38,7 +38,7 @@ export default () => {
                     <ul>
                         <li><h1>Visitanos!</h1></li>
                         <li><HomeIcon />{SNSData.address}</li>
-                        <li><FacebookIcon className="facebook-logo-svg" /><a target="_blank" href={"https://m.me/" + SNSData.facebookId}>/{SNSData.facebookId}</a></li>
+                        <li><FacebookIcon className="facebook-logo-svg" /><a target="_blank" href={"https://www.facebook.com/" + SNSData.facebookId}>{SNSData.facebookId}</a></li>
                         <li><WhatsappIcon /><a href={"https://wa.me/"+SNSData.phone}>{SNSData.phone}</a></li>
                         <li><EmailIcon /><a href={"mailto:" + SNSData.email}>{SNSData.email}</a></li>
                     </ul>

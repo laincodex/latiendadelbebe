@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import Tooltip from "../../home/components/Tooltip";
 import { TCarouselItem } from "../../../components/carousel";
 import Snackbar, {SnackbarTime, SnackbarStyles} from "../../../components/Snackbar";
@@ -134,6 +134,7 @@ export default ( { sourceCarouselItems } :CarouselProps ) => {
     }
 
     const submitCarouselItems = (ev :any) => {
+        setIsLoading(true);
         Axios.post("/admin/carousel", {
             data: {
                 source: sourceCarouselItemsCopy.current,
@@ -145,10 +146,11 @@ export default ( { sourceCarouselItems } :CarouselProps ) => {
             sourceCarouselItemsCopy.current = updatedCarousel.map(item => Object.assign({}, item));
             activeSuccessSnackbar();
             setHasAnyChangesFlag(false);
+            setIsLoading(false);
             setCarouselItems(updatedCarousel.map(item => Object.assign({}, item)));
-            
         })
         .catch(err => {
+            setIsLoading(false);
             activeErrorSnackbar();
             console.log(err);
         });

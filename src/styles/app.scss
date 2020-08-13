@@ -2285,9 +2285,19 @@ footer {
             padding: 0;
             height: 45px;
         }
-        .product-detail-body .product-detail-thumbnails li {
-            width: 20vw;
-            height: 20vw;
+        .product-detail-body {
+            .product-detail-data {
+                .product-detail-data-stockfeature-container {
+                    flex-direction: column;
+                }
+                .product-detail-data-featured {
+                    margin-top: 10px;
+                }
+            }
+            .product-detail-thumbnails li {
+                width: 20vw;
+                height: 20vw;
+            }
         }
     }
 } 

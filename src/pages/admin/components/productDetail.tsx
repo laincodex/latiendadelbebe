@@ -162,17 +162,20 @@ export default ({ product, productImages, categories, refUrl, isNewProduct} :Pro
     }
 
     const submitProduct = () => {
+        setIsLoading(true);
         Axios.put("/admin/productos/" + productState.id, {
             data: productState
         }).then(res => {
+            setIsLoading(false);
             if (res.data.id) {
                 document.location.href = "/admin/productos/" + res.data.id;
             }
             if (res.data.ok) {
                 activeSuccessSnackbar();
                 setHasAnyChangesFlag(false);
-            } else throw(res);
+            };
         }).catch(err => {
+            setIsLoading(false);
             console.log(err);
             activeErrorSnackbar();
         });
@@ -250,9 +253,9 @@ export default ({ product, productImages, categories, refUrl, isNewProduct} :Pro
             <div className="admin-product-detail-header">
                 <input className="admin-product-detail-title" defaultValue={productState.title} onChange={handleTitleChange} placeholder="Ingrese el titulo del producto." />
                 <div className="admin-product-detail-data">
-                    <div className={"admin-product-star" + (productState.is_featured ? "-active" : "")} onClick={toggleFeatured}><Tooltip style={{marginTop: 50, width: 250}} title={"Haga click para " + (productState.is_featured ? "dejar de " : "")  + "destacar"}><StarIcon /></Tooltip></div>
+                    <div className={"admin-product-star" + (productState.is_featured ? "-active" : "")} onClick={toggleFeatured}><Tooltip style={{transform: "translateY(50px)", width: 300}} title={"Haga click para " + (productState.is_featured ? "dejar de " : "")  + "destacar"}><StarIcon /></Tooltip></div>
                     <div className="admin-product-detail-date">{parseDate(new Date(productState.date*1000))}</div>
-                    <div className={"admin-product-detail" + (productState.available ? "-stock" : "-nostock")} onClick={toggleStock}><Tooltip style={{marginTop: 38}} title={(productState.available ? "Deshabilitar el stock" : "Habilitar el stock")}>{productState.available ? "EN STOCK" : "SIN STOCK"}</Tooltip></div>
+                    <div className={"admin-product-detail" + (productState.available ? "-stock" : "-nostock")} onClick={toggleStock}><Tooltip style={{transform: "translateY(50px)"}} title={(productState.available ? "Deshabilitar el stock" : "Habilitar el stock")}>{productState.available ? "EN STOCK" : "SIN STOCK"}</Tooltip></div>
                 </div>
             </div>
             <h3>Descripcion del producto</h3>
