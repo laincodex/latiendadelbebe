@@ -9,6 +9,7 @@ import jwt from "jsonwebtoken";
 import sqlite3 from "sqlite3";
 import { open as openDatabase, Database} from "sqlite";
 import sharp from "sharp";
+import dotenv from "dotenv";
 
 const app :Application = express();
 const server : http.Server = http.createServer(app);
@@ -26,8 +27,10 @@ import * as Products from "./components/products";
 
 import { getRefUrl, StringUtils } from "./pages/Utils";
 
+dotenv.config({path: __dirname + "/data/.env"});
+
 const database = openDatabase({
-    filename: "data/database.db",
+    filename: __dirname + "/data/database.db",
     driver: sqlite3.Database
 });
 
@@ -35,7 +38,7 @@ app.use(cookieparser());
 
 app.use(express.static("public"));
 app.use(express.urlencoded({extended: true}));
-app.set("jwt-secret", "6x7fSQ7z6JXDDfBa6Lrdozrd9rHK");
+app.set("jwt-secret", process.env.JWTSECRET);
 
 // const
 const uploadProductImagesTmpDir = __dirname + "/public/upload/products/tmp/";
@@ -185,7 +188,7 @@ app.get("/admin/login", (req :Request, res :Response) => {
 
 app.post("/admin/login", (req :Request, res :Response) => {
     const refUrl = getRefUrl(req, "/admin");
-    if(req.body.username == "admin" && req.body.password == "admin") {
+    if(req.body.username == process.env.ADMINUSERNAME && req.body.password == process.env.ADMINPASSWORD) {
         const token = jwt.sign( {username: "admin"}, app.get("jwt-secret"), {
             algorithm: "HS256",
             expiresIn: '30m'

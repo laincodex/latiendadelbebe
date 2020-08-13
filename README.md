@@ -13,11 +13,13 @@
 * `yarn server`
 
 ### build and deploy to docker
-on dev:
+on dev [automate]:
+1. sh build-docker-prod.sh <version>
+on dev[manual]:
 1. rm -r dist // clean dist directory
 2. yarn deploy
-3. docker build . -t latiendadelbebe
-4. docker save latiendadelbebe -o latiendadelbebe.tar
+3. docker build . -t latiendadelbebe:version
+4. docker save latiendadelbebe:version -o latiendadelbebe-version.tar
 
 on server:
 1. docker load latiendadelbebe.tar
