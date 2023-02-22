@@ -2,7 +2,7 @@ FROM node:lts-alpine
 WORKDIR /app
 COPY dist/ .
 COPY docker/docker.package.json ./package.json
-RUN npm install
+RUN yarn install
 COPY docker/cron.sh /etc/cron.d/cron.sh
 COPY docker/entrypoint.sh /entrypoint.sh
 ENTRYPOINT /entrypoint.sh
