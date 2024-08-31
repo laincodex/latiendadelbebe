@@ -2,7 +2,7 @@ import React from "react";
 import { renderToString } from "react-dom/server";
 import express, { Application, Request, Response, NextFunction } from "express";
 import fs from "fs";
-import multyparty from "multiparty";
+import multiparty from "multiparty";
 import cookieparser from "cookie-parser";
 import http from "http";
 import jwt from "jsonwebtoken";
@@ -354,7 +354,7 @@ if (!fs.existsSync(uploadProductImagesTmpDir))
 
 app.post("/admin/productos/uploadImages", adminOnly, async (req :Request, res :Response) => {
     try {
-        const form = new multyparty.Form({uploadDir: uploadProductImagesTmpDir});
+        const form = new multiparty.Form({uploadDir: uploadProductImagesTmpDir});
         const db :Database = await database;
         form.parse(req, async (err, fields, files) => {
             if (err) {
@@ -364,7 +364,7 @@ app.post("/admin/productos/uploadImages", adminOnly, async (req :Request, res :R
             const productId = parseInt(fields.productId[0],10);
             if (isNaN(productId))
                 throw("Bad product id");
-            const productTempImages :multyparty.File[] = files["productImages"];
+            const productTempImages :multiparty.File[] = files["productImages"];
             const productImagesPath :string = __dirname + `/public/upload/products/${productId}/`;
             const productImagesResolved :Products.TProductImage[] = [];
             if (!fs.existsSync(productImagesPath)) 
@@ -441,14 +441,14 @@ if (!fs.existsSync(carouselImagesTmpPath + "/uploaded"))
     fs.mkdirSync(carouselImagesTmpPath + "/uploaded");
 app.post("/admin/carousel/upload", adminOnly, async (req :Request, res :Response) => {
     try {
-        const form = new multyparty.Form({uploadDir: carouselImagesTmpPath + "/uploaded"});
+        const form = new multiparty.Form({uploadDir: carouselImagesTmpPath + "/uploaded"});
         form.parse(req, async (err, fields, files) => {
             if (err) {
                 res.status(400).send(err);
                 console.log(err);
                 return;
             }
-            const carouselImage :multyparty.File = files["carouselImage"][0];
+            const carouselImage :multiparty.File = files["carouselImage"][0];
             const tmpPath :string = carouselImage.path.replace(/uploaded\//, "");
             const carouselImageFileName :string = carouselImage.path.replace(/.*tmp\/uploaded\//, "");
             await sharp(carouselImage.path).resize({width: 1270}).toFile(tmpPath);

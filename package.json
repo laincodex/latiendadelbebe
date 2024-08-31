@@ -1,13 +1,13 @@
 {
   "scripts": {
     "build": "gulp build",
-    "deploy": "NODE_ENV=production gulp build",
-    "deploy-win": "set NODE_ENV=production&& gulp build",
-    "deploy-docker": "set NODE_ENV=production gulp deploydocker",
+    "deploy": "node_options=--openssl-legacy-provider NODE_ENV=production gulp build",
+    "deploy-win": "set NODE_OPTIONS=--openssl-legacy-provider NODE_ENV=production&& gulp build",
+    "deploy-docker": "set NODE_OPTIONS=--openssl-legacy-provider NODE_ENV=production gulp deploydocker",
     "buildjs": "gulp buildjs",
     "buildreact": "gulp buildreact",
-    "dev": "gulp dev",
-    "server": "gulp server",
+    "dev": "NODE_OPTIONS=--openssl-legacy-provider gulp dev",
+    "server": "NODE_OPTIONS=--openssl-legacy-provider gulp server",
     "start": "cd dist && node app"
   },
   "dependencies": {
@@ -16,7 +16,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "multiparty": "^4.2.1",
+    "multiparty": "^4.2.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
@@ -42,7 +42,7 @@
     "gulp": "^4.0.2",
     "gulp-typescript": "^6.0.0-alpha.1",
     "mini-css-extract-plugin": "^0.9.0",
-    "node-sass": "^6.0.1",
+    "node-sass": "^9.0.0",
     "sass-loader": "^13.2.0",
     "style-loader": "^1.2.1",
     "typescript": "^3.8.3",
